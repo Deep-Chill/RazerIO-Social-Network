@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+
+{% if user.is_authenticated %}
+
+Paper name: {{ Newspaper.Title }}
+<br>
+Owner: {{ Newspaper.Owner }}
+<br>
+
+<a href="#">Write article</a>
+<br>
+{% for i in articles %}
+<a href="{% url 'article' i.id %}">{{ i }}</a>
+{% endfor %}
+{% else %}
+
+{% endif %}
+{% endblock %}
