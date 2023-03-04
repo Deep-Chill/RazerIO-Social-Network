@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}Write Article{% endblock %}
+
+{% block content %}
+{% load static %}
+<script src="{% static 'ckeditor/ckeditor-init.js' %}"></script>
+<script src="{% static 'ckeditor/ckeditor/ckeditor.js' %}"></script>
+
+  <h1>Write a New Article</h1>
+  <h2>{{ newspaper.Title }}</h2>
+
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+
+    <button type="submit" class="btn btn-primary">Publish</button>
+  </form>
+
+{% endblock %}

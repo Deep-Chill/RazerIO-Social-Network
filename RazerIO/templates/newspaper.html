@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}{{ newspaper.Title }}{% endblock %}
+
+{% block content %}
+
+{% if user.is_authenticated %}
+
+<div class="row">
+  <div class="col-md-8">
+    <h1>{{ newspaper.Title }}</h1>
+    <p>Owner: {{ newspaper.Owner }}</p>
+
+    <hr>
+
+    <h2>Articles</h2>
+
+    {% if articles %}
+      <ul>
+        {% for article in articles %}
+          <li>
+            <a href="{% url 'article' article.id %}">{{ article.Title }}</a>
+            <br>
+            <small>Published on {{ article.Date_Published }}</small>
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p>No articles yet.</p>
+    {% endif %}
+
+  </div>
+
+  {% if user == newspaper.Owner %}
+  <div class="col-md-4">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Write an Article</h5>
+        <a href="{% url 'write_article' %}" class="btn btn-primary">Start writing</a>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+</div>
+
+{% else %}
+
+<div class="alert alert-info" role="alert">
+  You need to be logged in to view this page.
+</div>
+
+{% endif %}
+
+{% endblock %}

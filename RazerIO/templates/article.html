@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}
+{{ Article.Title}} by {{ Author }}{% endblock %}
+
+{% block content %}
+
+{% if user.is_authenticated %}
+
+<div class="row">
+  <div class="col-md-8">
+    <h2>{{ Article.Title }}</h2>
+    <p>{{ Article.Text|safe }}</p>
+    <p>Published on {{ Article.Date_Published }}</p>
+  </div>
+  <div class="col-md-4">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">{{ Article.Title }}</h5>
+        <p class="card-text">{{ Author }}</p>
+        <a href="{% url 'write_article' %}" class="btn btn-primary">Write article</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endif %}
+{% endblock %}

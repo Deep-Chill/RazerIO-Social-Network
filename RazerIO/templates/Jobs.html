@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block title %}Job Market{% endblock %}
+
+{% block content %}
+
+<div class="container mt-5">
+  <h1 class="mb-4">Job Market</h1>
+  <div class="row">
+    {% for job in jobs %}
+    <div class="col-md-4 mb-4">
+      <p class="h5">{{ job.Job_Title }}</p>
+      {% if job.company %}
+      <p><a href="#" class="text-primary">{{ job.company }}</a></p>
+      {% else %}
+      <p>This job does not have a Company!</p>
+      {% endif %}
+      <p class="text-muted">${{ job.Salary_Low }} - ${{ job.Salary_High }}/year</p>
+      <p class="text-muted">{{ job.Category }}</p>
+      <p class="text-muted">{{ job.Location }}</p>
+      <p class="text-muted">{{ job.Date_Posted }}</p>
+      <a href="#" class="btn btn-outline-primary mt-3">View Details</a>
+    </div>
+    {% endfor %}
+  </div>
+  <!-- Pagination links -->
+  <nav aria-label="Job listings pagination">
+    <ul class="pagination justify-content-center mt-5">
+      {% if jobs.has_previous %}
+        <li class="page-item">
+          <a class="page-link" href="?page={{ jobs.previous_page_number }}">Previous</a>
+        </li>
+      {% endif %}
+  {% for num in jobs.paginator.page_range %}
+    {% if jobs.number == num %}
+      <li class="page-item active">
+        <a class="page-link" href="#">{{ num }}</a>
+      </li>
+    {% elif num > jobs.number|add:'-3' and num < jobs.number|add:'3' %}
+      <li class="page-item">
+        <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+      </li>
+    {% endif %}
+  {% endfor %}
+
+  {% if jobs.has_next %}
+    <li class="page-item">
+      <a class="page-link" href="?page={{ jobs.next_page_number }}">Next</a>
+    </li>
+  {% endif %}
+</ul>
+  </nav>
+  <div class="mt-5">
+    <a href="{% url 'home' %}" class="btn btn-primary">Home</a>
+    <a href="#" class="btn btn-outline-primary">Post a Job</a>
+    <a href="{% url 'logout' %}" class="btn btn-danger">Log Out</a>
+  </div>
+</div>
+{% endblock %}

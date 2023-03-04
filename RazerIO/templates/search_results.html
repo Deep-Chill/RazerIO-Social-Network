@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+  <h2>Search Results for '{{ query }}'</h2>
+  <ul class="nav nav-tabs" role="tablist">
+    <li class="nav-item">
+      <a class="nav-link {% if users|length > 0 %}active{% endif %}" data-toggle="tab" href="#users" role="tab">Users{% if users|length > 0 %}<span class="badge badge-pill badge-secondary ml-2">{{ users|length }}</span>{% endif %}</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link {% if articles|length > 0 %}active{% endif %}" data-toggle="tab" href="#articles" role="tab">Articles{% if articles|length > 0 %}<span class="badge badge-pill badge-secondary ml-2">{{ articles|length }}</span>{% endif %}</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link {% if newspapers|length > 0 %}active{% endif %}" data-toggle="tab" href="#newspapers" role="tab">Newspapers{% if newspapers|length > 0 %}<span class="badge badge-pill badge-secondary ml-2">{{ newspapers|length }}</span>{% endif %}</a>
+    </li>
+  </ul>
+
+  <div class="tab-content">
+    <div class="tab-pane {% if users|length > 0 %}active{% endif %}" id="users" role="tabpanel">
+      {% if users %}
+      <div class="list-group">
+        {% for user in users %}
+        <a href="{% url 'profile' user.id %}" class="list-group-item">{{ user.username }}</a>
+        {% endfor %}
+      </div>
+      {% else %}
+      <p>No users found.</p>
+      {% endif %}
+    </div>
+
+    <div class="tab-pane {% if articles|length > 0 %}active{% endif %}" id="articles" role="tabpanel">
+      {% if articles %}
+      <div class="list-group">
+        {% for article in articles %}
+        <a href="{% url 'article' article.id %}" class="list-group-item">{{ article.Title }} by {{ article.Newspaper.Title }}</a>
+        {% endfor %}
+      </div>
+      {% else %}
+      <p>No articles found.</p>
+      {% endif %}
+    </div>
+
+    <div class="tab-pane {% if newspapers|length > 0 %}active{% endif %}" id="newspapers" role="tabpanel">
+      {% if newspapers %}
+      <div class="list-group">
+        {% for newspaper in newspapers %}
+        <a href="{% url 'newspaper' newspaper.id %}" class="list-group-item">{{ newspaper.Title }}</a>
+        {% endfor %}
+      </div>
+      {% else %}
+      <p>No newspapers found.</p>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

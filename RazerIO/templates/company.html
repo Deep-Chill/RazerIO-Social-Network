@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}Company Page{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="row">
+    <div class="col-md-6 offset-md-3">
+      <h1 class="text-center">{{ Company.Name }}</h1>
+      {% if StockPrice %}
+        <h3 class="text-center">Stock Price: ${{ StockPrice|floatformat:2 }}</h3>
+      {% endif %}
+      <hr>
+      <p class="text-center">Number of employees: 79,000</p>
+      <p class="text-center">Number of verified employees: {{ Employees }}</p>
+      {% if user.is_authenticated %}
+  <div class="text-center">
+    <a class="btn btn-primary" href="{% url 'profile' request.user.id %}">Profile</a>
+  </div>
+{% else %}
+  <p>You are not logged in</p>
+  <a href="{% url 'login' %}">Log In</a> |
+  <a href="{% url 'signup' %}">Sign Up</a>
+{% endif %}
+
+    </div>
+  </div>
+</div>
+{% endblock %}
