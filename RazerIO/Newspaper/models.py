@@ -1,12 +1,14 @@
 from django.db import models
 from django.conf import settings
 from ckeditor.fields import RichTextField
+from Company.models import Company
+from django.contrib.auth import get_user_model
 
 # Create your models here.
 
 class Newspaper(models.Model):
     Title = models.CharField(max_length=256)
-    Owner = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
+    Owner = models.OneToOneField(get_user_model(), on_delete=models.CASCADE,
                                  related_name='Newspaper')
     Date_Created = models.DateField(auto_created=True)
     Logo = models.ImageField(upload_to='Newspaper/Logos', null=True)
@@ -24,11 +26,16 @@ class Article(models.Model):
         return f'{self.Title}'
 
 class Article_Comment(models.Model):
-    Author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     Text = models.TextField(max_length=10000)
-    Date_Published = models.DateTimeField(auto_created=True)
+    Author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
+                               null=True, blank=True)
+    Date_Published = models.DateTimeField(auto_now_add=True)
+    Article = models.ForeignKey(Article, on_delete=models.CASCADE, default=1)
+    Is_Anonymous = models.BooleanField(default=False)
+    Company = models.ForeignKey(Company, on_delete=models.CASCADE,
+                                null=True, blank=True)
+    Show_Company = models.BooleanField(default=True)
 
-# class Article_Votes(models.Model):
-#     User = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-#     Article = models.ForeignKey(Article, on_delete=models.CASCADE)
-#
+    def __str__(self):
+        return f'{self.Author} posted in {self.Article}'
+

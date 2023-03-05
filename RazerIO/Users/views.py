@@ -64,11 +64,11 @@ def index(request):
         user = request.user
         Following = UserFollowing.objects.filter(User=user).values_list('Following_User_ID', flat=True)
         FriendsPosts = Post.objects.filter(Q(Author__in=Following) | Q(Author=user), Category='Friends').select_related(
-            'Author')
+            'Author').order_by('-Date_Created')
         NationalPosts = Post.objects.filter(Category='National', Author__Country=user.Country).select_related('Author')
         CompanyPosts = Post.objects.filter(Category='Organization', Author__Company=user.Company).select_related(
             'Author')
-        Articles = Article.objects.filter(Date_Published__gte=timezone.now() - timezone.timedelta(hours=48))
+        Articles = Article.objects.filter(Date_Published__gte=timezone.now() - timezone.timedelta(hours=48)).order_by('-Date_Published')
 
         if request.method == "POST":
             form = NewPost(request.POST)

@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .views import newspaper_view, ArticleView, write_article
+from .views import newspaper_view, ArticleView, write_article, Add_Comment
 
 urlpatterns = [
     path("<int:id>", newspaper_view, name='newspaper'),

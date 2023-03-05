@@ -7,6 +7,21 @@ from django.db.models import Q
 
 User = settings.AUTH_USER_MODEL
 
+
+
+class CustomUser(AbstractUser):
+    Bio = models.CharField(max_length=240, default='')
+    Salary = models.IntegerField(default=0)
+    Company = models.ForeignKey('Company.Company', on_delete=models.CASCADE,
+                                   null=True, blank=True)
+    Skills = models.ManyToManyField('Skill', blank=True)
+    Country = models.CharField(choices=(('USA', 'USA'), ('Canada', 'Canada')),
+                               max_length=50, default='USA')
+
+    def __str__(self):
+        return self.username
+
+
 PROGRAMMING_SKILLS = [
     ('python', 'Python'),
     ('java', 'Java'),
@@ -95,21 +110,6 @@ PROGRAMMING_SKILLS = [
     ('wordpress', 'WordPress'),
     ('drupal', 'Drupal'),
     ('joomla', 'Joomla')]
-
-class CustomUser(AbstractUser):
-    Bio = models.CharField(max_length=240, default='')
-    Salary = models.IntegerField(default=0)
-    Company = models.ForeignKey('Company.Company', on_delete=models.CASCADE,
-                                   null=True, blank=True)
-    Skills = models.ManyToManyField('Skill', blank=True)
-    Country = models.CharField(choices=(('USA', 'USA'), ('Canada', 'Canada')),
-                               max_length=50, default='USA')
-
-    def __str__(self):
-        return self.username
-
-
-
 class Skill(models.Model):
     name = models.CharField(choices=PROGRAMMING_SKILLS, max_length=50)
 
