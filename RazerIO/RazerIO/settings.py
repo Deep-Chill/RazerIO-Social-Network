@@ -43,7 +43,8 @@ INSTALLED_APPS = [
     'Company.apps.CompanyConfig',
     'Newspaper.apps.NewspaperConfig',
     'Jobs.apps.JobsConfig',
-    'ckeditor'
+    'ckeditor',
+    'MessagingAlerts.apps.MessagingalertsConfig',
 ]
 
 MIDDLEWARE = [

@@ -14,7 +14,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, re_path
 from django.views.generic.base import TemplateView
 from Users.views import index, search
 from django.conf import settings
@@ -30,7 +30,6 @@ urlpatterns = [
     path("market/", include("Jobs.urls")),
     path('search/', search, name='search'),
     path('ckeditor/', include('ckeditor_uploader.urls')),
-
 ]
 
 if settings.DEBUG:
