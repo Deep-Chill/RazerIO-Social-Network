@@ -19,6 +19,7 @@ from django.views.generic.base import TemplateView
 from Users.views import index, search
 from django.conf import settings
 from django.conf.urls.static import static
+from MessagingAlerts.views import inbox
 
 urlpatterns = [
     path("", index, name="home"),
@@ -30,6 +31,7 @@ urlpatterns = [
     path("market/", include("Jobs.urls")),
     path('search/', search, name='search'),
     path('ckeditor/', include('ckeditor_uploader.urls')),
+    path('', include('MessagingAlerts.urls'))
 ]
 
 if settings.DEBUG:
