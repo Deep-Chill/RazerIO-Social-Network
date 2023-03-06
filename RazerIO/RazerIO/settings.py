@@ -45,6 +45,8 @@ INSTALLED_APPS = [
     'Jobs.apps.JobsConfig',
     'ckeditor',
     'MessagingAlerts.apps.MessagingalertsConfig',
+    'Country.apps.CountryConfig',
+    'yfinance',
 ]
 
 MIDDLEWARE = [
