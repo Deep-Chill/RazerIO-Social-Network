@@ -43,7 +43,6 @@ def ArticleView(request, id):
         form = ArticleCommentForm()
 
     comments = Article_Comment.objects.filter(Article=article)
-
     context = {
         'Article': article,
         'author': author,

@@ -4,6 +4,7 @@
 
 {% block content %}
 {% if user.is_authenticated %}
+
 <style>
 #new-post-form {
   margin-top: 0;
@@ -39,13 +40,12 @@ textarea.form-control {
       <div class="card">
         <div class="card-body">
           <h5 class="card-title">{{ user.username }}</h5>
+          <div class="mt-3">
           <a href="{% url 'profile' user.id %}" class="btn btn-primary">Profile</a>
-          <a href="{% url 'logout' %}" class="btn btn-primary">Logout</a>
+          <button class="btn btn-secondary">Alerts</button>
+          <a class="btn btn-secondary" href="{% url 'inbox' %}">Messages</a>
+          </div>
         </div>
-      </div>
-      <div class="mt-3">
-        <button class="btn btn-secondary">Alerts</button>
-        <a class="btn btn-secondary" href="{% url 'inbox' %}">Messages</a>
       </div>
     </div>
     <div class="col-sm-5">

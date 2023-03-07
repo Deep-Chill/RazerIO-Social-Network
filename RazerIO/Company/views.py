@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from .models import Company
+from django.views.decorators.cache import cache_page
 from operator import itemgetter
 # Create your views here.
 
@@ -15,6 +16,7 @@ def Merge(dict1, dict2):
 import yfinance as yf
 from django.utils import timezone
 
+@cache_page(60 * 15)
 def CompanyPage(request, id):
     company = Company.objects.get(id=id)
     ticker = yf.Ticker(company.StockTicker)

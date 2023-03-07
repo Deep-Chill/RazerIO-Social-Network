@@ -8,7 +8,11 @@
     <!-- Navigation panel -->
     <div class="col-md-2 col-sm-3 bg-light">
       <div class="pt-3">
-        <img src="{% static 'img/pfp.jpg' %}" alt="Profile Image" class="rounded-circle mx-auto d-block img-fluid" width="100">
+    {% if request.user.ProfilePic %}
+      <img src="{{ request.user.ProfilePic.url }}" alt="Profile Image" class="rounded-circle mx-auto d-block img-fluid" width="100">
+    {% else %}
+      <img src="{% static 'img/pfp.jpg' %}" alt="Profile Image" class="rounded-circle mx-auto d-block img-fluid" width="100">
+    {% endif %}
         <h6 class="text-center mt-3">{{ request.user.username }}</h6>
       </div>
       <hr>
@@ -31,7 +35,7 @@
         <h3 class="mb-3">Inbox</h3>
         <div class="list-group">
           {% for conversation in conversations %}
-          <a href="#" class="list-group-item list-group-item-action{% if conversation.is_read %} read{% endif %}">
+          <a href="{% url 'conversation' id=conversation.id %}" class="list-group-item list-group-item-action{% if conversation.is_read %} read{% endif %}">
             <div class="d-flex w-100 justify-content-between">
               <h5 class="mb-1">{{ conversation.subject }}</h5>
               <small>{{ conversation.last_message.timestamp|date:"d M, Y h:i A" }}</small>

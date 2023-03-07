@@ -3,53 +3,52 @@
 {% block title %}{{ newspaper.Title }}{% endblock %}
 
 {% block content %}
-
-{% if user.is_authenticated %}
-
-<div class="row">
-  <div class="col-md-8">
-    <h1>{{ newspaper.Title }}</h1>
-    <p>Owner: {{ newspaper.Owner }}</p>
-
-    <hr>
-
-    <h2>Articles</h2>
-
-    {% if articles %}
-      <ul>
+<div class="container">
+  {% if user.is_authenticated %}
+  <div class="row">
+    <div class="col-md-8">
+      <h1>{{ newspaper.Title }}</h1>
+      <p class="lead">Owner: {{ newspaper.Owner }}</p>
+      <hr>
+      <h2>Articles</h2>
+      {% if articles %}
+      <ul class="list-group">
         {% for article in articles %}
-          <li>
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          <div>
             <a href="{% url 'article' article.id %}">{{ article.Title }}</a>
             <br>
-            <small>Published on {{ article.Date_Published }}</small>
-          </li>
+            <small class="text-muted">Published on {{ article.Date_Published }}</small>
+          </div>
+          <span class="badge bg-primary rounded-pill">{{ article.category }}</span>
+        </li>
         {% endfor %}
       </ul>
-    {% else %}
+      {% else %}
       <p>No articles yet.</p>
+      {% endif %}
+    </div>
+    {% if user == newspaper.Owner %}
+    <div class="col-md-4">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Write an Article</h5>
+          <a href="{% url 'write_article' %}" class="btn btn-primary">Start Writing</a>
+        </div>
+      </div>
+    </div>
     {% endif %}
-
   </div>
-
-  {% if user == newspaper.Owner %}
-  <div class="col-md-4">
-    <div class="card">
-      <div class="card-body">
-        <h5 class="card-title">Write an Article</h5>
-        <a href="{% url 'write_article' %}" class="btn btn-primary">Start writing</a>
+  {% else %}
+  <div class="row justify-content-center">
+    <div class="col-md-8 text-center">
+      <div class="alert alert-info mt-5" role="alert">
+        <h2 class="mb-4">You need to be logged in to view this page.</h2>
+        <a href="{% url 'login' %}" class="btn btn-primary">Login</a>
+        <a href="{% url 'signup' %}" class="btn btn-secondary">Sign Up</a>
       </div>
     </div>
   </div>
   {% endif %}
-
 </div>
-
-{% else %}
-
-<div class="alert alert-info" role="alert">
-  You need to be logged in to view this page.
-</div>
-
-{% endif %}
-
 {% endblock %}

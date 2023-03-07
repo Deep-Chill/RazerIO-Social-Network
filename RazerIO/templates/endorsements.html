@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+  <h1>Endorsements</h1>
+  <hr>
+  <div class="row">
+    {% if endorsements %}
+      {% for endorsement in endorsements %}
+        <div class="col-md-12">
+          <div class="card my-3">
+            <div class="card-body">
+              <h5 class="card-title">{{ endorsement.author.username }} endorsed {{ endorsement.receiver.username }}</h5>
+              <p class="card-text">{{ endorsement.text }}</p>
+              <p class="card-text"><small class="text-muted">{{ endorsement.timestamp|date:"F j, Y, g:i a" }}</small></p>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    {% else %}
+      <div class="col-md-12">
+        <p>You haven't received any endorsements yet.</p>
+      </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

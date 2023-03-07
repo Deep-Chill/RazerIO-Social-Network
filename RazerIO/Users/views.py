@@ -1,24 +1,18 @@
 from datetime import timedelta
-
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth import get_user_model
 from django.conf import settings
-from django.core.cache import cache
-from django.db.models import Q
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from django.utils import timezone
 from django.views.generic.edit import CreateView
-from django.views.generic.base import TemplateView
-from django.contrib.auth.decorators import login_required
 
-from .forms import CustomUserCreationForm, NewPost
+from .forms import CustomUserCreationForm, NewPost, CustomUserChangeForm
 from Company.models import Company
 from Feed.models import Post
 from Newspaper.models import Article, Newspaper as Nsp
 from Users.models import CustomUser, UserFollowing
+from Endorsements.models import Endorsement
 
 User = settings.AUTH_USER_MODEL
 past_48_hours = timezone.now() - timedelta(hours=48)
@@ -37,6 +31,7 @@ def profile(request, id):
     newspaper = Nsp.objects.filter(Owner=id).first()
     followers = UserFollowing.objects.filter(Following_User_ID=id)
     users_following = UserFollowing.objects.filter(User=id)
+    endorsements = Endorsement.objects.filter(receiver=id)
     is_following = False
 
     if request.user.is_authenticated:
@@ -51,6 +46,7 @@ def profile(request, id):
         "following": users_following,
         "user1": user,
         "is_following": is_following,
+        "endorsements":endorsements,
     }
     return render(request, 'profile.html', context=context)
 
@@ -115,3 +111,14 @@ def search(request):
     posts = Post.objects.filter(Text__icontains=query)
     context = {'users': users, 'articles': articles, 'newspapers': newspapers, 'posts': posts, 'query': query}
     return render(request, 'search_results.html', context=context)
+
+def edit_profile(request):
+    if request.method == "POST":
+        form = CustomUserChangeForm(request.POST, instance=request.user)
+        if form.is_valid():
+            edited_profile = form.save(commit=False)
+            edited_profile.save()
+            return redirect('profile', id=request.user.id)
+    else:
+        form = CustomUserChangeForm(instance=request.user)
+    return render(request, 'edit_profile.html', {'form':form})

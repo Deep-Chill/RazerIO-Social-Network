@@ -5,4 +5,3 @@ from django.core.exceptions import ValidationError
 from django.db.models import Q
 
 User = get_user_model()
-

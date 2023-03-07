@@ -47,7 +47,9 @@ INSTALLED_APPS = [
     'MessagingAlerts.apps.MessagingalertsConfig',
     'Country.apps.CountryConfig',
     'yfinance',
-    'django.contrib.humanize'
+    'django.contrib.humanize',
+    'widget_tweaks',
+    'Endorsements.apps.EndorsementsConfig',
 ]
 
 MIDDLEWARE = [

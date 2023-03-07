@@ -5,62 +5,61 @@
 {% block content %}
 <div class="container mt-5">
   {% if user.is_authenticated %}
-  <h1 class="mb-4">{{ user1.username }}</h1>
-  <div class="row">
-    <div class="col-md-6">
-      <p class="h4">Company:</p>
-      {% if user1.Company %}
-      <p><a href="{% url 'company' user1.Company.id %}" class="text-primary">{{ user1.Company.Name }}</a></p>
-      {% else %}
-      <p>This user does not have a Company!</p>
-      {% endif %}
-      <p class="h4">Salary:</p>
-      <p>${{ user1.Salary }}/year.</p>
-      <p class="h4">Newspaper:</p>
-      {% if user1.Newspaper %}
-      <p><a href="{% url 'newspaper' id %}" class="text-primary">{{ user1.Newspaper }}</a></p>
-      {% else %}
-      {% if user1 == request.user %}
-      <p>You don't have a newspaper. Click <a href="#">here</a> to create one now!</p>
-      {% else %}
-      <p>{{ user1.username }} does not have a newspaper!</p>
-      {% endif %}
-      {% endif %}
+    <h1 class="mb-4">{{ user1.username }}</h1>
+    <div class="row">
+      <div class="col-md-6">
+        <p class="h4">Company:</p>
+        {% if user1.Company %}
+          <p><a href="{% url 'company' user1.Company.id %}" class="text-primary">{{ user1.Company.Name }}</a></p>
+        {% else %}
+          <p>This user does not have a Company!</p>
+        {% endif %}
+        <p class="h4">Salary:</p>
+        <p>${{ user1.Salary }}/year.</p>
+        <p class="h4">Newspaper:</p>
+        {% if user1.Newspaper %}
+          <p><a href="{% url 'newspaper' id %}" class="text-primary">{{ user1.Newspaper }}</a></p>
+        {% else %}
+          {% if user1 == request.user %}
+            <p>You don't have a newspaper. Click <a href="#">here</a> to create one now!</p>
+          {% else %}
+            <p>{{ user1.username }} does not have a newspaper!</p>
+          {% endif %}
+        {% endif %}
+      </div>
+      <div class="col-md-6">
+        <p class="h4">Followers:</p>
+        {% for i in followers %}
+          <p><a href="{% url 'profile' i.User.id %}" class="text-primary">{{ i }}</a></p>
+        {% endfor %}
+        <p class="h4">Following:</p>
+        {% for i in following %}
+          <p><a href="{% url 'profile' i.Following_User_ID.id %}" class="text-primary">{{ i.Following_User_ID }}</a></p>
+        {% endfor %}
+        {% if user1 != request.user %}
+          {% if is_following %}
+            <form method="post" action="{% url 'unfollow_user' user1.id %}">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-outline-danger mt-3">Unfollow</button>
+            </form>
+          {% else %}
+            <form method="post" action="{% url 'follow_user' user1.id %}">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-outline-primary mt-3">Follow</button>
+            </form>
+          {% endif %}
+        {% endif %}
+      </div>
     </div>
-    <div class="col-md-6">
-      <p class="h4">Followers:</p>
-      {% for i in followers %}
-      <p><a href="{% url 'profile' i.User.id %}" class="text-primary">{{ i }}</a></p>
-      {% endfor %}
-      <p class="h4">Following:</p>
-      {% for i in following %}
-      <p><a href="{% url 'profile' i.Following_User_ID.id %}" class="text-primary">{{ i.Following_User_ID }}</a></p>
-      {% endfor %}
-      {% if user1 != request.user %}
-      {% if is_following %}
-      <form method="post" action="{% url 'unfollow_user' user1.id %}">
-        {% csrf_token %}
-        <button type="submit" class="btn btn-outline-danger mt-3">Unfollow</button>
-      </form>
-      {% else %}
-      <form method="post" action="{% url 'follow_user' user1.id %}">
-        {% csrf_token %}
-        <button type="submit" class="btn btn-outline-primary mt-3">Follow</button>
-      </form>
-      {% endif %}
-      {% endif %}
+    <div class="mt-5">
+      <a href="{% url 'edit-profile' %}" class="btn btn-primary">Edit Profile</a>
     </div>
-  </div>
-  <div class="mt-5">
-    <a href="{% url 'home' %}" class="btn btn-primary">Home</a>
-    <a href="{% url 'logout' %}" class="btn btn-danger">Log Out</a>
-  </div>
   {% else %}
-  <p>You are not logged in</p>
-  <div class="mt-3">
-    <a href="{% url 'login' %}" class="btn btn-primary">Log In</a>
-    <a href="{% url 'signup' %}" class="btn btn-outline-primary">Sign Up</a>
-  </div>
+    <p>You are not logged in</p>
+    <div class="mt-3">
+      <a href="{% url 'login' %}" class="btn btn-primary">Log In</a>
+      <a href="{% url 'signup' %}" class="btn btn-outline-primary">Sign Up</a>
+    </div>
   {% endif %}
 </div>
 {% endblock %}

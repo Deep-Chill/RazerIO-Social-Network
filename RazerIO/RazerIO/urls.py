@@ -30,7 +30,8 @@ urlpatterns = [
     path("market/", include("Jobs.urls")),
     path('search/', search, name='search'),
     path('ckeditor/', include('ckeditor_uploader.urls')),
-    path('', include("MessagingAlerts.urls"))
+    path('', include("MessagingAlerts.urls")),
+    path('endorsements/', include("Endorsements.urls")),
 ]
 
 if settings.DEBUG:
