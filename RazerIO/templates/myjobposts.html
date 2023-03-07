@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+  <div class="row">
+    <div class="col-md-12">
+      <h2>My Job Posts</h2>
+      <hr>
+    </div>
+  </div>
+  <div class="row">
+    {% for job_post in job_posts_by_me %}
+    <div class="col-md-6">
+      <div class="card mb-4">
+        <div class="card-body">
+          <h5 class="card-title">{{ job_post.Job_Title }}</h5>
+          <h6 class="card-subtitle mb-2 text-muted">{{ job_post.company }}</h6>
+          <p class="card-text job-description">{{ job_post.Job_Description|truncatewords:50 }}</p>
+          <p class="card-text"><strong>Location:</strong> {{ job_post.Location }}</p>
+          <p class="card-text"><strong>Salary Range:</strong> {{ job_post.salary_min }} - {{ job_post.salary_max }}</p>
+          <p class="card-text"><strong>Job Status:</strong> {{ job_post.Job_Status }}</p>
+          <p class="card-text"><strong>Posted On:</strong> {{ job_post.Date_Posted }}</p>
+          <a href="#" class="btn btn-primary">View Applicants</a>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

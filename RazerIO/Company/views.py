@@ -23,9 +23,11 @@ def CompanyPage(request, id):
     market_cap = ticker.fast_info['marketCap'] if company.StockTicker else None
     institutional = ticker.institutional_holders[:5]
     mutual_funds = ticker.mutualfund_holders[:5]
+    institutional = institutional.copy()
+    mutual_funds = mutual_funds.copy()
+    institutional.loc[:, 'Shares_M'] = institutional.loc[:, 'Shares'] / 1000000
     institutional['Value_M'] = institutional['Value'] / 1000000
     mutual_funds['Value_M'] = mutual_funds['Value'] / 1000000
-    institutional['Shares_M'] = institutional['Shares'] / 1000000
     mutual_funds['Shares_M'] = mutual_funds['Shares'] / 1000000
     market_cap_M = market_cap / 1000000
 

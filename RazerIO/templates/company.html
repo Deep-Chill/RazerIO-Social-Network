@@ -3,9 +3,10 @@
 {% block title %}Company Page{% endblock %}
 
 {% block content %}
+{% load humanize %}
 <div class="container-fluid">
   <div class="row">
-    <div class="col-md-3">
+    <div class="col-sm-4">
       <div class="card">
         <div class="card-header">Institutional Holders</div>
         <div class="card-body p-0">
@@ -21,8 +22,8 @@
               {% for _, row in Institutional.iterrows %}
                 <tr>
                   <td>{{ row.Holder }}</td>
-                  <td>{{ row.Shares_M|floatformat:2 }}</td>
-                  <td>{{ row.Value_M|floatformat:2 }}</td>
+                  <td>{{ row.Shares_M|floatformat:2|intcomma }}</td>
+                  <td>{{ row.Value_M|floatformat:2|intcomma }}</td>
                 </tr>
               {% endfor %}
             </tbody>
@@ -45,8 +46,8 @@
               {% for _, row in MutualFunds.iterrows %}
                 <tr>
                   <td>{{ row.Holder }}</td>
-                  <td>{{ row.Shares_M|floatformat:2 }}</td>
-                  <td>{{ row.Value_M|floatformat:2 }}</td>
+                  <td>{{ row.Shares_M|floatformat:2|intcomma }}</td>
+                  <td>{{ row.Value_M|floatformat:2|intcomma }}</td>
                 </tr>
               {% endfor %}
             </tbody>
@@ -55,24 +56,21 @@
       </div>
     </div>
 
-    <div class="col-md-9">
+    <div class="col-sm-4">
       <h1>{{ Company.Name }}</h1>
       {% if StockPrice %}
-        <h3>Stock Price: ${{ StockPrice|floatformat:2 }}</h3>
+        <h3>Market cap($M): {{ MarketCap|floatformat:2|intcomma }}</h3>
       {% endif %}
       <hr>
       <p>Number of employees: 79,000</p>
       <p>Number of verified employees: {{ Employees }}</p>
-      <p>Market cap($M): {{ MarketCap|floatformat:2 }}</p>
+      <p>Stock Price: ${{ StockPrice|floatformat:2 }}</p>
     </div>
   </div>
 
   <div class="row mt-3">
-    <div class="col-md-12">
+    <div class="col-sm-4">
       {% if user.is_authenticated %}
-        <div class="text-center">
-          <a class="btn btn-primary" href="{% url 'profile' request.user.id %}">Profile</a>
-        </div>
       {% else %}
         <p>You are not logged in</p>
         <a href="{% url 'login' %}">Log In</a> |

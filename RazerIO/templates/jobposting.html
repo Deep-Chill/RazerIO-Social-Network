@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}{{ job }}{% endblock %}
+
+{% block content %}
+
+Job posted by: {{ job.Poster }}
+
+<br>
+Salary: {{ job.salary_min }} - {{ job.salary_max }}
+<hr>
+Job description: {{ job.Job_Description }}
+<br>
+Job requirements: {{ job.Job_Requirements }}
+<br>
+Location: {{ job.Location }}
+
+<hr>
+<a href="{% url 'apply_to_job' id=job.id %}" class="btn btn-outline-primary mt-3">Apply</a>
+{% endblock %}

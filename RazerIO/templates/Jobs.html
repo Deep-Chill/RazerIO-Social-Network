@@ -5,13 +5,17 @@
 {% block content %}
 
 <div class="container mt-5">
+  <a href="{% url 'job_applications' %}" class="btn btn-outline-primary">My Job Applications</a>
+  {% if job_posts_by_me %}
+  <a href="{% url 'myjobposts' %}" class="btn btn-outline-primary">My Job Posts</a>
+  {% endif %}
   <h1 class="mb-4">Job Market</h1>
   <div class="row">
     {% for job in jobs %}
     <div class="col-md-4 mb-4">
       <p class="h5">{{ job.Job_Title }}</p>
-      {% if job.company %}
-      <p><a href="#" class="text-primary">{{ job.company }}</a></p>
+      {% if job.Company %}
+      <p><a href="{% url 'company' id=job.Company.id %}" class="text-primary">{{ job.Company }}</a></p>
       {% else %}
       <p>This job does not have a Company!</p>
       {% endif %}
@@ -19,7 +23,7 @@
       <p class="text-muted">{{ job.Category }}</p>
       <p class="text-muted">{{ job.Location }}</p>
       <p class="text-muted">{{ job.Date_Posted }}</p>
-      <a href="#" class="btn btn-outline-primary mt-3">View Details</a>
+      <a href="{% url 'jobposting' job.id %}" class="btn btn-outline-primary mt-3">View Details</a>
     </div>
     {% endfor %}
   </div>
@@ -52,7 +56,7 @@
   </nav>
   <div class="mt-5">
     <a href="{% url 'home' %}" class="btn btn-primary">Home</a>
-    <a href="#" class="btn btn-outline-primary">Post a Job</a>
+    <a href="{% url 'createjoblisting' %}" class="btn btn-outline-primary">Post a Job</a>
     <a href="{% url 'logout' %}" class="btn btn-danger">Log Out</a>
   </div>
 </div>

@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from Company.models import Company
 
 User = settings.AUTH_USER_MODEL
 
@@ -13,7 +14,7 @@ Locations = (('Sacramento', 'Sacramento'), ('San Diego', 'San Diego'),
              ('Los Angeles', 'Los Angeles'), ('Remote', 'Remote'))
 class JobListing(models.Model):
     Poster = models.ForeignKey(User, on_delete=models.CASCADE)
-    company = models.CharField(max_length=100)
+    Company = models.ForeignKey(Company, on_delete=models.CASCADE)
     Job_Title = models.CharField(max_length=50)
     Job_Description = models.TextField(max_length=5000)
     Job_Requirements = models.TextField(max_length=5000)
@@ -25,4 +26,14 @@ class JobListing(models.Model):
     Date_Posted = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f'{self.Job_Title} at {self.company}'
+        return f'{self.Job_Title} at {self.Company}'
+
+class JobApplication(models.Model):
+    applicant = models.ForeignKey(User, on_delete=models.CASCADE)
+    job_listing = models.ForeignKey(JobListing, on_delete=models.CASCADE)
+    resume = models.CharField(max_length=10000)
+    cover_letter = models.TextField()
+    date_applied = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'{self.applicant} applied at {self.job_listing.Company}'

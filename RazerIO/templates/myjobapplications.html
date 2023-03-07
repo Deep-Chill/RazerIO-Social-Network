@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container">
+  <div class="row">
+    <div class="col-md-12">
+      <h1>My Job Applications</h1>
+      <hr>
+      {% if job_applications %}
+        {% for job_application in job_applications %}
+          <div class="card mb-3">
+            <div class="card-body">
+              <h5 class="card-title">{{ job_application.job_listing.Job_Title }}</h5>
+              <h6 class="card-subtitle mb-2 text-muted">{{ job_application.job_listing.Company }}</h6>
+              <p class="card-text">{{ job_application.job_listing.Job_Description|truncatewords:50 }}</p>
+              <hr>
+              <h6 class="card-subtitle mb-2 text-muted">Application Date: {{ job_application.date_applied }}</h6>
+              <a href="{{ job_application.resume.url }}" class="card-link">Resume</a>
+              <a href="#" class="card-link">Cover Letter</a>
+            </div>
+          </div>
+        {% endfor %}
+      {% else %}
+        <div class="alert alert-info" role="alert">
+          You have not applied for any jobs yet.
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}
