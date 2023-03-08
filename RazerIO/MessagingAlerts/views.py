@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
-from .models import Message, Conversation, Participant
+from .models import Message, Conversation, Participant, Alert
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.utils import timezone
@@ -27,3 +27,16 @@ def conversation(request, id):
     messages = Message.objects.filter(conversation=conversation)
     context = {'conversation':conversation, 'messages':messages}
     return render(request, 'conversation.html', context=context)
+
+
+@login_required
+def alerts(request):
+    # Get all unread alerts for the current user
+    unread_alerts = Alert.objects.filter(recipient=request.user, read=False)
+
+    # Create a copy of the queryset
+
+    # Mark all unread alerts as read
+
+    # Render the alerts template with the new alerts
+    return render(request, 'alerts.html', {'alerts': unread_alerts})

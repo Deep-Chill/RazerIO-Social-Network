@@ -10,7 +10,11 @@
           <ul class="list-unstyled">
             {% for message in messages %}
               <li class="media">
-                <img src="{{ message.author.profile_picture.url }}" class="mr-3 rounded-circle" alt="{{ message.sender.username }}" width="50" height="50">
+                {% if message.sender.ProfilePic %}
+                    <img src="{{ message.sender.ProfilePic.url }}" class="mr-3 rounded-circle" alt="{{ message.sender.username }}" width="50" height="50">
+                {% else %}
+                    <img src="#" class="mr-3 rounded-circle" alt="{{ message.sender.username }}" width="50" height="50">
+                {% endif %}
                 <div class="media-body">
                   <h5 class="mt-0 mb-1">{{ message.sender.username }}</h5>
                   <p>{{ message.content }}</p>

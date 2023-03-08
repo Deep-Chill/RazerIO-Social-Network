@@ -42,7 +42,7 @@ textarea.form-control {
           <h5 class="card-title">{{ user.username }}</h5>
           <div class="mt-3">
           <a href="{% url 'profile' user.id %}" class="btn btn-primary">Profile</a>
-          <button class="btn btn-secondary">Alerts</button>
+          <a class="btn btn-secondary" href="{% url 'alerts' %}">Alerts</a>
           <a class="btn btn-secondary" href="{% url 'inbox' %}">Messages</a>
           </div>
         </div>
@@ -89,7 +89,7 @@ textarea.form-control {
   <div class="card-body">
     <div id="org-posts">
       <h2>Organization Posts:</h2>
-      {% for post in OrganizationPosts %}
+      {% for post in CompanyPosts %}
           <a href="{% url 'profile' post.Author.id %}">{{ post.Author }}</a> wrote: {{ post.Text }}<br>
       {% empty %}
         No organization posts yet!

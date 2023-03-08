@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container my-5">
+  <h1 class="mb-4">Alerts</h1>
+  {% if alerts %}
+    <div class="list-group">
+      {% for alert in alerts %}
+        <a href="#" class="list-group-item list-group-item-action{% if not alert.read %} bg-light{% endif %}">
+          <div class="d-flex justify-content-between">
+            <div class="fw-bold">{{ alert.actor.username }} {{ alert.verb }}</div>
+            <small class="text-muted">{{ alert.timestamp|timesince }} ago</small>
+          </div>
+          {% if alert.target %}
+            <div>{{ alert.target }}</div>
+          {% endif %}
+        </a>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p class="lead">No new alerts.</p>
+  {% endif %}
+</div>
+{% endblock %}

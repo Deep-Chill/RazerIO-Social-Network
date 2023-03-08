@@ -55,17 +55,23 @@ from django.db.models import Q
 from django.utils import timezone
 
 
+from django.db.models import Q
+from django.utils import timezone
+from django.http import JsonResponse
+from django.shortcuts import render
+
 def index(request):
     if request.user.is_authenticated:
         user = request.user
-        Following = UserFollowing.objects.filter(User=user).values_list('Following_User_ID', flat=True)
-        FriendsPosts = Post.objects.filter(Q(Author__in=Following) | Q(Author=user), Category='Friends').select_related(
-            'Author').order_by('-Date_Created')
-        NationalPosts = Post.objects.filter(Category='National', Author__Country=user.Country).select_related('Author')
-        CompanyPosts = Post.objects.filter(Category='Organization', Author__Company=user.Company).select_related(
-            'Author')
-        Articles = Article.objects.filter(Date_Published__gte=timezone.now() - timezone.timedelta(hours=48)).order_by('-Date_Published')
 
+        # Fetch all the necessary data with a few queries
+        following_ids = UserFollowing.objects.filter(User=user).values_list('Following_User_ID', flat=True)
+        friends_posts = Post.objects.filter(Q(Author__in=following_ids) | Q(Author=user), Category='Friends').select_related('Author')
+        national_posts = Post.objects.filter(Category='National', Author__Country=user.Country).select_related('Author')
+        company_posts = Post.objects.filter(Category='Organization', Author__Company=user.Company).select_related('Author')
+        articles = Article.objects.filter(Date_Published__gte=timezone.now() - timezone.timedelta(hours=48))
+
+        # Handle the POST request separately to avoid unnecessary database queries
         if request.method == "POST":
             form = NewPost(request.POST)
             if form.is_valid():
@@ -78,19 +84,21 @@ def index(request):
                 return JsonResponse({'status': 'error', 'errors': form.errors})
         else:
             form = NewPost()
+
+        # Pass all the data to the template context in a single dictionary
         context = {
-            "FriendsPosts": FriendsPosts,
+            "FriendsPosts": friends_posts.order_by('-Date_Created'),
             "form": form,
-            "Articles": Articles,
-            "NationalPosts": NationalPosts,
-            "CompanyPosts": CompanyPosts,
+            "Articles": articles.order_by('-Date_Published'),
+            "NationalPosts": national_posts,
+            "CompanyPosts": company_posts,
         }
         return render(request, 'home.html', context=context)
     else:
         return render(request, 'home.html')
 
 
-from django.shortcuts import get_object_or_404
+
 
 def follow_user(request, id):
     user_to_follow = get_object_or_404(get_user_model(), id=int(id))

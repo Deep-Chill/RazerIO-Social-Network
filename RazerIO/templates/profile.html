@@ -26,6 +26,10 @@
             <p>{{ user1.username }} does not have a newspaper!</p>
           {% endif %}
         {% endif %}
+
+        <div class="mt-5">
+          <a href="{% url 'endorsement' user1.id %}" class="btn btn-primary">Endorsements</a>
+        </div>
       </div>
       <div class="col-md-6">
         <p class="h4">Followers:</p>
@@ -48,11 +52,12 @@
               <button type="submit" class="btn btn-outline-primary mt-3">Follow</button>
             </form>
           {% endif %}
+        {% else %}
+        <div class="mt-5">
+      <a href="{% url 'edit-profile' %}" class="btn btn-primary">Edit Profile</a>
+    </div>
         {% endif %}
       </div>
-    </div>
-    <div class="mt-5">
-      <a href="{% url 'edit-profile' %}" class="btn btn-primary">Edit Profile</a>
     </div>
   {% else %}
     <p>You are not logged in</p>

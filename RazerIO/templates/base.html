@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="en">
 <head>
@@ -26,49 +27,59 @@
 <body>
 
     {% if user.is_authenticated %}
-        <nav class="navbar navbar-expand-sm navbar-light bg-light" style="margin-top: 10px;">
-    <a class="navbar-brand">RazerIO</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav mr-auto">
-            <li class="nav-item active">
-    <a href="{% url 'home' %}" class="btn btn-primary">Home</a>
-            </li>
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle text-primary" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Me
-                </a>
-                <div class="dropdown-menu custom-dropdown" aria-labelledby="navbarDropdown">
-                    <a class="dropdown-item" href="{% url 'profile' user.id %}">Profile</a>
-                    {% if user.Newspaper %}
-                        <a class="dropdown-item" href="{% url 'newspaper' user.Newspaper.id %}">Newspaper</a>
-                    {% else %}
-                        <a class="dropdown-item" href="#">Newspaper</a>
-                    {% endif %}
-                </div>
-            </li>
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle text-primary" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Markets
-                </a>
-                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                    <a class="dropdown-item" href="{% url 'jobs' %}">Jobs</a>
-                    <a class="dropdown-item" href="#">Employees</a>
-                </div>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link text-primary" href="#">Community</a>
-            </li>
-        </ul>
-        <form class="form-inline my-2 my-lg-0" method="GET" action="{% url 'search' %}">
-    <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" name="q">
-    <button class="btn btn-outline-success my-2 my-sm-0 mr-5" type="submit">Search</button>
-</form>
+<nav class="navbar navbar-expand-sm navbar-light bg-light" style="margin-top: 10px;">
+  <a class="navbar-brand">RazerIO</a>
 
-        <button type="button" class="btn btn-danger" onclick="location.href='{% url 'logout' %}'">Logout</button>
-    </div>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto">
+
+      <li class="nav-item active">
+        <a href="{% url 'home' %}" class="btn btn-primary">Home</a>
+      </li>
+
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle text-primary" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Me</a>
+
+        <div class="dropdown-menu custom-dropdown" aria-labelledby="navbarDropdown">
+          <a class="dropdown-item" href="{% url 'profile' user.id %}">Profile</a>
+          {% if user.Newspaper %}
+            <a class="dropdown-item" href="{% url 'newspaper' user.Newspaper.id %}">Newspaper</a>
+          {% else %}
+            <a class="dropdown-item" href="#">Newspaper</a>
+          {% endif %}
+        </div>
+
+      </li>
+
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle text-primary" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Markets</a>
+
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          <a class="dropdown-item" href="{% url 'jobs' %}">Jobs</a>
+          <a class="dropdown-item" href="#">Employees</a>
+        </div>
+
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link text-primary" href="#">Community</a>
+      </li>
+
+    </ul>
+
+    <form class="form-inline my-2 my-lg-0" method="GET" action="{% url 'search' %}">
+      <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" name="q">
+      <button class="btn btn-outline-success my-2 my-sm-0 mr-5" type="submit">Search</button>
+    </form>
+
+    <button type="button" class="btn btn-danger" onclick="location.href='{% url 'logout' %}'">Logout</button>
+
+  </div>
+
 </nav>
 
     {% endif %}
