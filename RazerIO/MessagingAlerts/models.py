@@ -10,6 +10,9 @@ class Conversation(models.Model):
     participants = models.ManyToManyField(User, through='Participant', related_name='conversations')
     created_at = models.DateTimeField(auto_now_add=True)
     subject = models.TextField(max_length=256, blank=True, null=True)
+
+    def __str__(self):
+        return f'{self.subject}'
 class Message(models.Model):
     sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='send_messages')
     receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name='received_messages')
@@ -17,9 +20,15 @@ class Message(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
     conversation = models.ForeignKey(Conversation, on_delete=models.CASCADE)
 
+    def __str__(self):
+        return f'{self.sender} wrote to {self.receiver}'
+
 class Participant(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     conversation = models.ForeignKey(Conversation, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f'{self.user} in {self.conversation}'
 
 class Alert(models.Model):
     recipient = models.ForeignKey(User, related_name='notifications', on_delete=models.CASCADE)
