@@ -7,5 +7,7 @@ urlpatterns = [
     path('outbox/', outbox, name='outbox'),
     path('conversation/<int:id>', conversation, name='conversation'),
     path('alerts/', alerts, name='alerts'),
-    path('new_conversation', start_new_conversation, name='new_conversation')
+    path('new_conversation/', start_new_conversation, name='new_conversation'),
+    path('new_conversation/<int:user_id>/', start_new_conversation, name='new_conversation_id'),
+
 ]

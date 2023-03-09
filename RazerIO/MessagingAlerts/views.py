@@ -22,8 +22,10 @@ def outbox(request):
     user = request.user
     messages = Message.objects.filter(sender=user).select_related('conversation')
     conversations = Conversation.objects.filter(participants=user).select_related('participants')
-    context = {'messages':messages, 'conversations':conversations}
+    active_tab = 'outbox'
+    context = {'messages':messages, 'conversations':conversations, 'active_tab':active_tab}
     return render(request, 'outbox.html', context=context)
+
 
 @login_required
 def conversation(request, id):
@@ -64,16 +66,18 @@ def alerts(request):
     # Render the alerts template with the new alerts
     return render(request, 'alerts.html', {'alerts': unread_alerts})
 
-def start_new_conversation(request):
-    if request.method == "POST":
-        form = StartNewConversationForm(request.POST, user=request.user)
+@login_required
+def start_new_conversation(request, user_id=None):
+    user = request.user
+    recipient = None
+    if user_id:
+        recipient = get_object_or_404(User, id=user_id)
+    if request.method == 'POST':
+        form = StartNewConversationForm(request.POST, user=user)
         if form.is_valid():
-            sender = request.user
-            conversation = form.save(commit=True, sender=sender)
-            return redirect('conversation', id=conversation.id)
+            form.save(sender=user)
+            messages.success(request, 'Conversation started successfully.')
+            return redirect('inbox')
     else:
-        form = StartNewConversationForm(user=request.user)
-    context = {
-        'form':form
-    }
-    return render(request, 'new_conversation.html', context)
+        form = StartNewConversationForm(user=user, recipient=recipient)
+    return render(request, 'new_conversation.html', {'form': form})

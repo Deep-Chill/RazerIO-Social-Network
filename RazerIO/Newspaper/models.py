@@ -21,6 +21,7 @@ class Article(models.Model):
     Date_Published = models.DateTimeField(auto_now_add=True)
     Text = RichTextField()
     Newspaper = models.ForeignKey(Newspaper, on_delete=models.CASCADE)
+    Upvotes = models.ManyToManyField(get_user_model(), through='ArticleUpvote', related_name='upvoted_articles')
 
     def __str__(self):
         return f'{self.Title}'
@@ -39,3 +40,10 @@ class Article_Comment(models.Model):
     def __str__(self):
         return f'{self.Author} posted in {self.Article}'
 
+class ArticleUpvote(models.Model):
+    article = models.ForeignKey(Article, on_delete=models.CASCADE)
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    created = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('article', 'user')

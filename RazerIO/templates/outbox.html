@@ -1,46 +1,73 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block content %}
   <div class="container-fluid">
-    <h1 class="mt-4">Outbox</h1>
-    <hr>
-
-    {% if messages %}
-    <div class="table-responsive">
-      <table class="table table-striped table-sm">
-        <thead>
-          <tr>
-            <th>Conversation</th>
-            <th>Participants</th>
-            <th>Message</th>
-            <th>Date</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for message in messages %}
-          <tr>
-            <td>{{ message.conversation.subject }}</td>
-            <td>
-              {% for participant in message.conversation.participants.all %}
-                {% if participant != message.sender %}
-                  {{ participant.username }}
-                  {% if not forloop.last %}, {% endif %}
-                {% endif %}
-              {% endfor %}
-            </td>
-            <td>{{ message.content }}</td>
-            <td>{{ message.timestamp }}</td>
-            <td>
-              <a href="#" class="btn btn-danger btn-sm">Delete</a>
-            </td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
+    <div class="row">
+      <div class="col-md-2 col-sm-3 bg-light">
+        <div class="pt-3">
+          {% if request.user.ProfilePic %}
+            <img src="{{ request.user.ProfilePic.url }}" alt="Profile Image" class="rounded-circle mx-auto d-block img-fluid" width="100">
+          {% else %}
+            <img src="{% static 'img/pfp.jpg' %}" alt="Profile Image" class="rounded-circle mx-auto d-block img-fluid" width="100">
+          {% endif %}
+          <h6 class="text-center mt-3">{{ request.user.username }}</h6>
+        </div>
+        <hr>
+        <ul class="nav flex-column">
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'inbox' %}">Inbox</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'outbox' %}">Sent Messages</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'new_conversation' %}">Compose</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'alerts' %}">Alerts</a>
+          </li>
+        </ul>
+      </div>
+      <div class="col-md-10 col-sm-9">
+        {% if messages %}
+          <div class="table-responsive">
+            <table class="table table-striped table-sm">
+              <thead>
+                <tr>
+                  <th>Conversation</th>
+                  <th>Participants</th>
+                  <th>Message</th>
+                  <th>Date</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for message in messages %}
+                  <tr>
+                    <td>{{ message.conversation.subject }}</td>
+                    <td>
+                      {% for participant in message.conversation.participants.all %}
+                        {% if participant != message.sender %}
+                          {{ participant.username }}
+                          {% if not forloop.last %}, {% endif %}
+                        {% endif %}
+                      {% endfor %}
+                    </td>
+                    <td>{{ message.content }}</td>
+                    <td>{{ message.timestamp }}</td>
+                    <td>
+                      <a href="#" class="btn btn-danger btn-sm">Delete</a>
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        {% else %}
+          <p>You have no messages in your outbox.</p>
+        {% endif %}
+      </div>
     </div>
-    {% else %}
-      <p>You have no messages in your outbox.</p>
-    {% endif %}
   </div>
 {% endblock %}

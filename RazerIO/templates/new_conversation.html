@@ -1,31 +1,69 @@
 {% extends 'base.html' %}
-
+{% load static %}
 {% block content %}
 
-<form method="post" class="form-horizontal">
-  {% csrf_token %}
-  <div class="form-group">
-    <label for="{{ form.participants.id_for_label }}" class="col-sm-2 control-label">Participants:</label>
-    <div class="col-sm-10">
-      {{ form.participants }}
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-2 col-sm-3 bg-light">
+      <div class="pt-3">
+        {% if request.user.ProfilePic %}
+          <img src="{{ request.user.ProfilePic.url }}" alt="Profile Image" class="rounded-circle mx-auto d-block img-fluid" width="100">
+        {% else %}
+          <img src="{% static 'img/pfp.jpg' %}" alt="Profile Image" class="rounded-circle mx-auto d-block img-fluid" width="100">
+        {% endif %}
+        <h6 class="text-center mt-3">{{ request.user.username }}</h6>
+      </div>
+      <hr>
+      <ul class="nav flex-column">
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'inbox' %}">Inbox</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'outbox' %}">Sent Messages</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'new_conversation' %}">Compose</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'alerts' %}">Alerts</a>
+        </li>
+      </ul>
+    </div>
+
+    <div class="col-md-10 col-sm-9">
+      <form method="post" class="form-horizontal">
+        {% csrf_token %}
+        <div class="form-group">
+          <label for="{{ form.participants.id_for_label }}" class="col-sm-2 control-label">Participants:</label>
+          <div class="col-sm-10">
+            {% if prepopulated_participant %}
+              <input type="text" value="{{ prepopulated_participant }}" disabled>
+              <input type="hidden" name="participants" value="{{ prepopulated_participant }}">
+            {% else %}
+              {{ form.participants }}
+            {% endif %}
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="{{ form.subject.id_for_label }}" class="col-sm-2 control-label">Subject:</label>
+          <div class="col-sm-10">
+            {{ form.subject }}
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="{{ form.message.id_for_label }}" class="col-sm-2 control-label">Message:</label>
+          <div class="col-sm-10">
+            {{ form.message }}
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="col-sm-offset-2 col-sm-10">
+            <button type="submit" class="btn btn-primary">Start Conversation</button>
+          </div>
+        </div>
+      </form>
     </div>
   </div>
-  <div class="form-group">
-    <label for="{{ form.subject.id_for_label }}" class="col-sm-2 control-label">Subject:</label>
-    <div class="col-sm-10">
-      {{ form.subject }}
-    </div>
-  </div>
-  <div class="form-group">
-    <label for="{{ form.message.id_for_label }}" class="col-sm-2 control-label">Message:</label>
-    <div class="col-sm-10">
-      {{ form.message }}
-    </div>
-  </div>
-  <div class="form-group">
-    <div class="col-sm-offset-2 col-sm-10">
-      <button type="submit" class="btn btn-primary">Start Conversation</button>
-    </div>
-  </div>
-</form>
+</div>
+
 {% endblock %}

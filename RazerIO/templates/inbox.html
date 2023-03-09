@@ -17,31 +17,31 @@
       </div>
       <hr>
       <ul class="nav flex-column">
-        <li class="nav-item">
-          <a class="nav-link active" href="{% url 'inbox' %}">Inbox</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="{% url 'outbox' %}">Sent Messages</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="{% url 'new_conversation' %}">Compose</a>
-        </li>
-      </ul>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'inbox' %}">Inbox</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'outbox' %}">Sent Messages</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'new_conversation' %}">Compose</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'alerts' %}">Alerts</a>
+          </li>
+        </ul>
     </div>
 
     <!-- Message list panel -->
     <div class="col-md-10 col-sm-9">
       <div class="pt-3 px-3">
-        <h3 class="mb-3">Inbox</h3>
+        <h3 class="mb-3">{{ page_title }}</h3>
         <div class="list-group">
           {% for conversation in conversations %}
           <a href="{% url 'conversation' id=conversation.id %}" class="list-group-item list-group-item-action{% if conversation.is_read %} read{% endif %}">
             <div class="d-flex w-100 justify-content-between">
               <h5 class="mb-1">{{ conversation.subject }}</h5>
-              <small>{{ conversation.last_message.timestamp|date:"d M, Y h:i A" }}</small>
             </div>
-            <p class="mb-1">{{ conversation.last_message.content|truncatewords:20 }}</p>
-            <small class="text-muted">{{ conversation.last_message.sender.username }}</small>
           </a>
           {% empty %}
           <p>No messages yet.</p>

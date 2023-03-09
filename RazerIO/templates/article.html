@@ -63,13 +63,21 @@
 {% endif %}      </div>
     </div>
   </div>
-  <div class="col-md-4">
-    <div class="card mb-3">
+
+
+  <div class="col-sm-2">
+    <div class="card w-16">
       <div class="card-body">
-        <a href="{% url 'write_article' %}" class="btn btn-primary">Write article</a>
-      </div>
+        <h5 class="card-title text-center">Score: {{ upvotes }}</h5>
+  </div>
+          <hr>
+          <form class="col-sm-8 offset-sm-4" method="post" action="{% url 'upvote_article' id=Article.id %}">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-primary btn-sm mb-3">Upvote</button>
+  </form>
+</div>
+
     </div>
   </div>
-</div>
 
 {% endblock %}

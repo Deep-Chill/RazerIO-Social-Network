@@ -1,24 +1,62 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block content %}
-<div class="container my-5">
-  <h1 class="mb-4">Alerts</h1>
-  {% if alerts %}
+
+<div class="container-fluid">
+  <div class="row">
+<!-- Navigation panel -->
+<div class="col-md-2 col-sm-3 bg-light">
+  <div class="pt-3">
+{% if request.user.ProfilePic %}
+  <img src="{{ request.user.ProfilePic.url }}" alt="Profile Image" class="rounded-circle mx-auto d-block img-fluid" width="100">
+{% else %}
+  <img src="{% static 'img/pfp.jpg' %}" alt="Profile Image" class="rounded-circle mx-auto d-block img-fluid" width="100">
+{% endif %}
+    <h6 class="text-center mt-3">{{ request.user.username }}</h6>
+  </div>
+  <hr>
+  <ul class="nav flex-column">
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'inbox' %}">Inbox</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'outbox' %}">Sent Messages</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'new_conversation' %}">Compose</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link active" href="{% url 'alerts' %}">Alerts</a>
+      </li>
+    </ul>
+</div>
+
+<!-- Alerts list panel -->
+<div class="col-md-10 col-sm-9">
+  <div class="pt-3 px-3">
+    <h3 class="mb-3">Alerts</h3>
+    {% if alerts %}
     <div class="list-group">
       {% for alert in alerts %}
-        <a href="#" class="list-group-item list-group-item-action{% if not alert.read %} bg-light{% endif %}">
-          <div class="d-flex justify-content-between">
-            <div class="fw-bold">{{ alert.actor.username }} {{ alert.verb }}</div>
-            <small class="text-muted">{{ alert.timestamp|timesince }} ago</small>
-          </div>
-          {% if alert.target %}
-            <div>{{ alert.target }}</div>
-          {% endif %}
-        </a>
+      <a href="#" class="list-group-item list-group-item-action{% if not alert.read %} bg-light{% endif %}">
+        <div class="d-flex justify-content-between">
+          <div class="fw-bold">{{ alert.actor.username }} {{ alert.verb }}</div>
+          <small class="text-muted">{{ alert.timestamp|timesince }} ago</small>
+        </div>
+        {% if alert.target %}
+        <div>{{ alert.target }}</div>
+        {% endif %}
+      </a>
       {% endfor %}
     </div>
-  {% else %}
+    {% else %}
     <p class="lead">No new alerts.</p>
-  {% endif %}
+    {% endif %}
+  </div>
+</div>
+  </div>
 </div>
 {% endblock %}
+
+

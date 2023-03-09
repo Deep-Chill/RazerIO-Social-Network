@@ -20,6 +20,7 @@ class SendMessageForm(forms.ModelForm):
 class StartNewConversationForm(forms.ModelForm):
     subject = forms.CharField(max_length=256, required=False)
     message = forms.CharField(max_length=10000)
+    participants = forms.ModelMultipleChoiceField(queryset=User.objects.none())
 
     class Meta:
         model = Conversation
@@ -27,10 +28,14 @@ class StartNewConversationForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user')
+        recipient = kwargs.pop('recipient', None)
         super().__init__(*args, **kwargs)
         self.fields['participants'].queryset = User.objects.filter(
             Q(followers__User=user) & Q(following__Following_User_ID=user)
         ).exclude(id=user.id)
+
+        if recipient:
+            self.fields['participants'].initial = [recipient]
 
     def save(self, commit=True, sender=None):
         conversation = super().save(commit=False)

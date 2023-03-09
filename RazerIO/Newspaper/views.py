@@ -1,9 +1,12 @@
 from django.shortcuts import render
 from .models import Newspaper as Nsp
 from .models import Article, Article_Comment
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect, render
 from .forms import ArticleForm, ArticleCommentForm
-from .models import Newspaper, Article
+from .models import Newspaper, Article, ArticleUpvote
+from django.contrib.auth.decorators import login_required
+from django.db.models import F, Count
+from django.views.decorators.http import require_POST
 
 # Create your views here.
 
@@ -15,10 +18,11 @@ def newspaper_view(request, id):
     context = {"newspaper": newspaper, "id":id, "articles":articles}
     return render(request, 'newspaper.html', context=context)
 
-
+@login_required
 def ArticleView(request, id):
     article = get_object_or_404(Article, id=id)
-    author = Nsp.objects.get(id=article.Newspaper.id).Owner
+    author = Nsp.objects.select_related('Owner').get(id=article.Newspaper.id).Owner
+    user = request.user
 
     if request.method == 'POST':
         form = ArticleCommentForm(request.POST)
@@ -28,34 +32,38 @@ def ArticleView(request, id):
                 comment.Text = form.cleaned_data['Text']
                 comment.Author = None
                 if form.cleaned_data['Show_Company']:
-                    comment.Company = request.user.Company
+                    comment.Company = user.Company
                 else:
                     comment.Company = None
             else:
                 comment.Text = form.cleaned_data['Text']
-                comment.Author = request.user
-                comment.Company = request.user.Company
+                comment.Author = user
+                comment.Company = user.Company
             comment.Article = article
             comment.save()
             # Redirect to the same page to see the comment added
             return redirect('article', id=id)
     else:
         form = ArticleCommentForm()
-
+    total_upvotes = article.Upvotes.annotate(num_upvotes=Count('upvoted_articles')).values_list('num_upvotes',
+                                                                                                 flat=True).count() or 0
     comments = Article_Comment.objects.filter(Article=article)
     context = {
         'Article': article,
         'author': author,
         'form': form,
         'comments': comments,
+        'upvotes':total_upvotes
     }
+
+    if request.method == 'POST' and 'upvote_button' in request.POST:
+        if user not in article.Upvotes.all():
+            article.upvoters.add(user)
+            article.upvotes = F('upvotes') + 1
+            article.save(update_fields=['upvotes'])
+        return redirect('article', id=id)
+
     return render(request, 'article.html', context=context)
-
-
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect
-
-
 
 @login_required
 def write_article(request):
@@ -101,3 +109,17 @@ def Add_Comment(request, id):
 
     context = {'form':form, 'comment':comment, 'article':article}
     return render(request, 'create_comment.html', context)
+
+
+@require_POST
+def upvote_article(request, id):
+    article = get_object_or_404(Article, id=id)
+    user = request.user
+    if user.is_authenticated:
+        if user in article.Upvotes.all():
+            article.Upvotes.remove(user)
+        else:
+            article.Upvotes.add(user)
+        return redirect('article', id=id)
+    else:
+        return redirect('login')
