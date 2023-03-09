@@ -20,8 +20,9 @@ def inbox(request):
 
 def outbox(request):
     user = request.user
-    messages = Message.objects.filter(sender=user)
-    context = {'messages':messages}
+    messages = Message.objects.filter(sender=user).select_related('conversation')
+    conversations = Conversation.objects.filter(participants=user).select_related('participants')
+    context = {'messages':messages, 'conversations':conversations}
     return render(request, 'outbox.html', context=context)
 
 @login_required
@@ -32,7 +33,6 @@ def conversation(request, id):
     if user not in participants:
         return render(request, 'unauthorized_conversation.html')
     messages = conversation.message_set.order_by('timestamp')
-    receiver = Participant.objects.filter(conversation=conversation).first()
     if request.method == "POST":
         form = SendMessageForm(request.POST)
         if form.is_valid():
@@ -40,7 +40,6 @@ def conversation(request, id):
             message.conversation = conversation
             message.sender = user
             message.content = form.cleaned_data['content']
-            message.receiver = receiver.user
             message.save()
             return redirect('conversation', id=id)
     else:

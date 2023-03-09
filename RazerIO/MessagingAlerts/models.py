@@ -15,13 +15,12 @@ class Conversation(models.Model):
         return f'{self.subject}'
 class Message(models.Model):
     sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='send_messages')
-    receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name='received_messages')
     content = models.TextField(max_length=10000)
     timestamp = models.DateTimeField(auto_now_add=True)
     conversation = models.ForeignKey(Conversation, on_delete=models.CASCADE)
 
     def __str__(self):
-        return f'{self.sender} wrote to {self.receiver}'
+        return f'{self.sender} wrote in {self.conversation}'
 
 class Participant(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)

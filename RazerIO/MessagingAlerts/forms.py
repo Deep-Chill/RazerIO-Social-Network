@@ -28,7 +28,9 @@ class StartNewConversationForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user')
         super().__init__(*args, **kwargs)
-        self.fields['participants'].queryset = User.objects.exclude(id=user.id)
+        self.fields['participants'].queryset = User.objects.filter(
+            Q(followers__User=user) & Q(following__Following_User_ID=user)
+        ).exclude(id=user.id)
 
     def save(self, commit=True, sender=None):
         conversation = super().save(commit=False)
@@ -36,11 +38,10 @@ class StartNewConversationForm(forms.ModelForm):
             conversation.save()
         Participant.objects.create(user=sender, conversation=conversation)
         participants = self.cleaned_data['participants']
-        first_participant = participants[0]
         for participant in participants:
             if participant == sender:
                 continue
             Participant.objects.create(user=participant, conversation=conversation)
-        Message.objects.create(sender=sender, receiver=first_participant, content=self.cleaned_data['message'],
+        Message.objects.create(sender=sender, content=self.cleaned_data['message'],
                                conversation=conversation)
         return conversation

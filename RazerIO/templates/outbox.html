@@ -10,7 +10,8 @@
       <table class="table table-striped table-sm">
         <thead>
           <tr>
-            <th>To</th>
+            <th>Conversation</th>
+            <th>Participants</th>
             <th>Message</th>
             <th>Date</th>
             <th>Actions</th>
@@ -19,7 +20,15 @@
         <tbody>
           {% for message in messages %}
           <tr>
-            <td>{{ message.receiver }}</td>
+            <td>{{ message.conversation.subject }}</td>
+            <td>
+              {% for participant in message.conversation.participants.all %}
+                {% if participant != message.sender %}
+                  {{ participant.username }}
+                  {% if not forloop.last %}, {% endif %}
+                {% endif %}
+              {% endfor %}
+            </td>
             <td>{{ message.content }}</td>
             <td>{{ message.timestamp }}</td>
             <td>
