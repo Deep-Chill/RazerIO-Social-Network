@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+  <div class="container">
+    <h1 class="display-5 mb-4">Projects</h1>
+    <div class="row">
+      {% for project in projects %}
+        <div class="col-md-6 mb-4">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">{{ project.title }}</h5>
+              <p class="card-text">{{ project.description }}</p>
+              <p class="card-text"><small class="text-muted">Created by {{ project.owner }}</small></p>
+              <a href="#" class="btn btn-primary">View Project</a>
+            </div>
+          </div>
+        </div>
+      {% empty %}
+        <div class="col-md-12">
+          <div class="alert alert-info" role="alert">
+            No projects yet.
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+    <a href="{% url 'new_project' %}" class="btn btn-success mt-3">Create a project</a>
+  </div>
+{% endblock %}

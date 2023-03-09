@@ -6,9 +6,11 @@ User = settings.AUTH_USER_MODEL
 
 # Create your models here.
 
-Job_Categories = (('Programming', 'Programming'), ('Administrative',
-                                                   'Administrative'),
-                  ('Design', 'Design'), ('Sales & Marketing', 'Sales & Marketing'))
+Job_Categories = (('Programming', 'Programming'), ('Project and Product Management',
+                                                   'Management'),
+                  ('Design', 'Design'), ('IT Operations and Infrastructure', 'IT and Security'),
+                  ('Sales & Marketing', 'Sales & Marketing'), ('Hardware', 'Hardware'),
+                  ('Other', 'Other'))
 Job_Status_Choices = (('Open', 'Open'), ('Closed', 'Closed'), ('Filled', 'Filled'))
 Locations = (('Sacramento', 'Sacramento'), ('San Diego', 'San Diego'),
              ('Los Angeles', 'Los Angeles'), ('Remote', 'Remote'))

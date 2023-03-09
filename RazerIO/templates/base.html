@@ -60,13 +60,28 @@
 
         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
           <a class="dropdown-item" href="{% url 'jobs' %}">Jobs</a>
-          <a class="dropdown-item" href="#">Employees</a>
+          <a class="dropdown-item" href="#">Remote Contracts</a>
+          <a class="dropdown-item" href="#">On-site Contracts</a>
         </div>
 
       </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle text-primary" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Programming</a>
 
-      <li class="nav-item">
-        <a class="nav-link text-primary" href="#">Community</a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          <a class="dropdown-item" href="#">Competitive Programming</a>
+          <a class="dropdown-item" href="{% url 'projects' %}">Projects</a>
+        </div>
+
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle text-primary" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Entrepreneurship</a>
+
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          <a class="dropdown-item" href="#">Startup Funding</a>
+          <a class="dropdown-item" href="#">Sales</a>
+        </div>
+
       </li>
 
     </ul>

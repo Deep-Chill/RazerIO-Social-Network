@@ -14,3 +14,13 @@ class ArticleCommentForm(forms.ModelForm):
     class Meta:
         model = Article_Comment
         fields = ['Text', 'Is_Anonymous', 'Show_Company']
+        labels = {
+            'Text': 'Add comment',
+            'Is_Anonymous': 'Post as Anonymous',
+            'Show_Company': 'Show Company Name'
+        }
+        widgets = {
+            'Text': forms.Textarea(attrs={'class': 'form-control', 'rows': 4}),
+            'Is_Anonymous': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+            'Show_Company': forms.CheckboxInput(attrs={'class': 'form-check-input'})
+        }

@@ -1,38 +1,67 @@
 {% extends 'base.html' %}
-
+{% load static %}
 {% block content %}
+
 <div class="container-fluid">
-  <div class="row justify-content-center">
-    <div class="col-md-8">
-      <div class="card">
-        <div class="card-header">{{ conversation.subject }}</div>
-        <div class="card-body">
-          <ul class="list-unstyled">
-            {% for message in messages %}
-              <li class="media">
-                {% if message.sender.ProfilePic %}
-                    <img src="{{ message.sender.ProfilePic.url }}" class="mr-3 rounded-circle" alt="{{ message.sender.username }}" width="50" height="50">
-                {% else %}
-                    <img src="#" class="mr-3 rounded-circle" alt="{{ message.sender.username }}" width="50" height="50">
-                {% endif %}
-                <div class="media-body">
-                  <h5 class="mt-0 mb-1">{{ message.sender.username }}</h5>
-                  <p>{{ message.content }}</p>
-                  <small class="text-muted">{{ message.timestamp }}</small>
-                </div>
-              </li>
-            {% endfor %}
-          </ul>
-        </div>
-        <div class="card-footer">
-          <form method="POST" action="">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <button type="submit" class="btn btn-primary">Send</button>
-          </form>
-        </div>
-      </div>
+  <div class="row">
+<!-- Navigation panel -->
+<div class="col-md-2 col-sm-3 bg-light">
+  <div class="pt-3">
+    {% if request.user.ProfilePic %}
+      <img src="{{ request.user.ProfilePic.url }}" alt="Profile Image" class="rounded-circle mx-auto d-block img-fluid" width="100">
+    {% else %}
+      <img src="{% static 'img/pfp.jpg' %}" alt="Profile Image" class="rounded-circle mx-auto d-block img-fluid" width="100">
+    {% endif %}
+    <h6 class="text-center mt-3">{{ request.user.username }}</h6>
+  </div>
+  <hr>
+  <ul class="nav flex-column">
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'inbox' %}">Inbox</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'outbox' %}">Sent Messages</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'new_conversation' %}">Compose</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'alerts' %}">Alerts</a>
+      </li>
+    </ul>
+</div>
+
+<!-- Conversation panel -->
+<div class="col-md-10 col-sm-9">
+  <div class="card">
+    <div class="card-header">{{ conversation.subject }}</div>
+    <div class="card-body">
+      <ul class="list-unstyled">
+        {% for message in messages %}
+          <li class="media">
+            {% if message.sender.ProfilePic %}
+                <img src="{{ message.sender.ProfilePic.url }}" class="mr-3 rounded-circle" alt="{{ message.sender.username }}" width="50" height="50">
+            {% else %}
+                <img src="#" class="mr-3 rounded-circle" alt="{{ message.sender.username }}" width="50" height="50">
+            {% endif %}
+            <div class="media-body">
+              <h5 class="mt-0 mb-1">{{ message.sender.username }}</h5>
+              <p>{{ message.content }}</p>
+              <small class="text-muted">{{ message.timestamp }}</small>
+            </div>
+          </li>
+        {% endfor %}
+      </ul>
     </div>
+    <div class="card-footer">
+      <form method="POST" action="">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">Send</button>
+      </form>
+    </div>
+  </div>
+</div>
   </div>
 </div>
 {% endblock %}

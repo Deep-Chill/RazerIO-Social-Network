@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'django.contrib.humanize',
     'widget_tweaks',
     'Endorsements.apps.EndorsementsConfig',
+    'Projects.apps.ProjectsConfig'
 ]
 
 MIDDLEWARE = [
