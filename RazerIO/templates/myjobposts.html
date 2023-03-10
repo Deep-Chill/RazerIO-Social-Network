@@ -20,7 +20,7 @@
           <p class="card-text"><strong>Salary Range:</strong> {{ job_post.salary_min }} - {{ job_post.salary_max }}</p>
           <p class="card-text"><strong>Job Status:</strong> {{ job_post.Job_Status }}</p>
           <p class="card-text"><strong>Posted On:</strong> {{ job_post.Date_Posted }}</p>
-          <a href="#" class="btn btn-primary">View Applicants</a>
+          <a href="{% url 'job_applicants' job_id=job_post.id%}" class="btn btn-primary">View Applicants</a>
         </div>
       </div>
     </div>

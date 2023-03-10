@@ -14,4 +14,4 @@ class ApplyToJobForm(ModelForm):
 
     class Meta:
         model = JobApplication
-        fields = ['resume', 'cover_letter']
+        fields = ['resume', 'cover_letter', 'skills']

@@ -60,3 +60,13 @@ def MyJobApplications(request):
     job_applications = JobApplication.objects.filter(applicant=user)
     context = {'job_applications':job_applications}
     return render(request, 'myjobapplications.html', context=context)
+
+def job_applicants(request, job_id):
+    job_listing = get_object_or_404(JobListing, id=job_id)
+    job_applications = JobApplication.objects.filter(job_listing=job_listing)
+    # Add any additional sorting or filtering here
+    context = {
+        'job_listing': job_listing,
+        'job_applications': job_applications
+    }
+    return render(request, 'view_job_applicants.html', context)

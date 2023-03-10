@@ -36,6 +36,7 @@ class JobApplication(models.Model):
     resume = models.CharField(max_length=10000)
     cover_letter = models.TextField()
     date_applied = models.DateTimeField(auto_now_add=True)
+    skills = models.ManyToManyField('Users.Skill', related_name='used_in_job_app', blank=True)
 
     def __str__(self):
         return f'{self.applicant} applied at {self.job_listing.Company}'

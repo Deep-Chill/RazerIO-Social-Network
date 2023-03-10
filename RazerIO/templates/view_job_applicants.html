@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+  <h1>{{ job_listing.Job_Title }} Applicants</h1>
+  <form method="get" id="filter-form">
+    <div class="row">
+      <div class="col-md-3">
+        <label for="name-filter">Name:</label>
+        <input type="text" name="name" id="name-filter" class="form-control" value="{{ request.GET.name }}">
+      </div>
+      <div class="col-md-3">
+        <label for="education-filter">Education:</label>
+        <input type="text" name="education" id="education-filter" class="form-control" value="{{ request.GET.education }}">
+      </div>
+      <div class="col-md-3">
+        <label for="skills-filter">Skills:</label>
+        <input type="text" name="skills" id="skills-filter" class="form-control" value="{{ request.GET.skills }}">
+      </div>
+      <div class="col-md-3">
+        <label for="experience-filter">Experience:</label>
+        <input type="text" name="experience" id="experience-filter" class="form-control" value="{{ request.GET.experience }}">
+      </div>
+    </div>
+    <br>
+    <button type="submit" class="btn btn-primary">Filter</button>
+  </form>
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Name</th>
+        <th scope="col">Education</th>
+        <th scope="col">Skills</th>
+        <th scope="col">Experience</th>
+        <th scope="col">Resume</th>
+        <th scope="col">Cover Letter</th>
+        <th scope="col">Date Applied</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for application in job_applications %}
+        <tr>
+          <th scope="row">{{ forloop.counter }}</th>
+          <td>{{ application.applicant.username }}</td>
+          <td>{{ application.applicant.education.all|join:", " }}</td>
+          <td>{{ application.skills.all|join:", " }}</td>
+          <td>{{ application.applicant.experience.all|join:", " }}</td>
+          <td><a href="{{ application.resume.url }}" download>Download</a></td>
+          <td>{{ application.cover_letter }}</td>
+          <td>{{ application.date_applied|date:"F d, Y" }}</td>
+        </tr>
+      {% empty %}
+        <tr>
+          <td colspan="8">No applications yet</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <script>
+    const filterForm = document.getElementById('filter-form');
+    const nameFilter = document.getElementById('name-filter');
+    const applicantRows = document.querySelectorAll('.applicant-row');
+
+    filterForm.addEventListener('submit', function(event) {
+      event.preventDefault();
+
+      const filterValue = nameFilter.value.toLowerCase();
+
+      for (let i = 0; i < applicantRows.length; i++) {
+        const nameCell = applicantRows[i].querySelector('td:nth-of-type(2)');
+        const nameText = nameCell.textContent.toLowerCase();
+
+        if (nameText.indexOf(filterValue) > -1) {
+          applicantRows[i].style.display = '';
+        } else {
+          applicantRows[i].style.display = 'none';
+        }
+      }
+    });
+  </script>
+{% endblock %}
+
