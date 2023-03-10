@@ -35,8 +35,8 @@ textarea.form-control {
 </style>
 
 <div class="container-fluid">
-  <div class="row">
-    <div class="col-sm-3">
+  <div class="row justify-content-between">
+    <div class="col-sm-2 col-md-2 col-lg-2">
       <div class="card">
         <div class="card-body">
           <h5 class="card-title">{{ user.username }}</h5>
@@ -48,7 +48,7 @@ textarea.form-control {
         </div>
       </div>
     </div>
-    <div class="col-sm-5">
+    <div class="col-sm-4 col-md-4 col-lg-4">
       <div class="card">
         <div class="card-body">
           <h2 class="card-title">News</h2>
@@ -60,58 +60,77 @@ textarea.form-control {
         </div>
       </div>
     </div>
-    <div class="col-sm-4">
-      <div class="card">
-        <div class="card-body">
-          <div id="post-list">
-            <h2>Social Feed:</h2>
-            {% for i in FriendsPosts %}
-            <a href="{% url 'profile' i.Author.id %}">{{ i.Author }}</a> wrote: {{ i.Text }}<br>
-            {% empty %}
-            No posts yet!
-            {% endfor %}
-          </div>
-        </div>
-      </div>
-      <div class="card">
-  <div class="card-body">
-    <div id="national-posts">
-      <h2>National Posts:</h2>
-      {% for post in NationalPosts %}
-          <a href="{% url 'profile' post.Author.id %}">{{ post.Author }}</a> wrote: {{ post.Text }}<br>
-      {% empty %}
-        No national posts yet!
-      {% endfor %}
-    </div>
-  </div>
-</div>
-    <div class="card">
-  <div class="card-body">
-    <div id="org-posts">
-      <h2>Organization Posts:</h2>
-      {% for post in CompanyPosts %}
-          <a href="{% url 'profile' post.Author.id %}">{{ post.Author }}</a> wrote: {{ post.Text }}<br>
-      {% empty %}
-        No organization posts yet!
-      {% endfor %}
-    </div>
-  </div>
-</div>
-    </div>
-  </div>
-</div>
-
-<br>
-<form id="new-post-form" method="POST">
+    <div class="row justify-content-between">
+  <div class="col-sm-12 col-md-12 col-lg-12">
+    <form id="new-post-form" method="POST">
   {% csrf_token %}
-  <div class="form-group col-md-6">
+  <div class="form-group col-sm-12 col-md-12 col-lg-12">
     {{ form.text|as_crispy_field }}
   </div>
-  <div class="form-group col-md-6">
+  <div class="form-group col-sm-12 col-md-12 col-lg-12">
     {{ form.Category|as_crispy_field }}
   </div>
   <button type="submit" class="btn btn-success">Create Post</button>
 </form>
+    <hr>
+    <ul class="nav nav-tabs ">
+      <li class="nav-item">
+        <a class="nav-link active" data-toggle="tab" href="#social-posts">Social Posts</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" data-toggle="tab" href="#national-posts">National Posts</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" data-toggle="tab" href="#org-posts">Organization Posts</a>
+      </li>
+    </ul>
+    <div class="tab-content">
+      <div id="social-posts" class="tab-pane fade show active">
+        <div class="card">
+          <div class="card-body">
+            <div id="post-list">
+              <h2>Social Feed:</h2>
+              {% for i in FriendsPosts %}
+              <a href="{% url 'profile' i.Author.id %}">{{ i.Author }}</a> wrote: {{ i.Text }}<br>
+              {% empty %}
+              No posts yet!
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="national-posts" class="tab-pane fade">
+        <div class="card">
+          <div class="card-body">
+            <div id="national-posts">
+              <h2>National Posts:</h2>
+              {% for post in NationalPosts %}
+              <a href="{% url 'profile' post.Author.id %}">{{ post.Author }}</a> wrote: {{ post.Text }}<br>
+              {% empty %}
+              No national posts yet!
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="org-posts" class="tab-pane fade">
+        <div class="card">
+          <div class="card-body">
+            <div id="org-posts">
+              <h2>Organization Posts:</h2>
+              {% for post in CompanyPosts %}
+              <a href="{% url 'profile' post.Author.id %}">{{ post.Author }}</a> wrote: {{ post.Text }}<br>
+              {% empty %}
+              No organization posts yet!
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<br>
 
 <script>
   function submitForm() {

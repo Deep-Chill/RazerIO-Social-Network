@@ -1,6 +1,10 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from .models import Project
-from .forms import ProjectForm
+from .forms import ProjectForm, ProjectApplicationForm
+from Users.models import Skill
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+
 
 def projects(request):
     projects = Project.objects.all()
@@ -14,7 +18,31 @@ def new_project(request):
             project = form.save(commit=False)
             project.owner = request.user
             project.save()
+            form.save_m2m()  # save many-to-many fields after saving project
             return redirect('projects')
     else:
         form = ProjectForm()
     return render(request, 'new_project.html', {'form': form})
+
+
+def project(request, id):
+    project = Project.objects.get(id=id)
+    context = {'project':project}
+    return render(request, 'project.html', context=context)
+
+
+@login_required
+def apply_to_project(request, id):
+    project = get_object_or_404(Project, id=id)
+    if request.method == 'POST':
+        form = ProjectApplicationForm(request.POST)
+        if form.is_valid():
+            application = form.save(commit=False)
+            application.project = project
+            application.user = request.user
+            application.save()
+            messages.success(request, 'Your application has been submitted.')
+            return redirect('project', id=project.id)
+    else:
+        form = ProjectApplicationForm()
+    return render(request, 'apply_to_project.html', {'project': project, 'form': form})

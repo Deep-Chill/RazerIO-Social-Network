@@ -65,6 +65,11 @@
       <p>Number of employees: 79,000</p>
       <p>Number of verified employees: {{ Employees }}</p>
       <p>Stock Price: ${{ StockPrice|floatformat:2 }}</p>
+      <p>About: {{ Company.About }}</p>
+
+      {% if user.is_authenticated and user in Company.Employees.all %}
+        <a href="{% url 'edit_company' Company.id %}" class="btn btn-primary">Edit Page</a>
+      {% endif %}
     </div>
   </div>
 

@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container mt-4">
+  <div class="row">
+    <div class="col-md-12">
+      <a href="{% url 'apply_to_project' project.id %}" class="btn btn-primary mb-3">Apply to Project</a>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-8">
+      <h2>{{ project.title }}</h2>
+      <p class="lead">{{ project.description }}</p>
+      <p>Owner: {{ project.owner }}</p>
+      <p>Created: {{ project.created_at }}</p>
+      <p>Collaborator requirements: {{ project.collaborator_requirements }}</p>
+      <hr>
+      <h2>About the Project Creator</h2>
+      <div class="card mb-4">
+        <div class="card-body">
+          <h5 class="card-title">{{ project.owner.name }}</h5>
+          <p class="card-text">{{ project.owner.bio }}</p>
+        </div>
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item"><strong>Email:</strong> {{ project.owner.email }}</li>
+          <li class="list-group-item"><strong>Previous Work:</strong> {{ project.owner.previous_work }}</li>
+        </ul>
+      </div>
+      <hr>
+      <h2>Project Updates</h2>
+      {% for update in project.updates.all %}
+        <div class="card mb-2">
+          <div class="card-body">
+            <h5 class="card-title">{{ update.title }}</h5>
+            <p class="card-text">{{ update.description }}</p>
+            <p class="card-text"><small class="text-muted">{{ update.created_at }}</small></p>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+    <div class="col-md-4">
+      <img src="{{ project.image.url }}" alt="{{ project.title }}" class="img-fluid mb-4">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Project Details</h5>
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item"><strong>Required Skills:</strong> {% for skill in project.required_skills.all %}
+                <span class="badge badge-secondary bg-info">{{ skill.name }}</span>
+              {% empty %}
+                <span class="badge badge-secondary bg-info">None</span>
+              {% endfor %}</li>
+            <li class="list-group-item"><strong>Tech Stack:</strong> {% for tech in project.tech_stack.all %}
+                <span class="badge badge-secondary bg-info">{{ tech.name }}</span>
+              {% empty %}
+                <span class="badge badge-secondary bg-info">None</span>
+              {% endfor %}</li>
+            <li class="list-group-item"><strong>Location:</strong> {{ project.location }}</li>
+            <li class="list-group-item"><strong>Status:</strong> {{ project.status }}</li>
+            <li class="list-group-item"><strong>Collaborators Needed:</strong> {{ project.looking_for_x_collaborators }}</li>
+          </ul>
+        </div>
+      </div>
+      <hr>
+      <h5>Why Collaborate on this Project?</h5>
+      <p>{{ project.benefits }}</p>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
