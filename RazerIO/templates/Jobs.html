@@ -1,10 +1,17 @@
 {% extends "base.html" %}
+
 {% block title %}
 Job Market
 {% endblock %}
 
 {% load humanize %}
-
+{% block head %}
+<style>
+    .table {
+        width: 1500px;
+    }
+</style>
+{% endblock %}
 {% block content %}
 
 <div class="container mt-auto">
