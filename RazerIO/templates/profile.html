@@ -7,6 +7,11 @@
 {% block content %}
 <div class="container mt-5" style="max-width: 75%;">
   {% if user.is_authenticated %}
+  {% if user1.ProfilePic %}
+      <img src="{{ user1.ProfilePic.url }}" alt="Profile Image" class="rounded float-left" width="100">
+    {% else %}
+      <img src="{% static 'img/pfp.jpg' %}" alt="Profile Image" class="rounded float-left" width="100">
+    {% endif %}
     <h1 class="d-flex">{{ user1.first_name }} {{ user1.last_name }}</h1>
   <h5>@{{ user1.username }}</h5>
   <hr>
@@ -101,7 +106,7 @@
           <div class="card mb-3">
             <div class="card-body">
               <h5 class="card-title">{{ i.degree_type }}, {{ i.major }}</h5>
-              <h6 class="card-subtitle mb-2 text-muted">{{ i.institution_name }}</h6>
+              <h6 class="card-subtitle mb-2 text-muted">{{ i.institution }}</h6>
               <p class="card-text">{{ i.start_date|date:"Y" }} - {{ i.end_date|date:"Y" }}</p>
             </div>
           </div>

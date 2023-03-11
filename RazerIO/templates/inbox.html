@@ -1,42 +1,45 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block content %}
-<div class="container-fluid">
-  <div class="row">
 
-    <!-- Navigation panel -->
-    <div class="col-md-2 col-sm-3 bg-light">
-      <div class="pt-3">
+{% block content %}
+
+<style>
+  .custom-container {
+    padding-left: 100px;
+  }
+  .custom1 {
+    padding-left: 100px;
+  }
+  .tab-content{
+    height: 500px;
+  }
+  .tab-pane {
+  padding-top: 100px;
+}
+</style>
+
+<div class="d-flex align-items-center container-fluid">
+
+  <div class="nav flex-column nav-pills me-3 custom1" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+    <div class="pt-3">
     {% if request.user.ProfilePic %}
       <img src="{{ request.user.ProfilePic.url }}" alt="Profile Image" class="rounded-circle mx-auto d-block img-fluid" width="100">
     {% else %}
       <img src="{% static 'img/pfp.jpg' %}" alt="Profile Image" class="rounded-circle mx-auto d-block img-fluid" width="100">
     {% endif %}
         <h6 class="text-center mt-3">{{ request.user.username }}</h6>
-      </div>
       <hr>
-      <ul class="nav flex-column">
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'inbox' %}">Inbox</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'outbox' %}">Sent Messages</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'new_conversation' %}">Compose</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'alerts' %}">Alerts</a>
-          </li>
-        </ul>
-    </div>
-
-    <!-- Message list panel -->
-    <div class="col-md-10 col-sm-9">
-      <div class="pt-3 px-3">
-        <h3 class="mb-3">{{ page_title }}</h3>
-        <div class="list-group">
+      </div>
+    <a class="nav-link active" id="v-pills-home-tab" data-toggle="pill" href="#v-pills-home" role="tab" aria-controls="v-pills-home" aria-selected="true">Inbox</a>
+    <a class="nav-link" id="v-pills-profile-tab" data-toggle="pill" href="#v-pills-profile" role="tab" aria-controls="v-pills-profile" aria-selected="false">New Message</a>
+    <a class="nav-link" id="v-pills-messages-tab" data-toggle="pill" href="#v-pills-messages" role="tab" aria-controls="v-pills-messages" aria-selected="false">Outbox</a>
+    <a class="nav-link" id="v-pills-settings-tab" data-toggle="pill" href="#v-pills-settings" role="tab" aria-controls="v-pills-settings" aria-selected="false">Alerts</a>
+  </div>
+  <div class="tab-content mx-auto" id="v-pills-tabContent">
+    <div class="tab-pane fade show active" id="v-pills-home" role="tabpanel" aria-labelledby="v-pills-home-tab">
+      <!-- Inbox tab content -->
+      <div class="list-group">
           {% for conversation in conversations %}
           <a href="{% url 'conversation' id=conversation.id %}" class="list-group-item list-group-item-action{% if conversation.is_read %} read{% endif %}">
             <div class="d-flex w-100 justify-content-between">
@@ -47,9 +50,104 @@
           <p>No messages yet.</p>
           {% endfor %}
         </div>
-      </div>
     </div>
+    <div class="tab-pane fade" id="v-pills-profile" role="tabpanel" aria-labelledby="v-pills-profile-tab">
+      <!-- New Message tab content -->
+      <form method="post" class="form-horizontal">
+        {% csrf_token %}
+        <div class="form-group">
+          <label for="{{ form.participants.id_for_label }}" class="col-sm-2 control-label">Participants:</label>
+          <div class="col-sm-10">
+            {% if prepopulated_participant %}
+              <input type="text" value="{{ prepopulated_participant }}" disabled>
+              <input type="hidden" name="participants" value="{{ prepopulated_participant }}">
+            {% else %}
+              {{ form.participants }}
+            {% endif %}
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="{{ form.subject.id_for_label }}" class="col-sm-2 control-label">Subject:</label>
+          <div class="col-sm-10">
+            {{ form.subject }}
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="{{ form.message.id_for_label }}" class="col-sm-2 control-label">Message:</label>
+          <div class="col-sm-10">
+            {{ form.message }}
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="col-sm-offset-2 col-sm-10">
+            <button type="submit" class="btn btn-primary">Start Conversation</button>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="tab-pane fade" id="v-pills-messages" role="tabpanel" aria-labelledby="v-pills-messages-tab">
+      <!-- Outbox tab content -->
+        {% if outmessages %}
+          <div class="table-responsive">
+            <table class="table table-striped table-sm">
+              <thead>
+                <tr>
+                  <th>Conversation</th>
+                  <th>Participants</th>
+                  <th>Message</th>
+                  <th>Date</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for message in outmessages %}
+                  <tr>
+                    <td>{{ message.conversation.subject }}</td>
+                    <td>
+                      {% for participant in message.conversation.participants.all %}
+                        {% if participant != message.sender %}
+                          {{ participant.username }}
+                          {% if not forloop.last %}, {% endif %}
+                        {% endif %}
+                      {% endfor %}
+                    </td>
+                    <td>{{ message.content }}</td>
+                    <td>{{ message.timestamp }}</td>
+                    <td>
+                      <a href="#" class="btn btn-danger btn-sm">Delete</a>
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        {% else %}
+          <p>You have no messages in your outbox.</p>
+        {% endif %}
 
+    </div>
+    <div class="tab-pane fade" id="v-pills-settings" role="tabpanel" aria-labelledby="v-pills-settings-tab">
+      <!-- Alerts tab content -->
+            <div class="pt-3 px-3">
+    {% if alerts %}
+    <div class="list-group">
+      {% for alert in alerts %}
+      <a href="#" class="list-group-item list-group-item-action{% if not alert.read %} bg-light{% endif %}">
+        <div class="d-flex justify-content-between">
+          <div class="fw-bold">{{ alert.actor.username }} {{ alert.verb }}</div>
+          <small class="text-muted">{{ alert.timestamp|timesince }} ago</small>
+        </div>
+        {% if alert.target %}
+        <div>{{ alert.target }}</div>
+        {% endif %}
+      </a>
+      {% endfor %}
+    </div>
+    {% else %}
+    <p class="lead">No new alerts.</p>
+    {% endif %}
   </div>
 </div>
+    </div>
+  </div>
 {% endblock %}

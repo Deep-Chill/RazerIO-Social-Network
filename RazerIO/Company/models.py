@@ -4,12 +4,13 @@ from django.conf import settings
 
 class Company(models.Model):
     Name = models.CharField(max_length=256)
-    About = models.TextField(max_length=10000, default='')
+    About = models.TextField(max_length=10000, default='', blank=True, null=True)
     Employees = models.ManyToManyField('Users.CustomUser')
-    Shareprice = models.IntegerField(default=0)
+    Shareprice = models.IntegerField(default=0, blank=True, null=True)
     StockTicker = models.CharField(max_length=10, null=True, blank=True)
     LastEditedBy = models.ForeignKey('Users.CustomUser', null=True, blank=True, on_delete=models.SET_NULL,
                                      related_name='edited_companies')
+    Website = models.URLField(blank=True)
     Is_University = models.BooleanField(default=False)
 
     def __str__(self):

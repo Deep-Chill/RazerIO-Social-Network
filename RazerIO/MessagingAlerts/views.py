@@ -11,19 +11,39 @@ from django.http import HttpResponseForbidden
 
 User = get_user_model()
 
-def inbox(request):
+def inbox(request, user_id=None):
     user = request.user
+    unread_alerts = Alert.objects.filter(recipient=request.user, read=False)
     participant_conversation_ids = Participant.objects.filter(user=request.user).values_list('conversation', flat=True)
     conversations = Conversation.objects.filter(id__in=participant_conversation_ids)
-    context = {'conversations':conversations, 'participantids':participant_conversation_ids}
+    outmessages = Message.objects.filter(sender=user).select_related('conversation')
+
+    recipient = None
+    if user_id:
+        recipient = get_object_or_404(User, id=user_id)
+    if request.method == 'POST':
+        form = StartNewConversationForm(request.POST, user=user)
+        if form.is_valid():
+            form.save(sender=user)
+            messages.success(request, 'Conversation started successfully.')
+            return redirect('inbox')
+    else:
+        form = StartNewConversationForm(user=user, recipient=recipient)
+    context = {
+        'conversations':conversations,
+        'participantids':participant_conversation_ids,
+        'form':form,
+        'alerts':unread_alerts,
+        'outmessages':outmessages,
+        }
+
     return render(request, 'inbox.html', context=context)
 
 def outbox(request):
     user = request.user
     messages = Message.objects.filter(sender=user).select_related('conversation')
     conversations = Conversation.objects.filter(participants=user).select_related('participants')
-    active_tab = 'outbox'
-    context = {'messages':messages, 'conversations':conversations, 'active_tab':active_tab}
+    context = {'messages':messages, 'conversations':conversations, }
     return render(request, 'outbox.html', context=context)
 
 

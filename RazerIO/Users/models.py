@@ -76,7 +76,6 @@ class Education(models.Model):
         ('Other', 'Other'),
     )
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='education')
-    institution_name = models.CharField(max_length=100)
     degree_type = models.CharField(max_length=18, choices=DEGREE_TYPE_CHOICES, default='none')
     major = models.CharField(max_length=100, blank=True)
     start_date = models.DateField()
@@ -85,6 +84,8 @@ class Education(models.Model):
     description = models.TextField(blank=True, help_text="Describe your thoughts")
     location = models.CharField(max_length=255)
     activities_awards_and_societies = models.TextField(blank=True)
+    institution = models.ForeignKey('Company.Company', limit_choices_to={'Is_University':True}, on_delete=models.CASCADE,
+                                    default=None, blank=True, null=True)
 
     def __str__(self):
-        return f"{self.degree_type} from {self.institution_name}"
+        return f"{self.degree_type} from {self.institution}"
