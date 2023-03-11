@@ -10,6 +10,7 @@ class Company(models.Model):
     StockTicker = models.CharField(max_length=10, null=True, blank=True)
     LastEditedBy = models.ForeignKey('Users.CustomUser', null=True, blank=True, on_delete=models.SET_NULL,
                                      related_name='edited_companies')
+    Is_University = models.BooleanField(default=False)
 
     def __str__(self):
         return self.Name

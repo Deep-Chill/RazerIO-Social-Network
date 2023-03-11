@@ -11,8 +11,9 @@ from .forms import CustomUserCreationForm, NewPost, CustomUserChangeForm
 from Company.models import Company
 from Feed.models import Post
 from Newspaper.models import Article, Newspaper as Nsp
-from Users.models import CustomUser, UserFollowing
+from Users.models import CustomUser, UserFollowing, Education
 from Endorsements.models import Endorsement
+from Projects.models import Project
 
 User = settings.AUTH_USER_MODEL
 past_48_hours = timezone.now() - timedelta(hours=48)
@@ -33,6 +34,11 @@ def profile(request, id):
     users_following = UserFollowing.objects.filter(User=id)
     endorsements = Endorsement.objects.filter(receiver=id)
     is_following = False
+    education = Education.objects.filter(user=user)
+    owned_project = Project.objects.filter(owner=user)
+    collaborated_project = Project.objects.filter(collaborators__in=[user])
+    projects = owned_project|collaborated_project
+    projects = projects.distinct().order_by('status')
 
     if request.user.is_authenticated:
         following = UserFollowing.objects.filter(User=request.user, Following_User_ID=user).exists()
@@ -47,6 +53,10 @@ def profile(request, id):
         "user1": user,
         "is_following": is_following,
         "endorsements":endorsements,
+        "education":education,
+        "owned_project":owned_project,
+        "collaborated_project":collaborated_project,
+        "projects":projects
     }
     return render(request, 'profile.html', context=context)
 

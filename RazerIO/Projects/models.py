@@ -5,9 +5,9 @@ from django.conf import settings
 User = settings.AUTH_USER_MODEL
 
 STATUS_CHOICES = (
-    ('IP', 'In Progress'),
-    ('C', 'Completed'),
-    ('O', 'On Hold'),
+    ('In Progress', 'In Progress'),
+    ('Completed', 'Completed'),
+    ('On Hold', 'On Hold'),
 )
 
 LOCATIONS = (
@@ -25,7 +25,7 @@ class Project(models.Model):
     collaborators = models.ManyToManyField(User, related_name='collaborating_projects', blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    status = models.CharField(choices=STATUS_CHOICES, default='IP', max_length=2)
+    status = models.CharField(choices=STATUS_CHOICES, default='In Progress', max_length=12)
     looking_for_x_collaborators = models.IntegerField(default=1, blank=True, null=True)
     required_skills = models.ManyToManyField('Users.Skill', related_name='required_for_collaborators', blank=True, max_length=3)
     tech_stack = models.ManyToManyField('Users.Skill', related_name='used_in_project', blank=True)

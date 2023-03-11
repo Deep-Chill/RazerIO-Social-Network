@@ -2,6 +2,7 @@
 {% load static %}
 
 {% block content %}
+
 <div class="container">
   <div class="row">
     <div class="col-md-12">
@@ -16,8 +17,11 @@
               <p class="card-text">{{ job_application.job_listing.Job_Description|truncatewords:50 }}</p>
               <hr>
               <h6 class="card-subtitle mb-2 text-muted">Application Date: {{ job_application.date_applied }}</h6>
-              <a href="{{ job_application.resume.url }}" class="card-link">Resume</a>
-              <a href="#" class="card-link">Cover Letter</a>
+              <p class="card-text">Notes: {{ job_application.notes }}</p>
+              <form action="{% url 'delete_job_application' application_id=job_application.id %}" method="POST">
+              {% csrf_token %}
+                  <button class="btn btn-danger" type="submit">Delete</button>
+              </form>
             </div>
           </div>
         {% endfor %}
@@ -30,3 +34,6 @@
   </div>
 </div>
 {% endblock %}
+
+
+

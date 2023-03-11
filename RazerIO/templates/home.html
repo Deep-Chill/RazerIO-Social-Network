@@ -36,7 +36,7 @@ textarea.form-control {
 
 <div class="container-fluid">
   <div class="row justify-content-between">
-    <div class="col-sm-2 col-md-2 col-lg-2">
+    <div class="col-sm-2 col-md-2 col-lg-2 ml-5">
       <div class="card">
         <div class="card-body">
           <h5 class="card-title">{{ user.username }}</h5>
@@ -51,7 +51,7 @@ textarea.form-control {
     <div class="col-sm-4 col-md-4 col-lg-4">
       <div class="card">
         <div class="card-body">
-          <h2 class="card-title">News</h2>
+          <h3 class="card-title">Top Rated news in {{ user.Country }}</h3>
           {% for i in Articles %}
             <a href="{% url 'article' i.id %}">{{ i.Title }}</a> by {{ i.Newspaper }}<br>
             {% empty %}
@@ -75,13 +75,13 @@ textarea.form-control {
     <hr>
     <ul class="nav nav-tabs ">
       <li class="nav-item">
-        <a class="nav-link active" data-toggle="tab" href="#social-posts">Social Posts</a>
+        <a class="nav-link active" data-toggle="tab" href="#social-posts">Friends</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" data-toggle="tab" href="#national-posts">National Posts</a>
+        <a class="nav-link" data-toggle="tab" href="#national-posts">{{ user.Country }}</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" data-toggle="tab" href="#org-posts">Organization Posts</a>
+        <a class="nav-link" data-toggle="tab" href="#org-posts">{{ user.Company }}</a>
       </li>
     </ul>
     <div class="tab-content">

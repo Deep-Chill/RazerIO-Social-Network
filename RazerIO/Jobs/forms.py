@@ -6,12 +6,17 @@ class JobPosting(ModelForm):
 
     class Meta:
         model = JobListing
-        fields = ['Job_Title', 'Job_Description', 'Company', 'salary_min', 'salary_max', 'Category']
+        fields = ['Company', 'Category', 'Experience_Level', 'Job_Title', 'salary_min', 'salary_max',
+                  'MinimumExperience', 'NumberRecruiting', 'ApplicationURL']
+    def __init__(self, *args, **kwargs):
+        super(JobPosting, self).__init__(*args, **kwargs)
+        self.fields['salary_min'].label = "Minimum salary"
+        self.fields['salary_max'].label = "Maximum salary"
+        self.fields['MinimumExperience'].label = "Years of experience required"
+        self.fields['NumberRecruiting'].label = "How many people are being hired for this position?"
 
 class ApplyToJobForm(ModelForm):
-    resume = forms.CharField(label='Resume')
-    cover_letter = forms.CharField(label='Cover Letter', widget=forms.Textarea)
 
     class Meta:
         model = JobApplication
-        fields = ['resume', 'cover_letter', 'skills']
+        fields = []

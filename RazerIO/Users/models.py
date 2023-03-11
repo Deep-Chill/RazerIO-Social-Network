@@ -67,17 +67,17 @@ class UserFollowing(models.Model):
 
 class Education(models.Model):
     DEGREE_TYPE_CHOICES = (
-        ('none', 'None'),
-        ('hs', 'High School'),
-        ('aa', 'Associate Degree'),
-        ('ba', 'Bachelor\'s Degree'),
-        ('ma', 'Master\'s Degree'),
-        ('phd', 'Doctorate'),
-        ('other', 'Other'),
+        ('None', 'None'),
+        ('High School', 'High School'),
+        ('Associate\'s Degree', 'Associate\'s Degree'),
+        ('Bachelor\'s Degree', 'Bachelor\'s Degree'),
+        ('Master\'s Degree', 'Master\'s Degree'),
+        ('Doctorate', 'Doctorate'),
+        ('Other', 'Other'),
     )
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='education')
     institution_name = models.CharField(max_length=100)
-    degree_type = models.CharField(max_length=10, choices=DEGREE_TYPE_CHOICES, default='none')
+    degree_type = models.CharField(max_length=18, choices=DEGREE_TYPE_CHOICES, default='none')
     major = models.CharField(max_length=100, blank=True)
     start_date = models.DateField()
     end_date = models.DateField(blank=True, null=True)
