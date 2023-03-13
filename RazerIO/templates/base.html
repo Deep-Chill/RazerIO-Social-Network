@@ -98,19 +98,10 @@
       <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" name="q">
       <button class="btn btn-outline-success my-2 my-sm-0 mr-5" type="submit">Search</button>
     </form>
-
     <button type="button" class="btn btn-danger" onclick="location.href='{% url 'logout' %}'">Logout</button>
-
   </div>
-
 </nav>
-
-
     {% endif %}
-
-    <!-- Optional JavaScript -->
-    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-
   <main>
     {% block content %}
     {% endblock %}

@@ -7,11 +7,15 @@
 {% block content %}
 <div class="container mt-5" style="max-width: 75%;">
   {% if user.is_authenticated %}
+  {% if user1.socialaccount_set.all.0.get_avatar_url %}
+  <img src="{{ user1.socialaccount_set.all.0.get_avatar_url }}" alt="Profile Image" class="rounded float-left" width="100">
+  {% else %}
   {% if user1.ProfilePic %}
       <img src="{{ user1.ProfilePic.url }}" alt="Profile Image" class="rounded float-left" width="100">
     {% else %}
       <img src="{% static 'img/pfp.jpg' %}" alt="Profile Image" class="rounded float-left" width="100">
     {% endif %}
+  {% endif %}
     <h1 class="d-flex">{{ user1.first_name }} {{ user1.last_name }}</h1>
   <h5>@{{ user1.username }}</h5>
   <hr>
@@ -63,7 +67,16 @@
           </div>
         {% else %}
           <div class="mb-5">
-            <a href="{% url 'edit-profile' %}" class="btn btn-primary">Edit Profile</a>
+            <div class="dropdown mb-5">
+  <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    Account Settings
+  </button>
+  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+    <a class="dropdown-item" href="{% url 'edit-profile' %}">Edit Profile</a>
+    <a class="dropdown-item" href="{% url 'account_email' %}">Edit Email</a>
+    <a class="dropdown-item" href="{% url 'account_change_password1' %}">Password</a>
+  </div>
+</div>
           </div>
         {% endif %}
       </div>

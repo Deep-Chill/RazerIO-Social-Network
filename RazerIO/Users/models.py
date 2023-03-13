@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models.signals import post_save
 from django.contrib.auth.models import AbstractUser
 from django.conf import settings
 from django.db.models import Q
@@ -6,6 +7,11 @@ from Country.models import Country, Region
 from Projects.models import Project
 import uuid
 import os
+import email_validator
+from allauth.account.models import EmailAddress
+from django.forms import ValidationError
+from django.dispatch import receiver
+from allauth.account.signals import email_confirmed, email_changed, email_added, email_removed
 
 
 # Create your models here.
@@ -46,9 +52,30 @@ class CustomUser(AbstractUser):
     Region = models.ForeignKey(Region, on_delete=models.CASCADE, null=True)
     ProfilePic = models.ImageField(upload_to=upload_to, null=True, blank=True)
     Skill = models.ManyToManyField(Skill, through="User_Skill")
+    Company_Verified_Email = models.BooleanField(default=False)
 
     def __str__(self):
         return self.username
+
+
+@receiver(email_confirmed)
+@receiver(email_added)
+@receiver(email_removed)
+def updatecompanyverifiedstatus(sender, request, email_address, **kwargs):
+    user = email_address.user
+    domain = user.Company.Email_Domain
+    users_emails = EmailAddress.objects.filter(user=user, verified=True, email__endswith='@'+domain)
+    user.Company_Verified_Email = users_emails.exists()
+    user.save()
+
+@receiver(email_changed)
+def update_company_verified_email_on_change(sender, request, user, from_email_address, to_email_address, **kwargs):
+    user = to_email_address.user
+    domain = user.Company.Email_Domain
+    users_emails = EmailAddress.objects.filter(user=user, verified=True, email__endswith='@'+domain)
+    user.Company_Verified_Email = users_emails.exists()
+    user.save()
+
 
 class UserFollowing(models.Model):
     User = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='following', on_delete=models.CASCADE)

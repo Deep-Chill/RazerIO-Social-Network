@@ -7,6 +7,7 @@ from django.db.models import F
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.db.models import Count
+from .filters import JobFilter
 
 
 def jobs(request):
@@ -22,12 +23,25 @@ def jobs(request):
         company_name=F('Company__Name')
     ).order_by('company_name')
 
+    # job_list = JobListing.objects.filter(Job_Status='Open').order_by('Date_Posted').annotate(
+    #     total_applicants=Count('jobapplication'))
+    # job_filter = JobFilter(request.GET, queryset=job_list)
+    # filtered_jobs = job_filter.qs
+    # job_posts_by_me = JobListing.objects.filter(Poster=request.user).exists()
+    # job_applications_by_me = JobApplication.objects.filter(applicant=request.user).values_list('job_listing', flat=True)
+
     return render(request, 'jobs.html', {
         'jobs': jobs,
         'job_posts_by_me': job_posts_by_me,
         'jobs_by_company': jobs_by_company,
         'job_applications_by_me': job_applications_by_me
     })
+    # return render(request, 'jobs.html', {
+    #     'jobs': filtered_jobs,
+    #     'job_filter': job_filter,
+    #     'job_posts_by_me': job_posts_by_me,
+    #     'job_applications_by_me': job_applications_by_me
+    # })
 
 def JobPosting(request, id):
     job = JobListing.objects.get(id=id)

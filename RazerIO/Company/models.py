@@ -11,6 +11,7 @@ class Company(models.Model):
     LastEditedBy = models.ForeignKey('Users.CustomUser', null=True, blank=True, on_delete=models.SET_NULL,
                                      related_name='edited_companies')
     Website = models.URLField(blank=True)
+    Email_Domain = models.CharField(blank=True, max_length=50)
     Is_University = models.BooleanField(default=False)
 
     def __str__(self):

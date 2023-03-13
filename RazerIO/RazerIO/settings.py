@@ -50,10 +50,42 @@ INSTALLED_APPS = [
     'django.contrib.humanize',
     'widget_tweaks',
     'Endorsements.apps.EndorsementsConfig',
-    'Projects.apps.ProjectsConfig'
+    'Projects.apps.ProjectsConfig',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
+    "debug_toolbar",
+    'django_filters',
 ]
 
+SITE_ID = 1
+
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        # For each OAuth based provider, either add a ``SocialApp``
+        # (``socialaccount`` app) containing the required client
+        # credentials, or list them here:
+        'APP': {
+            'client_id': '1088484542900-2h3apepet5usgtf23vt3im1co3gig7ke.apps.googleusercontent.com',
+            'secret': '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',
+            'key': ''
+        },
+        'SCOPE': [
+            'profile',
+            'email',
+        ],
+    }
+}
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+# ACCOUNT_EMAIL_VERIFICATION = "mandatory"
+# ACCOUNT_EMAIL_REQUIRED = True
+SOCIALACCOUNT_AUTO_SIGNUP = False
+
 MIDDLEWARE = [
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -64,6 +96,11 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'RazerIO.urls'
+
+INTERNAL_IPS = [
+    "127.0.0.1",
+]
+
 
 TEMPLATES = [
     {
@@ -82,6 +119,14 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'RazerIO.wsgi.application'
+
+AUTHENTICATION_BACKENDS = [
+    # Needed to login by username in Django admin, regardless of `allauth`
+    'django.contrib.auth.backends.ModelBackend',
+
+    # `allauth` specific authentication methods, such as login by e-mail
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
 
 
 # Database

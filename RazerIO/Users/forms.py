@@ -14,7 +14,9 @@ class CustomUserChangeForm(UserChangeForm):
 
     class Meta:
         model = CustomUser
-        fields = ("email", "Bio", "Salary", "Company")
+        fields = ("Bio", "Salary", "Company")
+
+
 
 class NewPost(forms.ModelForm):
     text = forms.CharField(widget=forms.Textarea(attrs={'rows':2}), label='Text')

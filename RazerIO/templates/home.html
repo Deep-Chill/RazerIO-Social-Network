@@ -1,4 +1,6 @@
 {% extends "base.html" %}
+{% load socialaccount %}
+{% load account %}
 {% load crispy_forms_tags %}
 {% block title %}Home{% endblock %}
 
@@ -131,7 +133,8 @@ textarea.form-control {
   </div>
 </div>
 <br>
-
+</div>
+</div>
 <script>
   function submitForm() {
     $.ajax({
@@ -170,7 +173,7 @@ textarea.form-control {
 {% else %}
 
 <p>You are not logged in</p>
-<a href="{% url 'login' %}" class="btn btn-primary">Log In</a>
-<a href="{% url 'signup' %}" class="btn btn-primary">Sign Up</a>
+<a href="{% url 'account_login' %}" class="btn btn-primary">Log In</a>
+<a href="{% url 'account_signup' %}" class="btn btn-primary">Sign Up</a>
 {% endif %}
 {% endblock %}

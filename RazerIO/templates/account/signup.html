@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block title %}Signup{% endblock %}
+
+{% block content %}
+
+  <div class="container-fluid">
+<h3 class="h3">Sign Up</h3>
+
+<ul class="nav nav-tabs">
+  <li class="nav-item">
+    <a class="nav-link active" data-toggle="tab" href="#signup-form">Signup</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" data-toggle="tab" href="#signup-providers">Signup via Providers</a>
+  </li>
+</ul>
+
+<div class="tab-content">
+  <div class="tab-pane active" id="signup-form">
+    <form class="container-fluid text-center mt-3" id="signup_form" method="post" action="{% url 'account_signup' %}">
+      {% csrf_token %}
+      {{ form.as_p }}
+      {% if redirect_field_value %}
+        <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+      {% endif %}
+      <button class="btn btn-primary btn-lg mt-3" type="submit">Sign Up</button>
+    </form>
+  </div>
+
+  <div class="tab-pane" id="signup-providers">
+    {% load account socialaccount %}
+    {% get_providers as socialaccount_providers %}
+    {% for provider in socialaccount_providers %}
+      <form action="{% provider_login_url provider.id %}" method="POST">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-outline-primary btn-lg">
+          <i class="fa fa-{{provider.name}}"></i> {{ provider.name }}
+        </button>
+      </form>
+    {% endfor %}
+  </div>
+</div>
+
+<p class="mt-3">Already have an account? <a href="{{ login_url }}">Sign in</a>.</p>
+  </div>
+{% endblock %}
+
+

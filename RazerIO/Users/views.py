@@ -6,6 +6,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from django.utils import timezone
 from django.views.generic.edit import CreateView
+from django.core.exceptions import ObjectDoesNotExist
 
 from .forms import CustomUserCreationForm, NewPost, CustomUserChangeForm
 from Company.models import Company
@@ -14,6 +15,8 @@ from Newspaper.models import Article, Newspaper as Nsp
 from Users.models import CustomUser, UserFollowing, Education
 from Endorsements.models import Endorsement
 from Projects.models import Project
+from allauth.account.models import EmailAddress
+
 
 User = settings.AUTH_USER_MODEL
 past_48_hours = timezone.now() - timedelta(hours=48)
@@ -29,7 +32,10 @@ class SignUpView(CreateView):
 
 def profile(request, id):
     user = CustomUser.objects.get(id=id)
-    newspaper = Nsp.objects.filter(Owner=id).first()
+    try:
+        newspaper = Nsp.objects.get(Owner=id)
+    except ObjectDoesNotExist:
+        newspaper = None
     followers = UserFollowing.objects.filter(Following_User_ID=id)
     users_following = UserFollowing.objects.filter(User=id)
     endorsements = Endorsement.objects.filter(receiver=id)
@@ -130,13 +136,22 @@ def search(request):
     context = {'users': users, 'articles': articles, 'newspapers': newspapers, 'posts': posts, 'query': query}
     return render(request, 'search_results.html', context=context)
 
+from allauth.account.forms import AddEmailForm
+
+from allauth.account.forms import AddEmailForm
+from django.shortcuts import render
+from .forms import CustomUserChangeForm
+
+
 def edit_profile(request):
     if request.method == "POST":
         form = CustomUserChangeForm(request.POST, instance=request.user)
+        add_email_form = AddEmailForm(request.POST)
         if form.is_valid():
             edited_profile = form.save(commit=False)
             edited_profile.save()
             return redirect('profile', id=request.user.id)
     else:
         form = CustomUserChangeForm(instance=request.user)
-    return render(request, 'edit_profile.html', {'form':form})
+        add_email_form = AddEmailForm()
+    return render(request, 'edit_profile.html', {'form':form, 'add_email_form': add_email_form})

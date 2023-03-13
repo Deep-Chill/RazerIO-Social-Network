@@ -26,7 +26,6 @@ Job Market
     <input type="text" id="myInput" class="form-control" placeholder="Search Jobs">
 
 <br><br>
-    {% if jobs %}
         <table class="table table-striped" id="myTable">
             <thead>
                 <tr>
@@ -87,9 +86,6 @@ Job Market
                 {% endfor %}
             </tbody>
         </table>
-    {% else %}
-        <p>No jobs found.</p>
-    {% endif %}
 
     <!-- Pagination links -->
     <nav aria-label="Job listings pagination">

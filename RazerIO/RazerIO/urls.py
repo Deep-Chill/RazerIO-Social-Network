@@ -19,12 +19,14 @@ from django.views.generic.base import TemplateView
 from Users.views import index, search
 from django.conf import settings
 from django.conf.urls.static import static
+from allauth.account.views import LogoutView, LoginView, SignupView
+
 
 urlpatterns = [
     path("", index, name="home"),
     path("admin/", admin.site.urls),
     path("profile/", include("Users.urls")),
-    path("accounts/", include("django.contrib.auth.urls")),
+    # path("accounts/", include("django.contrib.auth.urls")),
     path("newspaper/", include("Newspaper.urls")),
     path("company/", include("Company.urls")),
     path("market/", include("Jobs.urls")),
@@ -32,7 +34,12 @@ urlpatterns = [
     path('ckeditor/', include('ckeditor_uploader.urls')),
     path('', include("MessagingAlerts.urls")),
     path('endorsements/', include("Endorsements.urls")),
-    path('projects/', include("Projects.urls"))
+    path('projects/', include("Projects.urls")),
+    path('accounts/', include("allauth.urls")),
+    path('accounts/logout', LogoutView.as_view(), name='logout'),
+    path('login/', LoginView.as_view(), name='account_login'),
+    path('signup/', SignupView.as_view(), name='account_signup'),
+    path('__debug__/', include('debug_toolbar.urls')),
 ]
 
 if settings.DEBUG:
