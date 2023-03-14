@@ -9,6 +9,25 @@ from django.core.exceptions import PermissionDenied
 from django.db.models import Count
 from .filters import JobFilter
 
+# def filtered_jobs(request):
+#     job_filter = JobFilter(request.GET, queryset=JobListing.objects.all())
+#     job = job_filter.qs
+#     return render(request, 'jobs_filtered.html', context={'job_filter':job_filter,
+#                                                           'jobs':JobListing.objects.all(),
+#                                                           })
+#     # job_filter = JobFilter()
+#     # job_list = JobListing.objects.filter(Job_Status='Open').order_by('Date_Posted').annotate(
+#     #     total_applicants=Count('jobapplication'))
+#     # job_filter = JobFilter(request.GET, queryset=job_list)
+#     # filtered_jobs = job_filter.qs
+#     # job_posts_by_me = JobListing.objects.filter(Poster=request.user).exists()
+#     # job_applications_by_me = JobApplication.objects.filter(applicant=request.user).values_list('job_listing', flat=True)
+#     # return render(request, 'jobs_filtered.html', {
+#     #     'jobs': filtered_jobs,
+#     #     'job_filter': job_filter,
+#     #     'job_posts_by_me': job_posts_by_me,
+#     #     'job_applications_by_me': job_applications_by_me
+#     # })
 
 def jobs(request):
     job_list = JobListing.objects.filter(Job_Status='Open').order_by('Date_Posted').annotate(total_applicants=Count('jobapplication'))
@@ -17,24 +36,21 @@ def jobs(request):
     jobs = paginator.get_page(page)
     job_posts_by_me = JobListing.objects.filter(Poster=request.user).exists()
     job_applications_by_me = JobApplication.objects.filter(applicant=request.user).values_list('job_listing', flat=True)
-    # Group jobs by company
     jobs_by_company = JobListing.objects.values('Company').annotate(
         company_jobs=F('id'),
         company_name=F('Company__Name')
     ).order_by('company_name')
+    job_filter = JobFilter(request.GET, queryset=job_list)
+    job = job_filter.qs
 
-    # job_list = JobListing.objects.filter(Job_Status='Open').order_by('Date_Posted').annotate(
-    #     total_applicants=Count('jobapplication'))
-    # job_filter = JobFilter(request.GET, queryset=job_list)
-    # filtered_jobs = job_filter.qs
-    # job_posts_by_me = JobListing.objects.filter(Poster=request.user).exists()
-    # job_applications_by_me = JobApplication.objects.filter(applicant=request.user).values_list('job_listing', flat=True)
 
     return render(request, 'jobs.html', {
-        'jobs': jobs,
         'job_posts_by_me': job_posts_by_me,
         'jobs_by_company': jobs_by_company,
-        'job_applications_by_me': job_applications_by_me
+        'job_applications_by_me': job_applications_by_me,
+        'job_filter': job_filter,
+         'jobs': jobs,
+        'job':job
     })
     # return render(request, 'jobs.html', {
     #     'jobs': filtered_jobs,

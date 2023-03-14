@@ -1,17 +1,15 @@
 {% extends "base.html" %}
 
 {% block title %}
-Job Market
+Job Market12
 {% endblock %}
 
-{% load humanize %}
-{% load widget_tweaks %}
 {% block head %}
 <style>
     .table {
         width: 1500px;
     }
-    .table-responsive {
+     .table-responsive {
         overflow-x: auto;
         min-width: 100%;
         display: flex;
@@ -19,19 +17,10 @@ Job Market
     }
 </style>
 {% endblock %}
+
+{% load widget_tweaks %}
+{% load humanize %}
 {% block content %}
-
-<div class="container mt-auto">
-<div class="d-flex justify-content-between">
-<a href="{% url 'job_applications' %}" class="btn btn-outline-primary">My Job Applications</a>
-  <a href="{% url 'createjoblisting' %}" class="btn btn-outline-primary">Post a Job</a>
-  {% if job_posts_by_me %}
-<a href="{% url 'myjobposts' %}" class="btn btn-outline-primary">My Job Posts</a>
-{% endif %}
-</div>
-
-<h1 class="mt-4 mb-5 text-center">Job Market</h1>
-</div>
 <div class="d-flex justify-content-center">
     <input type="text" id="myInput" class="form-control" placeholder="Search Jobs" style="width: 1500px;">
 </div>
@@ -40,7 +29,7 @@ Job Market
     <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
       Filter
     </button>
-    <a href="{% url 'jobs' %}" class="btn btn-link text-primary ml-2">Reset</a>
+    <a href="{% url 'filtered_jobs' %}" class="btn btn-link text-primary ml-2">Reset</a>
     <div class="dropdown-menu p-4 rounded" aria-labelledby="dropdownMenuButton" style="position: absolute; z-index: 1; width: 300px;">
         <h5>Customize your job search</h5>
         <hr>
@@ -73,7 +62,7 @@ Job Market
   </div>
 </div>
 
-    <div class="d-flex">
+<div class="d-flex">
     <div class="table-responsive">
         <table class="table table-striped" style="position: relative; z-index: 0;" id="myTable">
             <thead>
@@ -92,7 +81,7 @@ Job Market
                 </tr>
             </thead>
             <tbody>
-                {% for job in job %}
+                {% for job in job_filter.qs %}
                     <tr>
                         <td>
                             {% if job.Company %}
@@ -138,32 +127,6 @@ Job Market
     </div>
 </div>
 
-    <!-- Pagination links -->
-    <nav aria-label="Job listings pagination">
-        <ul class="pagination justify-content-center mt-5">
-            {% if filtered_jobs.has_previous %}
-                <li class="page-item">
-                    <a class="page-link" href="?page={{ filtered_jobs.previous_page_number }}">Previous</a>
-                </li>
-            {% endif %}
-
-            {% for num in filtered_jobs.paginator.page_range %}
-                {% if filtered_jobs.number == num %}
-                    <li class="page-item active">
-                        <a class="page-link" href="#">{{ num }}</a>
-                    </li>
-
-    {% endif %}
-  {% endfor %}
-{% if filtered_jobs.has_next %}
-<li class="page-item">
-<a class="page-link" href="?page={{ filtered_jobs.next_page_number }}">Next</a>
-</li>
-{% endif %}
-
-</ul>
-  </nav>
-
 <script>
 $(document).ready(function(){
   $("#myInput").on("keyup", function() {
@@ -174,6 +137,4 @@ $(document).ready(function(){
   });
 });
 </script>
-
-
 {% endblock %}

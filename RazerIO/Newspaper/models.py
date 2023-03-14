@@ -6,6 +6,11 @@ from django.contrib.auth import get_user_model
 
 # Create your models here.
 
+ARTICLE_CATEGORIES = (('Technology & Programming', 'Technology & Programming'), ('Artificial Intelligence',
+                    'Artificial Intelligence'), ('Business & Industry', 'Business & Industry'),
+                       ('Opinion & Analysis', 'Opinion & Analysis'), ('General', 'General')
+                      )
+
 class Newspaper(models.Model):
     Title = models.CharField(max_length=256)
     Owner = models.OneToOneField(get_user_model(), on_delete=models.CASCADE,
@@ -22,7 +27,7 @@ class Article(models.Model):
     Text = RichTextField()
     Newspaper = models.ForeignKey(Newspaper, on_delete=models.CASCADE)
     Upvotes = models.ManyToManyField(get_user_model(), through='ArticleUpvote', related_name='upvoted_articles')
-
+    Category = models.CharField(choices=ARTICLE_CATEGORIES, blank=True, max_length=50)
     def __str__(self):
         return f'{self.Title}'
 

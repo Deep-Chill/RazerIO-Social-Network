@@ -7,7 +7,7 @@ from .models import Newspaper, Article, ArticleUpvote
 from django.contrib.auth.decorators import login_required
 from django.db.models import F, Count
 from django.views.decorators.http import require_POST
-
+from django.utils import timezone
 # Create your views here.
 
 def newspaper_view(request, id):
@@ -91,15 +91,12 @@ def Add_Comment(request, id):
         form = ArticleCommentForm(request.POST)
         if form.is_valid():
             comment = form.save(commit=False)
+            comment.Text = form.cleaned_data['Text']
             if form.cleaned_data['Is_Anonymous']:
-                comment.Text = form.cleaned_data['Text']
                 comment.Author = None
                 if form.cleaned_data['Show_Company']:
                     comment.Company = request.user.Company
-                else:
-                    comment.Company = None
             else:
-                comment.Text = form.cleaned_data['Text']
                 comment.Author = request.user
                 comment.Company = request.user.Company
             comment.Article = article
@@ -107,7 +104,7 @@ def Add_Comment(request, id):
     else:
         form = ArticleCommentForm()
 
-    context = {'form':form, 'comment':comment, 'article':article}
+    context = {'form': form, 'comment': comment, 'article': article}
     return render(request, 'create_comment.html', context)
 
 
@@ -123,3 +120,33 @@ def upvote_article(request, id):
         return redirect('article', id=id)
     else:
         return redirect('login')
+
+def articles_page(request):
+    articles = Article.objects.filter(Date_Published__gte=timezone.now() - timezone.timedelta(hours=48)).annotate(num_upvotes=Count('articleupvote'))
+    context = {'articles':articles}
+    return render(request, 'top_articles.html', context=context)
+
+def tech_articles(request):
+    articles = Article.objects.filter(Category='Technology & Programming', Date_Published__gte=timezone.now() - timezone.timedelta(hours=48)).annotate(num_upvotes=Count('articleupvote'))
+    context = {'articles':articles}
+    return render(request, 'tech_articles.html', context=context)
+
+def ai_articles(request):
+    articles = Article.objects.filter(Category='Artificial Intelligence', Date_Published__gte=timezone.now() - timezone.timedelta(hours=48)).annotate(num_upvotes=Count('articleupvote'))
+    context = {'articles':articles}
+    return render(request, 'ai_articles.html', context=context)
+
+def business_articles(request):
+    articles = Article.objects.filter(Category='Business & Industry', Date_Published__gte=timezone.now() - timezone.timedelta(hours=48)).annotate(num_upvotes=Count('articleupvote'))
+    context = {'articles':articles}
+    return render(request, 'business_articles.html', context=context)
+
+def opinion_articles(request):
+    articles = Article.objects.filter(Category='Opinion & Analysis', Date_Published__gte=timezone.now() - timezone.timedelta(hours=48)).annotate(num_upvotes=Count('articleupvote'))
+    context = {'articles':articles}
+    return render(request, 'opinion_articles.html', context=context)
+
+def general_articles(request):
+    articles = Article.objects.filter(Category='General', Date_Published__gte=timezone.now() - timezone.timedelta(hours=48)).annotate(num_upvotes=Count('articleupvote'))
+    context = {'articles':articles}
+    return render(request, 'general_articles.html', context=context)

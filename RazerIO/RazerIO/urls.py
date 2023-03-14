@@ -20,6 +20,7 @@ from Users.views import index, search
 from django.conf import settings
 from django.conf.urls.static import static
 from allauth.account.views import LogoutView, LoginView, SignupView
+from Newspaper.views import articles_page
 
 
 urlpatterns = [
@@ -40,6 +41,7 @@ urlpatterns = [
     path('login/', LoginView.as_view(), name='account_login'),
     path('signup/', SignupView.as_view(), name='account_signup'),
     path('__debug__/', include('debug_toolbar.urls')),
+    path('news', articles_page, name='articles_page')
 ]
 
 if settings.DEBUG:

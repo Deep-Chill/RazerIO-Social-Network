@@ -37,39 +37,45 @@ textarea.form-control {
 </style>
 
 <div class="container-fluid">
-  <div class="row justify-content-between">
-    <div class="col-sm-2 col-md-2 col-lg-2 ml-5">
-      <div class="card">
-        <div class="card-body">
-          <h5 class="card-title">{{ user.username }}</h5>
-          <div class="mt-3">
-          <a href="{% url 'profile' user.id %}" class="btn btn-primary">Profile</a>
-          <a class="btn btn-secondary" href="{% url 'alerts' %}">Alerts</a>
-          <a class="btn btn-secondary" href="{% url 'inbox' %}">Messages</a>
-          </div>
+  <div class="row">
+    <div class="col-sm-2 col-md-2 col-lg-2">
+      <div class="card p-3 mb-3">
+        <div class="text-center">
+          <img src="{{ user.ProfilePic.url }}" class="rounded-circle" width="80" height="80">
+          <h5 class="mt-3 mb-0">{{ user.username }}</h5>
+        </div>
+        <hr>
+        <div class="d-grid gap-2">
+          <a href="{% url 'profile' user.id %}" class="btn btn-outline-primary"><i class="bi bi-person"></i> Profile</a>
+          <a href="{% url 'alerts' %}" class="btn btn-outline-secondary"><i class="bi bi-bell"></i> Alerts</a>
+          <a href="{% url 'inbox' %}" class="btn btn-outline-secondary"><i class="bi bi-chat"></i> Messages</a>
         </div>
       </div>
     </div>
-    <div class="col-sm-4 col-md-4 col-lg-4">
+    <div class="col-sm-6 col-md-6 col-lg-6">
       <div class="card">
         <div class="card-body">
           <h3 class="card-title">Top Rated news in {{ user.Country }}</h3>
-          {% for i in Articles %}
-            <a href="{% url 'article' i.id %}">{{ i.Title }}</a> by {{ i.Newspaper }}<br>
+          {% for article in Articles %}
+            <div class="d-flex align-items-center mb-2">
+              <span class="badge badge-primary mr-3">{{ article.num_upvotes }}</span>
+              <a href="{% url 'article' article.id %}">{{ article.Title }} </a> by {{ article.Newspaper }}
+            </div>
+          <a href="{% url 'articles_page' %}" class="btn btn-primary" style="width: 100%;">More News</a>
             {% empty %}
             No posts yet!
-            {% endfor %}
+          {% endfor %}
         </div>
       </div>
     </div>
-    <div class="row justify-content-between">
+    <div class="row justify-content-between col-sm-4 col-md-4 col-lg-4">
   <div class="col-sm-12 col-md-12 col-lg-12">
     <form id="new-post-form" method="POST">
   {% csrf_token %}
-  <div class="form-group col-sm-12 col-md-12 col-lg-12">
+  <div class="form-group">
     {{ form.text|as_crispy_field }}
   </div>
-  <div class="form-group col-sm-12 col-md-12 col-lg-12">
+  <div class="form-group">
     {{ form.Category|as_crispy_field }}
   </div>
   <button type="submit" class="btn btn-success">Create Post</button>

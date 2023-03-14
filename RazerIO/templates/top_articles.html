@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Top Rated News{% endblock %}
+{% load humanize %}
+{% block content %}
+{% if user.is_authenticated %}
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-sm-2 col-md-2 col-lg-2">
+      <div class="card p-3 mb-3">
+        <div class="text-center">
+          <img src="{{ user.ProfilePic.url }}" class="rounded-circle" width="80" height="80">
+          <h5 class="mt-3 mb-0">{{ user.username }}</h5>
+        </div>
+        <hr>
+        <div class="d-grid gap-2">
+          <a href="{% url 'profile' user.id %}" class="btn btn-outline-primary"><i class="bi bi-person"></i> Profile</a>
+          <a href="{% url 'alerts' %}" class="btn btn-outline-secondary"><i class="bi bi-bell"></i> Alerts</a>
+          <a href="{% url 'inbox' %}" class="btn btn-outline-secondary"><i class="bi bi-chat"></i> Messages</a>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-8 col-md-8 col-lg-8">
+      <div class="card card-body">
+        <h2>Top Rated Articles</h2>
+        {% for article in articles %}
+        <div class="card my-2">
+          <div class="card-body d-flex align-items-center" style="height: 75px;">
+            <div class="mr-2">
+              <button class="btn btn-outline-primary"><i class="bi bi-hand-thumbs-up"></i> {{ article.num_upvotes }}</button>
+            </div>
+            <div>
+              <h5 class="card-title mb-2"><a href="{% url 'article' article.id %}" style="font-size: 16px;">{{ article.Title }}</a></h5>
+            </div>
+            <div class="ml-auto mt-4">
+              <img src="https://cdnt.erepublik.net/Cx0jIAVumdJVKnuaHtG4SLnpANE=/55x55/smart/avatars/Newspapers/2009/04/08/206834c67b0bdedb5cceaea95b663cbb.jpg" width="50" height="50" alt="{{ article.Newspaper.Title }}">
+              <p style="font-size: 14px; text-align:center"><a href="{% url 'newspaper' id=article.Newspaper.id %}">{{ article.Newspaper.Title }}</a></p>
+            </div>
+          </div>
+          <div class="card-footer text-muted">
+            <small class="text-muted">{{ article.Category }} | Published {{ article.Date_Published|naturaltime }} | {{ article.Newspaper.Owner.Country }}</small>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
+{% endblock %}

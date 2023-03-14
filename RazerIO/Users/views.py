@@ -7,6 +7,7 @@ from django.urls import reverse_lazy
 from django.utils import timezone
 from django.views.generic.edit import CreateView
 from django.core.exceptions import ObjectDoesNotExist
+from django.db.models import Count
 
 from .forms import CustomUserCreationForm, NewPost, CustomUserChangeForm
 from Company.models import Company
@@ -16,7 +17,9 @@ from Users.models import CustomUser, UserFollowing, Education
 from Endorsements.models import Endorsement
 from Projects.models import Project
 from allauth.account.models import EmailAddress
-
+from django.db.models import Q
+from django.utils import timezone
+from django.http import JsonResponse
 
 User = settings.AUTH_USER_MODEL
 past_48_hours = timezone.now() - timedelta(hours=48)
@@ -67,14 +70,6 @@ def profile(request, id):
     return render(request, 'profile.html', context=context)
 
 
-from django.db.models import Q
-from django.utils import timezone
-
-
-from django.db.models import Q
-from django.utils import timezone
-from django.http import JsonResponse
-from django.shortcuts import render
 
 def index(request):
     if request.user.is_authenticated:
@@ -85,8 +80,7 @@ def index(request):
         friends_posts = Post.objects.filter(Q(Author__in=following_ids) | Q(Author=user), Category='Friends').select_related('Author')
         national_posts = Post.objects.filter(Category='National', Author__Country=user.Country).select_related('Author')
         company_posts = Post.objects.filter(Category='Organization', Author__Company=user.Company).select_related('Author')
-        articles = Article.objects.filter(Date_Published__gte=timezone.now() - timezone.timedelta(hours=48))
-
+        articles = Article.objects.filter(Date_Published__gte=timezone.now() - timezone.timedelta(hours=48)).annotate(num_upvotes=Count('articleupvote'))
         # Handle the POST request separately to avoid unnecessary database queries
         if request.method == "POST":
             form = NewPost(request.POST)
@@ -105,7 +99,7 @@ def index(request):
         context = {
             "FriendsPosts": friends_posts.order_by('-Date_Created'),
             "form": form,
-            "Articles": articles.order_by('-Date_Published'),
+            "Articles": articles.order_by('-num_upvotes', '-Date_Published'),
             "NationalPosts": national_posts,
             "CompanyPosts": company_posts,
         }

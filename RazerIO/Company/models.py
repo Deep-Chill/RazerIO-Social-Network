@@ -12,7 +12,6 @@ class Company(models.Model):
                                      related_name='edited_companies')
     Website = models.URLField(blank=True)
     Email_Domain = models.CharField(blank=True, max_length=50)
-    Is_University = models.BooleanField(default=False)
 
     def __str__(self):
         return self.Name
@@ -26,3 +25,16 @@ class Company_Review(models.Model):
     Rating = models.IntegerField()
     Text = models.TextField(max_length=10000)
     Date_Created = models.DateTimeField(auto_created=True)
+
+class University(models.Model):
+    Name = models.CharField(max_length=256)
+    About = models.TextField(max_length=10000, default='', blank=True, null=True)
+    Employees = models.ManyToManyField('Users.CustomUser', blank=True)
+    Students = models.IntegerField(null=True, blank=True)
+    LastEditedBy = models.ForeignKey('Users.CustomUser', null=True, blank=True, on_delete=models.SET_NULL,
+                                     related_name='edited_universities')
+    Website = models.URLField(blank=True)
+    Email_Domain = models.CharField(blank=True, max_length=50)
+
+    def __str__(self):
+        return f'{self.Name}'

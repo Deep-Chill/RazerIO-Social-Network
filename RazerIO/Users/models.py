@@ -8,10 +8,10 @@ from Projects.models import Project
 import uuid
 import os
 import email_validator
-from allauth.account.models import EmailAddress
+# from allauth.account.models import EmailAddress
 from django.forms import ValidationError
 from django.dispatch import receiver
-from allauth.account.signals import email_confirmed, email_changed, email_added, email_removed
+# from allauth.account.signals import email_confirmed, email_changed, email_added, email_removed
 
 
 # Create your models here.
@@ -53,28 +53,43 @@ class CustomUser(AbstractUser):
     ProfilePic = models.ImageField(upload_to=upload_to, null=True, blank=True)
     Skill = models.ManyToManyField(Skill, through="User_Skill")
     Company_Verified_Email = models.BooleanField(default=False)
+    badges = models.JSONField(default=dict)
+
+    def earn_badge(self, badge_name):
+        self.badges[badge_name] = True
+        self.save()
+
+    def remove_badge(self, badge_name):
+        if not self.badges:
+            return False
+        try:
+            del self.badges[badge_name]
+            self.save()
+            return True
+        except KeyError:
+            return False
 
     def __str__(self):
         return self.username
 
 
-@receiver(email_confirmed)
-@receiver(email_added)
-@receiver(email_removed)
-def updatecompanyverifiedstatus(sender, request, email_address, **kwargs):
-    user = email_address.user
-    domain = user.Company.Email_Domain
-    users_emails = EmailAddress.objects.filter(user=user, verified=True, email__endswith='@'+domain)
-    user.Company_Verified_Email = users_emails.exists()
-    user.save()
-
-@receiver(email_changed)
-def update_company_verified_email_on_change(sender, request, user, from_email_address, to_email_address, **kwargs):
-    user = to_email_address.user
-    domain = user.Company.Email_Domain
-    users_emails = EmailAddress.objects.filter(user=user, verified=True, email__endswith='@'+domain)
-    user.Company_Verified_Email = users_emails.exists()
-    user.save()
+# @receiver(email_confirmed)
+# @receiver(email_added)
+# @receiver(email_removed)
+# def updatecompanyverifiedstatus(sender, request, email_address, **kwargs):
+#     user = email_address.user
+#     domain = user.Company.Email_Domain
+#     users_emails = EmailAddress.objects.filter(user=user, verified=True, email__endswith='@'+domain)
+#     user.Company_Verified_Email = users_emails.exists()
+#     user.save()
+#
+# @receiver(email_changed)
+# def update_company_verified_email_on_change(sender, request, user, from_email_address, to_email_address, **kwargs):
+#     user = to_email_address.user
+#     domain = user.Company.Email_Domain
+#     users_emails = EmailAddress.objects.filter(user=user, verified=True, email__endswith='@'+domain)
+#     user.Company_Verified_Email = users_emails.exists()
+#     user.save()
 
 
 class UserFollowing(models.Model):
@@ -111,7 +126,7 @@ class Education(models.Model):
     description = models.TextField(blank=True, help_text="Describe your thoughts")
     location = models.CharField(max_length=255)
     activities_awards_and_societies = models.TextField(blank=True)
-    institution = models.ForeignKey('Company.Company', limit_choices_to={'Is_University':True}, on_delete=models.CASCADE,
+    institution = models.ForeignKey('Company.University', on_delete=models.CASCADE,
                                     default=None, blank=True, null=True)
 
     def __str__(self):
