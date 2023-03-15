@@ -9,9 +9,18 @@ from allauth.account.models import EmailAddress
 @receiver(email_removed)
 def updatecompanyverifiedstatus(sender, request, email_address, **kwargs):
     user = email_address.user
-    domain = user.Company.Email_Domain
-    users_emails = EmailAddress.objects.filter(user=user, verified=True, email__endswith='@'+domain)
-    user.Company_Verified_Email = users_emails.exists()
+    company_email_domains = user.Company.Email_Domain.all()
+    users_emails = EmailAddress.objects.filter(user=user, verified=True)
+
+    user.Company_Verified_Email = False
+    for users_email in users_emails:
+        for domain in company_email_domains:
+            if users_email.email.endswith('@' + domain.domain):
+                user.Company_Verified_Email = True
+                break
+        if user.Company_Verified_Email:
+            break
+
     user.save()
     if user.Company_Verified_Email:
         user.earn_badge('Verified_Company')
@@ -20,9 +29,18 @@ def updatecompanyverifiedstatus(sender, request, email_address, **kwargs):
 @receiver(email_changed)
 def update_company_verified_email_on_change(sender, request, user, from_email_address, to_email_address, **kwargs):
     user = to_email_address.user
-    domain = user.Company.Email_Domain
-    users_emails = EmailAddress.objects.filter(user=user, verified=True, email__endswith='@'+domain)
-    user.Company_Verified_Email = users_emails.exists()
+    company_email_domains = user.Company.Email_Domain.all()
+    users_emails = EmailAddress.objects.filter(user=user, verified=True)
+
+    user.Company_Verified_Email = False
+    for users_email in users_emails:
+        for domain in company_email_domains:
+            if users_email.email.endswith('@' + domain.domain):
+                user.Company_Verified_Email = True
+                break
+        if user.Company_Verified_Email:
+            break
+
     user.save()
     if user.Company_Verified_Email:
         user.earn_badge('Verified_Company')

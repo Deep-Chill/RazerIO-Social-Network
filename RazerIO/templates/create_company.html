@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <h2>Create a new company</h2>
+    <form method="post" enctype="multipart/form-data" class="mt-4">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="{{ company_form.Name.id_for_label }}">Name:</label>
+            {{ company_form.Name }}
+            <small class="form-text text-muted">Enter the full name of the company.</small>
+        </div>
+        <div class="form-group">
+            <label for="{{ company_form.About.id_for_label }}">About:</label>
+            {{ company_form.About }}
+            <small class="form-text text-muted">Provide a brief description of the company. (Optional)</small>
+        </div>
+        <div class="form-group">
+            <label for="{{ company_form.Industry.id_for_label }}">Industry:</label>
+            {{ company_form.Industry }}
+            <small class="form-text text-muted">Industry the company operates in. (Optional)</small>
+        </div>
+        <div class="form-group">
+            <label for="{{ company_form.StockTicker.id_for_label }}">Stock Ticker:</label>
+            {{ company_form.StockTicker }}
+            <small class="form-text text-muted">The stock ticker symbol for the company. (e.g., KO for Coca Cola, TSLA for Tesla)(Optional)</small>
+        </div>
+        <div class="form-group">
+            <label for="{{ company_form.Founded.id_for_label }}">Founded:</label>
+            {{ company_form.Founded }}
+            <small class="form-text text-muted">The date the company was founded. (Optional)</small>
+        </div>
+        <div class="form-group">
+            <label for="{{ company_form.Headquarters.id_for_label }}">Headquarters:</label>
+            {{ company_form.Headquarters }}
+            <small class="form-text text-muted">The location of the company's headquarters. (Optional)</small>
+        </div>
+        <div class="form-group">
+            <label for="{{ company_form.Website.id_for_label }}">Website:</label>
+            {{ company_form.Website }}
+            <small class="form-text text-muted">The company's website URL. (Optional)</small>
+        </div>
+        <h3>Email Domain</h3>
+        <div class="form-group">
+            <label for="{{ email_domain_form.domain.id_for_label }}">Domain:</label>
+            {{ email_domain_form.domain }}
+<small class="form-text text-muted">Enter the domain for company email addresses (e.g., "coke.com" for "contact@coke.com").</small>
+        </div>
+        <button type="submit" class="btn btn-primary">Create Company</button>
+    </form>
+</div>
+{% endblock %}

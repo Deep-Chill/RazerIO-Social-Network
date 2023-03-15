@@ -13,19 +13,35 @@ from django.http import JsonResponse
 from django.views import View
 from Company.models import Company
 from django.db.models import Q
-
+from django.utils import timezone
+from datetime import timedelta
 
 def jobs(request):
     salary_min = request.GET.get('salary_min', 0)
     salary_max = request.GET.get('salary_max', 9999999999)
+    date_posted = request.GET.get('date_posted', None)
 
     job_list = JobListing.objects.filter(Job_Status='Open')
 
     if salary_min:
-        job_list = job_list.filter(salary_min__gte=salary_min)
+        try:
+            salary_min = float(salary_min)  # Convert salary_min to a float
+            job_list = job_list.filter(salary_min__gte=salary_min)
+        except ValueError:
+            pass  # Ignore invalid salary_min input
 
     if str(salary_max) != '9999999999':  # Convert salary_max to a string when comparing
-        job_list = job_list.filter(salary_max__lte=salary_max)
+        try:
+            salary_max = float(salary_max)  # Convert salary_max to a float
+            job_list = job_list.filter(salary_max__lte=salary_max)
+        except ValueError:
+            pass  # Ignore invalid salary_max input
+
+    if date_posted:
+        days = int(date_posted)
+        date_threshold = timezone.now() - timedelta(days=days)
+        job_list = job_list.filter(Date_Posted__gte=date_threshold)
+
 
     job_list = job_list.order_by('Date_Posted').annotate(total_applicants=Count('jobapplication'))
 

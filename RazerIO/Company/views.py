@@ -6,7 +6,7 @@ from django.http import Http404
 from operator import itemgetter
 from django.core.cache import cache
 from django.contrib import messages
-from .forms import EditCompanyAboutForm
+from .forms import EditCompanyAboutForm, CreateCompanyForm, EmailDomainForm
 # Create your views here.
 
 # def CompanyPage(request, id):
@@ -92,3 +92,22 @@ def edit_company_about(request, company_id):
         form = EditCompanyAboutForm(instance=company)
 
     return render(request, 'edit_company_about.html', {'form': form, 'company': company})
+
+def create_company(request):
+    if request.method == 'POST':
+        company_form = CreateCompanyForm(request.POST, request.FILES)
+        email_domain_form = EmailDomainForm(request.POST)
+
+        if company_form.is_valid() and email_domain_form.is_valid():
+            company = company_form.save()
+            email_domain = email_domain_form.save(commit=False)
+            email_domain.company = company
+            email_domain.save()
+
+            return redirect('company_detail', company_id=company.pk)
+
+    else:
+        company_form = CreateCompanyForm()
+        email_domain_form = EmailDomainForm()
+    context = {'company_form': company_form, 'email_domain_form': email_domain_form}
+    return render(request, 'create_company.html', context=context)

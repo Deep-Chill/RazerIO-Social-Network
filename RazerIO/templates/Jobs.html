@@ -123,12 +123,23 @@ Job Market
                 Max: <span id="salary-max-display">$20,000</span>
             </p>
         </div>
-        <div class="form-group">
-          <label for="{{ job_filter.form.Date_Posted.id_for_label }}" class="font-weight-bold mb-2">Date Posted</label>
-          {{ job_filter.form.Date_Posted|add_class:"form-control rounded mb-3" }}
-        </div>
+<div class="form-group">
+    <label class="font-weight-bold mb-2">Date Posted</label>
+    <div class="btn-group btn-group-toggle d-flex justify-content-center" data-toggle="buttons">
+        <label class="btn btn-outline-primary">
+            <input type="radio" name="date_posted" value="1"> Last Day
+        </label>
+        <label class="btn btn-outline-primary">
+            <input type="radio" name="date_posted" value="7"> Last Week
+        </label>
+        <label class="btn btn-outline-primary">
+            <input type="radio" name="date_posted" value="30"> Last Month
+        </label>
+    </div>
+</div>
         <div class="form-group">
           <button type="submit" class="btn btn-primary btn-block rounded">Search</button>
+          <a href="{% url 'jobs' %}" class="btn btn-outline-secondary btn-block rounded">Reset Filters</a>
         </div>
             </form>
         </div>
@@ -169,7 +180,7 @@ Job Market
                         <td>${{ job.salary_min|floatformat:0|intcomma }} - ${{ job.salary_max|floatformat:0|intcomma }}/year</td>
                         <td>{{ job.Category }}</td>
                         <td>{{ job.Location }}</td>
-                        <td>{{ job.Date_Posted|date:"F j, Y" }}</td>
+                        <td>{{ job.Date_Posted|date:"F j, Y"|default:"Unknown" }}</td>
                         {% if job.NumberRecruiting %}
                         <td>{{ job.NumberRecruiting }}</td>
                         {% else %}
