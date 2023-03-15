@@ -5,33 +5,96 @@
 {% block title %}{{user1.username}}{% endblock %}
 
 {% block content %}
+
 <div class="container mt-5" style="max-width: 75%;">
   {% if user.is_authenticated %}
-  {% if user1.socialaccount_set.all.0.get_avatar_url %}
-  <img src="{{ user1.socialaccount_set.all.0.get_avatar_url }}" alt="Profile Image" class="rounded float-left" width="100">
-  {% else %}
-  {% if user1.ProfilePic %}
-      <img src="{{ user1.ProfilePic.url }}" alt="Profile Image" class="rounded float-left" width="100">
-    {% else %}
-      <img src="{% static 'img/pfp.jpg' %}" alt="Profile Image" class="rounded float-left" width="100">
-    {% endif %}
-  {% endif %}
-    <h1 class="d-flex">{{ user1.first_name }} {{ user1.last_name }}</h1>
-  <h5>@{{ user1.username }}</h5>     {% if user1.badges.Verified_Company %}
-    <span class="badge badge-success" data-toggle="tooltip" data-placement="bottom" title="This user has verified their company via email"><i class="bi bi-person-check-fill"></i> Company Verified</span>
-{% endif %}
+<div class="outer-profile-header">
+      <div class="profile-header d-flex align-items-center justify-content-between">
+        <div class="d-flex align-items-center">
+            {% if user1.socialaccount_set.all.0.get_avatar_url %}
+        <img src="{{ user1.socialaccount_set.all.0.get_avatar_url }}" alt="Profile Image" class="profile-image rounded-circle mr-3" width="100">
+            {% else %}
+        {% if user1.ProfilePic %}
+          <img src="{{ user1.ProfilePic.url }}" alt="Profile Image" class="profile-image rounded-circle mr-3" width="100">
+        {% else %}
+          <img src="{% static 'img/pfp.jpg' %}" alt="Profile Image" class="profile-image rounded-circle mr-3" width="100">
+        {% endif %}
+      {% endif %}
+      <div>
+        <h2>{{ user1.first_name }} {{ user1.last_name }}</h2>
+        <h6>@{{ user1.username }}</h6>
+        {% if user1.badges.Verified_Company %}
+          <span class="badge badge-success" data-toggle="tooltip" data-placement="bottom" title="This user has verified their company via email"><i class="bi bi-person-check-fill"></i> Company Verified</span>
+        {% endif %}
+      </div>
+    </div>
+      <div class="button-container d-flex flex-column">
+        {% if user1 != request.user %}
+          {% if is_following %}
+            <form method="post" action="{% url 'unfollow_user' user1.id %}" class="mb-3">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-outline-danger mb-2">Unfollow</button>
+            </form>
+            {% if mutual_follow %}
+              <a href="{% url 'new_conversation_id' user1.id %}" class="btn btn-outline-success">Send message</a>
+            {% endif %}
+          {% else %}
+            <form method="post" action="{% url 'follow_user' user1.id %}" class="mb-3">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-outline-primary">Follow</button>
+            </form>
+          {% endif %}
+        {% else %}
+          <div class="dropdown mb-5">
+            <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Account Settings
+            </button>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+              <a class="dropdown-item" href="{% url 'edit-profile' %}">Edit Profile</a>
+              <a class="dropdown-item" href="{% url 'account_email' %}">Edit Email</a>
+              <a class="dropdown-item" href="{% url 'account_change_password1' %}">Password</a>
+              <a class="dropdown-item" href="{% url 'socialaccount_connections' %}">Connect Social Accounts</a>
+            </div>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
   <hr>
+  {% endif %}
+
+<ul class="nav nav-pills mb-3" role="tablist">
+  <li class="nav-item">
+    <a class="nav-link active" data-toggle="pill" href="#info" role="tab">Info</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" data-toggle="pill" href="#education" role="tab">Education</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" data-toggle="pill" href="#experiences" role="tab">Experience</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" data-toggle="pill" href="#employment" role="tab">Employment History</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" data-toggle="pill" href="#endorsements" role="tab">Endorsements</a>
+  </li>
+</ul>
+
+<!-- Tab Content -->
+<div class="tab-content">
+  <div class="tab-pane fade show active" id="info" role="tabpanel">
     <div class="row">
       <div class="col-md-6">
-        <p class="h4">Company:</p>
+        <h4>Company:</h4>
         {% if user1.Company %}
           <p><a href="{% url 'company' user1.Company.id %}" class="text-primary">{{ user1.Company.Name }}</a></p>
         {% else %}
           <p>This user does not have a Company!</p>
         {% endif %}
-        <p class="h4">Salary:</p>
+        <h4>Salary:</h4>
         <p>${{ user1.Salary }}/year.</p>
-        <p class="h4">Newspaper:</p>
+        <h4>Newspaper:</h4>
         {% if user1.Newspaper %}
           <p><a href="{% url 'newspaper' id %}" class="text-primary">{{ user1.Newspaper }}</a></p>
         {% else %}
@@ -41,84 +104,28 @@
             <p>{{ user1.username }} does not have a newspaper!</p>
           {% endif %}
         {% endif %}
-
       </div>
       <div class="col-md-6">
-        <p class="h4">Followers:</p>
+        <h4>Followers:</h4>
         {% for i in followers %}
           <p><a href="{% url 'profile' i.User.id %}" class="text-primary">{{ i }}</a></p>
         {% endfor %}
-        <p class="h4">Following:</p>
+        <h4>Following:</h4>
         {% for i in following %}
           <p><a href="{% url 'profile' i.Following_User_ID.id %}" class="text-primary">{{ i.Following_User_ID }}</a></p>
         {% endfor %}
-        {% if user1 != request.user %}
-          {% if is_following %}
-            <form method="post" action="{% url 'unfollow_user' user1.id %}">
-              {% csrf_token %}
-              <button type="submit" class="btn btn-outline-danger mt-3">Unfollow</button>
-            </form>
-          {% else %}
-            <form method="post" action="{% url 'follow_user' user1.id %}">
-              {% csrf_token %}
-              <button type="submit" class="btn btn-outline-primary mt-3">Follow</button>
-            </form>
-          {% endif %}
-          <div class="mt-4">
-            <a href="{% url 'new_conversation_id' user_id=user1.id %}" class="btn btn-primary">Send a message</a>
-          </div>
-        {% else %}
-          <div class="mb-5">
-            <div class="dropdown mb-5">
-  <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-    Account Settings
-  </button>
-  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-    <a class="dropdown-item" href="{% url 'edit-profile' %}">Edit Profile</a>
-    <a class="dropdown-item" href="{% url 'account_email' %}">Edit Email</a>
-    <a class="dropdown-item" href="{% url 'account_change_password1' %}">Password</a>
-    <a class="dropdown-item" href="{% url 'socialaccount_connections' %}">Connect Social Accounts</a>
+      </div>
+    </div>
   </div>
-</div>
-          </div>
-        {% endif %}
-      </div>
-    </div>
-  {% else %}
-    <p>You are not logged in</p>
-    <div class="mt-3">
-      <a href="{% url 'login' %}" class="btn btn-primary">Log In</a>
-      <a href="{% url 'signup' %}" class="btn btn-outline-primary">Sign Up</a>
-    </div>
-  {% endif %}
-  <hr>
-</div>
-
-<div class="container">
-  <ul class="nav nav-pills mb-3" role="tablist">
-    <li class="nav-item">
-      <a class="nav-link active" data-toggle="tab" href="#education" role="tab">Education</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" data-toggle="tab" href="#projects" role="tab">Projects</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" data-toggle="tab" href="#experience" role="tab">Experience</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" data-toggle="tab" href="#endorsements" role="tab">Endorsements</a>
-    </li>
-  </ul>
-
-  <div class="tab-content">
-    <div class="tab-pane fade show active" id="education" role="tabpanel">
-        <div class="card-body">
-            {% if not education %}
-                          <div class="col-md-4">
-        <p>No education yet.</p>
-      </div>
-{% else %}
-          {% for i in education %}
+  <!-- Remaining tab content (Education, Projects, Experience, Endorsements) -->
+    <div class="tab-pane fade" id="education" role="tabpanel">
+    <div class="card-body">
+      {% if not education %}
+        <div class="col-md-4">
+          <p>No education yet.</p>
+        </div>
+      {% else %}
+        {% for i in education %}
           <div class="card mb-3">
             <div class="card-body">
               <h5 class="card-title">{{ i.degree_type }}, {{ i.major }}</h5>
@@ -126,93 +133,98 @@
               <p class="card-text">{{ i.start_date|date:"Y" }} - {{ i.end_date|date:"Y" }}</p>
             </div>
           </div>
-          {% endfor %}
-            {% endif %}
-        </div>
-    </div>
-
-    <div class="tab-pane fade" id="projects" role="tabpanel">
-          <table class="table table-hover table-hover table-sm">
-            <thead class="thead-light">
-              <tr>
-                <th>Name</th>
-                <th>Created</th>
-                <th>Tech stack</th>
-                <th>Status</th>
-                <th>Partners</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for i in projects %}
-              <tr>
-                <td><a href="{% url 'project' id=i.id %}">{{ i.title }}</a></td>
-                <td>{{ i.created_at|date:"F j, Y" }}</td>
-                <td>{% for tech in i.tech_stack.all %} {{ tech }} {% endfor %}</td>
-                <td>
-                  {% if i.status == "In Progress" %}
-                  <span class="badge badge-info">{{ i.status }}</span>
-                  {% elif i.status == "Completed" %}
-                  <span class="badge badge-success">{{ i.status }}</span>
-                  {% elif i.status == "On Hold" %}
-                  <span class="badge badge-danger">{{ i.status }}</span>
-                  {% endif %}
-                </td>
-                <td>{% for collaborator in i.collaborators.all %} {{ collaborator }} {% endfor %}</td>
-              </tr>
-              {% endfor %}
-            </tbody>
-          </table>
-        </div>
-
-
-<div class="tab-pane fade" id="experience" role="tabpanel">
-    <div class="card-body">
-        {% if not experience %}
-              <div class="col-md-4">
-        <p>No experience yet.</p>
-      </div>
-
-        {% else %}
-      {% for i in experience %}
-      <div class="card mb-3">
-        <div class="card-body">
-          <h5 class="card-title">{{ i.position }}</h5>
-          <h6 class="card-subtitle mb-2 text-muted">{{ i.company }}</h6>
-          <p class="card-text">{{ i.start_date|date:"Y" }} - {{ i.end_date|date:"Y" }}</p>
-        </div>
-      </div>
-      {% endfor %}
-        {% endif %}
+        {% endfor %}
+      {% endif %}
     </div>
   </div>
-
-
-<div class="tab-pane fade" id="endorsements" role="tabpanel">
-  <div class="card-body">
+<div class="tab-pane fade" id="experiences" role="tabpanel">
+    <table class="table table-hover table-hover table-sm">
+        <thead class="thead-light">
+            <tr>
+                <th>Title</th>
+                <th>Type</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+                <th>Status</th>
+                <th>Skills Used</th>
+                <th>Tools Used</th>
+                <th>Location</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for experience in experiences %}
+            <tr>
+                <td><a href="{% if experience.url %}{{ experience.url }}{% else %}#{% endif %}">{{ experience.title }}</a></td>
+                <td>{{ experience.item_type }}</td>
+                <td>{{ experience.start_date|date:"F j, Y" }}</td>
+                <td>
+                    {% if experience.end_date %}
+                    {{ experience.end_date|date:"F j, Y" }}
+                    {% else %}
+                    Present
+                    {% endif %}
+                </td>
+                <td>
+                    {% if experience.status == "In Progress" %}
+                    <span class="badge badge-info">{{ experience.status }}</span>
+                    {% elif experience.status == "Completed" %}
+                    <span class="badge badge-success">{{ experience.status }}</span>
+                    {% elif experience.status == "On Hold" %}
+                    <span class="badge badge-danger">{{ experience.status }}</span>
+                    {% endif %}
+                </td>
+                <td>{% for skill in experience.skills_used.all %} {{ skill }} {% endfor %}</td>
+                <td>{% for tool in experience.tools_used.all %} {{ tool }} {% endfor %}</td>
+                <td>{{ experience.location }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+  <div class="tab-pane fade" id="employment" role="tabpanel">
+    <div class="card-body">
+      {% if not experience %}
+        <div class="col-md-4">
+          <p>No experience yet.</p>
+        </div>
+      {% else %}
+        {% for i in experience %}
+          <div class="card mb-3">
+            <div class="card-body">
+              <h5 class="card-title">{{ i.position }}</h5>
+              <h6 class="card-subtitle mb-2 text-muted">{{ i.company }}</h6>
+              <p class="card-text">{{ i.start_date|date:"Y" }} - {{ i.end_date|date:"Y" }}</p>
+            </div>
+          </div>
+        {% endfor %}
+      {% endif %}
+    </div>
+  </div>
+  <div class="tab-pane fade" id="endorsements" role="tabpanel">
+    <div class="card-body">
     {% if endorsements %}
       {% for endorsement in endorsements %}
-    <div class="card mb-3">
-      <div class="card-body">
-              <h5 class="card-title">{{ endorsement.author.username }} endorsed {{ endorsement.receiver.username }}</h5>
-              <p class="card-text">{{ endorsement.text }}</p>
-              <p class="card-text"><small class="text-muted">{{ endorsement.timestamp|date:"F j, Y, g:i a" }}</small></p>
-      </div>
-    </div>
-        {% endfor %}
+        <div class="card mb-3">
+          <div class="card-body">
+            <h5 class="card-title">{{ endorsement.author.username }} endorsed {{ endorsement.receiver.username }}</h5>
+            <p class="card-text">{{ endorsement.text }}</p>
+            <p class="card-text"><small class="text-muted">{{ endorsement.timestamp|date:"F j, Y, g:i a" }}</small></p>
+          </div>
+        </div>
+      {% endfor %}
     {% else %}
       <div class="col-md-4">
         <p>No endorsements yet.</p>
       </div>
-      {% endif %}
+    {% endif %}
+  </div>
   </div>
 </div>
 </div>
-</div>
-
 <script>
   $(function () {
-  $('[data-toggle="tooltip"]').tooltip()
-})
+    $('[data-toggle="tooltip"]').tooltip()
+  })
 </script>
+</div>
 {% endblock %}
-

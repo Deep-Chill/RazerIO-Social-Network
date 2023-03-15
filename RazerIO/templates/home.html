@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% load socialaccount %}
 {% load account %}
+{% load post_filters %}
 {% load crispy_forms_tags %}
 {% block title %}Home{% endblock %}
 
@@ -41,7 +42,11 @@ textarea.form-control {
     <div class="col-sm-2 col-md-2 col-lg-2">
       <div class="card p-3 mb-3">
         <div class="text-center">
+          {% if user.ProfilePic %}
           <img src="{{ user.ProfilePic.url }}" class="rounded-circle" width="80" height="80">
+            {% else %}
+          <img src="https://cdn1.iconfinder.com/data/icons/user-pictures/100/unknown-512.png" class="rounded-circle" width="80" height="80">
+          {% endif %}
           <h5 class="mt-3 mb-0">{{ user.username }}</h5>
         </div>
         <hr>
@@ -98,11 +103,43 @@ textarea.form-control {
           <div class="card-body">
             <div id="post-list">
               <h2>Social Feed:</h2>
-              {% for i in FriendsPosts %}
-              <a href="{% url 'profile' i.Author.id %}">{{ i.Author }}</a> wrote: {{ i.Text }}<br>
-              {% empty %}
-              No posts yet!
-              {% endfor %}
+{% for post in FriendsPosts %}
+  <div class="post" style="background-color: #f8f9fa; padding: 20px; border-radius: 5px; margin-bottom: 20px;">
+    <div>
+      <a href="{% url 'profile' post.Author.id %}">{{ post.Author }}</a> wrote: {{ post.Text }}
+      <small class="text-muted"> ({{ post.Date_Created|timesince }} ago)</small>
+    </div>
+    <div>
+      <span class="upvote-count badge badge-pill badge-primary" data-post-id="{{ post.id }}">{{ post.upvote_set.count }}</span>
+      {% if not post|has_upvoted:request.user %}
+        <button class="btn btn-link upvote-btn" data-post-id="{{ post.id }}">Upvote</button>
+      {% endif %}
+      {% with post_comments=post.comment_set.all %}
+        <button class="btn btn-link toggle-comments" data-post-id="{{ post.id }}">
+          <span>{{ post_comments|length }} comments</span>
+        </button>
+      {% endwith %}
+    </div>
+    <div class="comments" style="display: none;">
+      <form class="comment-form" method="POST" style="display: flex; align-items: flex-start;">
+        {% csrf_token %}
+        <input type="hidden" name="post_id" value="{{ post.id }}">
+        <input type="text" name="comment_text" placeholder="Write a comment..." style="flex-grow: 1; margin-right: 10px;">
+        <button type="submit" class="btn btn-primary">Post Comment</button>
+      </form>
+      <div class="comment-list">
+        {% for comment in post.comment_set.all %}
+          <p>{{ comment.Author }}: {{ comment.Text }} <small class="text-muted">({{ comment.Date_Commented|timesince }} ago)</small></p>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+{% empty %}
+  <div class="text-center text-muted">
+    No posts yet!
+  </div>
+{% endfor %}
+
             </div>
           </div>
         </div>
@@ -113,10 +150,41 @@ textarea.form-control {
             <div id="national-posts">
               <h2>National Posts:</h2>
               {% for post in NationalPosts %}
-              <a href="{% url 'profile' post.Author.id %}">{{ post.Author }}</a> wrote: {{ post.Text }}<br>
-              {% empty %}
-              No national posts yet!
-              {% endfor %}
+  <div class="post" style="background-color: #f8f9fa; padding: 20px; border-radius: 5px; margin-bottom: 20px;">
+    <div>
+      <a href="{% url 'profile' post.Author.id %}">{{ post.Author }}</a> wrote: {{ post.Text }}
+      <small class="text-muted"> ({{ post.Date_Created|timesince }} ago)</small>
+    </div>
+    <div>
+      <span class="upvote-count badge badge-pill badge-primary" data-post-id="{{ post.id }}">{{ post.upvote_set.count }}</span>
+      {% if not post|has_upvoted:request.user %}
+        <button class="btn btn-link upvote-btn" data-post-id="{{ post.id }}">Upvote</button>
+      {% endif %}
+      {% with post_comments=post.comment_set.all %}
+        <button class="btn btn-link toggle-comments" data-post-id="{{ post.id }}">
+          <span>{{ post_comments|length }} comments</span>
+        </button>
+      {% endwith %}
+    </div>
+    <div class="comments" style="display: none;">
+      <form class="comment-form" method="POST" style="display: flex; align-items: flex-start;">
+        {% csrf_token %}
+        <input type="hidden" name="post_id" value="{{ post.id }}">
+        <input type="text" name="comment_text" placeholder="Write a comment..." style="flex-grow: 1; margin-right: 10px;">
+        <button type="submit" class="btn btn-primary">Post Comment</button>
+      </form>
+      <div class="comment-list">
+        {% for comment in post.comment_set.all %}
+          <p>{{ comment.Author }}: {{ comment.Text }} <small class="text-muted">({{ comment.Date_Commented|timesince }} ago)</small></p>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+{% empty %}
+  <div class="text-center text-muted">
+    No posts yet!
+  </div>
+{% endfor %}
             </div>
           </div>
         </div>
@@ -127,10 +195,41 @@ textarea.form-control {
             <div id="org-posts">
               <h2>Organization Posts:</h2>
               {% for post in CompanyPosts %}
-              <a href="{% url 'profile' post.Author.id %}">{{ post.Author }}</a> wrote: {{ post.Text }}<br>
-              {% empty %}
-              No organization posts yet!
-              {% endfor %}
+  <div class="post" style="background-color: #f8f9fa; padding: 20px; border-radius: 5px; margin-bottom: 20px;">
+    <div>
+      <a href="{% url 'profile' post.Author.id %}">{{ post.Author }}</a> wrote: {{ post.Text }}
+      <small class="text-muted"> ({{ post.Date_Created|timesince }} ago)</small>
+    </div>
+    <div>
+      <span class="upvote-count badge badge-pill badge-primary" data-post-id="{{ post.id }}">{{ post.upvote_set.count }}</span>
+      {% if not post|has_upvoted:request.user %}
+        <button class="btn btn-link upvote-btn" data-post-id="{{ post.id }}">Upvote</button>
+      {% endif %}
+      {% with post_comments=post.comment_set.all %}
+        <button class="btn btn-link toggle-comments" data-post-id="{{ post.id }}">
+          <span>{{ post_comments|length }} comments</span>
+        </button>
+      {% endwith %}
+    </div>
+    <div class="comments" style="display: none;">
+      <form class="comment-form" method="POST" style="display: flex; align-items: flex-start;">
+        {% csrf_token %}
+        <input type="hidden" name="post_id" value="{{ post.id }}">
+        <input type="text" name="comment_text" placeholder="Write a comment..." style="flex-grow: 1; margin-right: 10px;">
+        <button type="submit" class="btn btn-primary">Post Comment</button>
+      </form>
+      <div class="comment-list">
+        {% for comment in post.comment_set.all %}
+          <p>{{ comment.Author }}: {{ comment.Text }} <small class="text-muted">({{ comment.Date_Commented|timesince }} ago)</small></p>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+{% empty %}
+  <div class="text-center text-muted">
+    No posts yet!
+  </div>
+{% endfor %}
             </div>
           </div>
         </div>
@@ -160,22 +259,92 @@ textarea.form-control {
     });
   }
 
-  $(function() {
-    // Bind the submitForm() function to the form's submit event
-    $('#new-post-form').on('submit', function(event) {
-      event.preventDefault();
-      submitForm();
+  function createComment(form) {
+    const post_id = form.find("input[name='post_id']").val();
+    const comment_text = form.find("input[name='comment_text']").val();
+    $.ajax({
+      type: "POST",
+      url: "{% url 'create_comment' %}",
+      data: {
+        csrfmiddlewaretoken: form.find("input[name='csrfmiddlewaretoken']").val(),
+        post_id: post_id,
+        comment_text: comment_text
+      },
+      success: function(response) {
+        form.find("input[name='comment_text']").val(""); // Clear the comment text field
+        form.closest('.post').find(".comments").prepend(response.html);
+      },
+      error: function(response) {
+        console.log("Error:", response);
+      }
     });
+  }
 
-    // Connect to a WebSocket server for real-time updates
-    const socket = new WebSocket('ws://' + window.location.host + '/ws/posts/');
-    socket.onmessage = function(event) {
-      const data = JSON.parse(event.data);
-      // Add the new post to the top of the post list
-      $("#post-list").prepend(data.html);
-    };
+  function upvotePost(btn) {
+    const post_id = btn.data("post-id");
+    $.ajax({
+      type: "POST",
+      url: "{% url 'upvote_post' %}",
+      data: {
+        csrfmiddlewaretoken: $('input[name="csrfmiddlewaretoken"]').val(),
+        post_id: post_id
+      },
+      success: function(response) {
+        btn.siblings(".upvote-count").text(response.upvote_count + " Upvotes");
+      },
+      error: function(response) {
+        console.log("Error:", response);
+      }
+    });
+  }
+
+  $(function() {
+  // Bind the submitForm() function to the form's submit event
+  $('#new-post-form').on('submit', function(event) {
+    event.preventDefault();
+    submitForm();
   });
+
+  // Bind the createComment() function to the comment form's submit event using event delegation
+  $(document).on("submit", ".comment-form", function(event) {
+    event.preventDefault();
+    createComment($(this));
+  });
+
+  // Bind the upvotePost() function to the upvote button's click event using event delegation
+  $(document).on("click", ".upvote-btn", function() {
+    upvotePost($(this));
+  });
+  $('.toggle-comments').on('click', function() {
+  const postId = $(this).data('post-id');
+  const commentsContainer = $(this).closest('.post').find('.comments');
+  commentsContainer.slideToggle();
+});
+  $('.upvote-btn').on('click', function() {
+  const postId = $(this).data('post-id');
+  const btn = $(this);
+  $.ajax({
+    type: 'POST',
+    url: '/upvote/', // You'll need to create a view and URL for this
+    data: {
+      'post_id': postId,
+      'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val(),
+    },
+    success: function(response) {
+      // Update the upvote count
+      btn.prev('.upvote-count').text(response.upvote_count);
+      // Hide the upvote button
+      btn.hide();
+    },
+    error: function(response) {
+      console.log('Error:', response);
+    },
+  });
+});
+
+});
 </script>
+
 {% else %}
 
 <p>You are not logged in</p>

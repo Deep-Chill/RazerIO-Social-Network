@@ -10,5 +10,6 @@ urlpatterns = [
     path('jobs/myapplications/', MyJobApplications, name='job_applications'),
     path('jobs/<int:job_id>/applicants/', job_applicants, name='job_applicants'),
     path('job/myapplications/delete/<int:application_id>/', delete_application, name='delete_job_application'),
+
     # path('filtered/jobs', filtered_jobs, name='filtered_jobs')
 ]

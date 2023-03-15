@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Project
+from .models import Experience
 from .forms import ProjectForm, ProjectApplicationForm
 from Users.models import Skill
 from django.contrib.auth.decorators import login_required
@@ -7,7 +7,7 @@ from django.contrib import messages
 
 
 def projects(request):
-    projects = Project.objects.all()
+    projects = Experience.objects.all()
     return render(request, 'projects.html', {'projects': projects})
 
 
@@ -26,14 +26,14 @@ def new_project(request):
 
 
 def project(request, id):
-    project = Project.objects.get(id=id)
+    project = Experience.objects.get(id=id)
     context = {'project':project}
     return render(request, 'project.html', context=context)
 
 
 @login_required
 def apply_to_project(request, id):
-    project = get_object_or_404(Project, id=id)
+    project = get_object_or_404(Experience, id=id)
     if request.method == 'POST':
         form = ProjectApplicationForm(request.POST)
         if form.is_valid():

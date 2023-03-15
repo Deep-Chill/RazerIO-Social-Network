@@ -41,7 +41,8 @@ urlpatterns = [
     path('login/', LoginView.as_view(), name='account_login'),
     path('signup/', SignupView.as_view(), name='account_signup'),
     path('__debug__/', include('debug_toolbar.urls')),
-    path('news', articles_page, name='articles_page')
+    path('news', articles_page, name='articles_page'),
+
 ]
 
 if settings.DEBUG:

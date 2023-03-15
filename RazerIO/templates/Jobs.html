@@ -7,16 +7,76 @@ Job Market
 {% load humanize %}
 {% load widget_tweaks %}
 {% block head %}
+
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/@ttskch/select2-bootstrap4-theme@1.5.2/dist/select2-bootstrap4.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+<script>
+    $(document).on('select2:open', () => {
+        let allFound = document.querySelectorAll('.select2-container--open .select2-search__field');
+        allFound[allFound.length - 1].focus();
+    });
+</script>
+
+
+
 <style>
-    .table {
-        width: 1500px;
+.select2-container--bootstrap4 .select2-results__option--highlighted[aria-selected] {
+  background-color: #007bff;
+  color: #fff;
+}
+
+    .search-bar {
+        max-width: 100%;
+        margin-top: -45px;
     }
-    .table-responsive {
+    .table-container {
+        max-width: 100%;
         overflow-x: auto;
-        min-width: 100%;
-        display: flex;
-        justify-content: center;
     }
+    .filter-sidebar {
+        background-color: #f8f9fa;
+        border-right: 1px solid #dee2e6;
+        padding: 15px;
+        padding-left: 30px;
+    }
+    .main-content {
+        padding: 0 30px;
+    }
+        .responsive-table {
+    }
+.ui-slider {
+    position: relative;
+    text-align: left;
+    background: #e9ecef;
+    border-radius: 4px;
+    height: 4px;
+}
+
+.ui-slider .ui-slider-handle {
+    position: absolute;
+    z-index: 2;
+    width: 20px;
+    height: 20px;
+    background: #007bff;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    top: -8px;
+    outline: none;
+}
+
+.ui-slider .ui-slider-range {
+    position: absolute;
+    z-index: 1;
+    font-size: .7em;
+    display: block;
+    border: 0;
+    background-position: 0 0;
+    background-color: #007bff;
+}
+
 </style>
 {% endblock %}
 {% block content %}
@@ -32,34 +92,36 @@ Job Market
 
 <h1 class="mt-4 mb-5 text-center">Job Market</h1>
 </div>
-<div class="d-flex justify-content-center">
-    <input type="text" id="myInput" class="form-control" placeholder="Search Jobs" style="width: 1500px;">
-</div>
-<div class="d-flex justify-content-center">
-  <div class="dropdown">
-    <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-      Filter
-    </button>
-    <a href="{% url 'jobs' %}" class="btn btn-link text-primary ml-2">Reset</a>
-    <div class="dropdown-menu p-4 rounded" aria-labelledby="dropdownMenuButton" style="position: absolute; z-index: 1; width: 300px;">
-        <h5>Customize your job search</h5>
-        <hr>
-      <form method="get">
+
+<div class="container-fluid mt-5">
+  <div class="row">
+    <div class="col-md-3 col-lg-2 filter-sidebar">
+      <h5>Customize your job search</h5>
+      <hr>
+      <form method="get" id="job-filter-form">
         <div class="form-group">
+            <input type="hidden" name="salary_min" id="salary-min" value="{{ request.GET.salary_min }}">
           <label for="{{ job_filter.form.Company.id_for_label }}" class="font-weight-bold mb-2">Company</label>
           {{ job_filter.form.Company|add_class:"form-control rounded mb-3" }}
         </div>
         <div class="form-group">
+            <input type="hidden" name="salary_max" id="salary-max" value="{{ request.GET.salary_max }}">
           <label for="{{ job_filter.form.Experience_Level.id_for_label }}" class="font-weight-bold mb-2">Experience Level</label>
           {{ job_filter.form.Experience_Level|add_class:"form-control rounded mb-3" }}
         </div>
         <div class="form-group">
-          <label for="{{ job_filter.form.salary_min.id_for_label }}" class="font-weight-bold mb-2">Salary Min</label>
-          {{ job_filter.form.salary_min|add_class:"form-control rounded mb-3" }}
+            <label class="font-weight-bold mb-2">Salary Range</label>
+            <div id="salary-min-slider"></div>
+            <p class="text-center mt-2">
+                Min: <span id="salary-min-display">$20,000</span>
+            </p>
         </div>
         <div class="form-group">
-          <label for="{{ job_filter.form.salary_max.id_for_label }}" class="font-weight-bold mb-2">Salary Max</label>
-          {{ job_filter.form.salary_max|add_class:"form-control rounded mb-3" }}
+            <label class="font-weight-bold mb-2">Maximum Salary</label>
+            <div id="salary-max-slider"></div>
+            <p class="text-center mt-2">
+                Max: <span id="salary-max-display">$20,000</span>
+            </p>
         </div>
         <div class="form-group">
           <label for="{{ job_filter.form.Date_Posted.id_for_label }}" class="font-weight-bold mb-2">Date Posted</label>
@@ -68,14 +130,15 @@ Job Market
         <div class="form-group">
           <button type="submit" class="btn btn-primary btn-block rounded">Search</button>
         </div>
-      </form>
-    </div>
-  </div>
-</div>
-
-    <div class="d-flex">
-    <div class="table-responsive">
-        <table class="table table-striped" style="position: relative; z-index: 0;" id="myTable">
+            </form>
+        </div>
+        <div class="col-md-9 col-lg-10 main-content" style="margin-left: 0; padding-left: 15px;">
+            <div class="d-flex justify-content-center mb-3">
+                <input type="text" id="myInput" class="form-control search-bar" placeholder="Search Jobs">
+            </div>
+            <div class="table-container">
+                <div class="table-responsive">
+                    <table class="table table-striped" id="myTable">
             <thead>
                 <tr>
                     <th>Company</th>
@@ -134,7 +197,10 @@ Job Market
                     </tr>
                 {% endfor %}
             </tbody>
-        </table>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -165,15 +231,105 @@ Job Market
   </nav>
 
 <script>
+const sliderValues = [
+        20000, 25000, 30000, 35000, 40000, 45000, 50000, 55000, 60000, 65000, 70000, 75000, 80000, 85000, 90000, 95000, 100000,
+        110000, 120000, 130000, 140000, 150000, 160000, 170000, 180000, 190000, 200000, 210000, 220000, 230000, 240000, 250000,
+        275000, 300000, 325000, 350000, 375000, 400000, 425000, 450000, 475000, 500000, 525000, 550000, 575000, 600000, 625000,
+        650000, 675000, 700000, 725000, 750000, 775000, 800000, 825000, 850000, 875000, 900000, 925000, 950000, 975000, 1000000
+    ];
+
+function formatSalary(value) {
+    return '$' + sliderValues[value].toLocaleString();
+}
+
+function getParameterByName(name, url) {
+    if (!url) url = window.location.href;
+    name = name.replace(/[\[\]]/g, '\\$&');
+    var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+        results = regex.exec(url);
+    if (!results) return null;
+    if (!results[2]) return '';
+    return decodeURIComponent(results[2].replace(/\+/g, ' '));
+}
+
 $(document).ready(function(){
+
+
   $("#myInput").on("keyup", function() {
     var value = $(this).val().toLowerCase();
     $("#myTable tr").filter(function() {
       $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
     });
   });
+
+  $("#{{ job_filter.form.Company.auto_id }}").select2({
+    placeholder: "Search Company",
+    allowClear: true,
+    theme: "bootstrap4",
+    dropdownParent: $('body')
+  }).on('select2:opening', function() {
+    setTimeout(function() {
+      $('.select2-search__field').focus();
+    }, 100);
+  });
+
+  // Initialize sliders
+  $("#salary-min-slider").slider({
+    min: 0,
+    max: sliderValues.length - 1,
+    value: 0,
+    slide: function(event, ui) {
+        $("#salary-min-display").text(formatSalary(ui.value));
+        $("#{{ job_filter.form.salary_min.auto_id }}").val(sliderValues[ui.value]);
+    }
+  });
+
+  $("#salary-max-slider").slider({
+    min: 0,
+    max: sliderValues.length - 1,
+    value: 0,
+    slide: function(event, ui) {
+        $("#salary-max-display").text(formatSalary(ui.value));
+        $("#{{ job_filter.form.salary_max.auto_id }}").val(sliderValues[ui.value]);
+    }
+  });
+
+  const salaryMinInput = $('#salary-min');
+  const salaryMaxInput = $('#salary-max');
+  const salaryMinSlider = $('#salary-min-slider');
+  const salaryMaxSlider = $('#salary-max-slider');
+
+  const salaryMinValueFromUrl = parseInt(getParameterByName('salary_min')) || 0;
+  const salaryMaxValueFromUrl = parseInt(getParameterByName('salary_max')) || sliderValues[salaryMaxSlider.slider('option', 'max')];
+
+  // Find slider positions
+  const salaryMinPosition = sliderValues.indexOf(salaryMinValueFromUrl);
+  const salaryMaxPosition = sliderValues.indexOf(salaryMaxValueFromUrl);
+
+  // Set slider values
+  salaryMinSlider.slider('value', salaryMinPosition !== -1 ? salaryMinPosition : 0);
+  salaryMaxSlider.slider('value', salaryMaxPosition !== -1 ? salaryMaxPosition : salaryMaxSlider.slider('option', 'max'));
+
+  // Update the input elements when the sliders change
+  salaryMinSlider.on('slidechange', function(event, ui) {
+    console.log('Min slider changed:', ui.value);  // Debugging statement
+    salaryMinInput.val(sliderValues[ui.value]);
+  });
+
+  salaryMaxSlider.on('slidechange', function(event, ui) {
+    console.log('Max slider changed:', ui.value); // Debugging statement
+    salaryMaxInput.val(sliderValues[ui.value]);
+  });
+
+  // Add this at the end of your $(document).ready() function
+  $("#salary-min-display").text(formatSalary(salaryMinSlider.slider('value')));
+  $("#salary-max-display").text(formatSalary(salaryMaxSlider.slider('value')));
 });
+
 </script>
+
+
+
 
 
 {% endblock %}

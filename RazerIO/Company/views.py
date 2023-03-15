@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import cache_page
 from django.http import Http404
 from operator import itemgetter
+from django.core.cache import cache
 from django.contrib import messages
 from .forms import EditCompanyAboutForm
 # Create your views here.
@@ -20,15 +21,40 @@ def Merge(dict1, dict2):
 import yfinance as yf
 from django.utils import timezone
 
-@cache_page(60 * 15)
+def fetch_company_data(stock_ticker):
+    data = cache.get(stock_ticker)
+    if data is None:
+        ticker = yf.Ticker(stock_ticker)
+        stock_price = ticker.fast_info['lastPrice']
+        market_cap = ticker.fast_info['marketCap']
+        institutional = ticker.institutional_holders[:5]
+        mutual_funds = ticker.mutualfund_holders[:5]
+
+        data = {
+            'StockPrice': stock_price,
+            'MarketCap': market_cap,
+            'Institutional': institutional,
+            'MutualFunds': mutual_funds,
+        }
+        cache.set(stock_ticker, data, 60 * 15)  # Cache data for 15 minutes
+
+    return data
+
+
 def CompanyPage(request, id):
     company = Company.objects.get(id=id)
-    ticker = yf.Ticker(company.StockTicker)
     employees = Company.objects.filter(id=id).count()
-    stock_price = ticker.fast_info['lastPrice'] if company.StockTicker else None
-    market_cap = ticker.fast_info['marketCap'] if company.StockTicker else None
-    institutional = ticker.institutional_holders[:5]
-    mutual_funds = ticker.mutualfund_holders[:5]
+    if company.StockTicker:
+        company_data = fetch_company_data(company.StockTicker)
+        stock_price = company_data['StockPrice']
+        market_cap = company_data['MarketCap']
+        institutional = company_data['Institutional']
+        mutual_funds = company_data['MutualFunds']
+    else:
+        stock_price = None
+        market_cap = None
+        institutional = None
+        mutual_funds = None
     institutional = institutional.copy()
     mutual_funds = mutual_funds.copy()
     institutional.loc[:, 'Shares_M'] = institutional.loc[:, 'Shares'] / 1000000
@@ -42,7 +68,7 @@ def CompanyPage(request, id):
         'StockPrice': stock_price,
         'Institutional': institutional,
         'MutualFunds':mutual_funds,
-        'MarketCap':market_cap_M
+        'MarketCap':market_cap_M,
     }
     return render(request, 'company.html', context=context)
 
@@ -51,7 +77,7 @@ def CompanyPage(request, id):
 def edit_company_about(request, company_id):
     company = get_object_or_404(Company, id=company_id)
 
-    if request.user not in company.Employees.all():
+    if request.user.Company != company:
         raise Http404
 
     if request.method == 'POST':
@@ -66,5 +92,3 @@ def edit_company_about(request, company_id):
         form = EditCompanyAboutForm(instance=company)
 
     return render(request, 'edit_company_about.html', {'form': form, 'company': company})
-
-

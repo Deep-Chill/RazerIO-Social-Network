@@ -47,7 +47,6 @@ INSTALLED_APPS = [
     'MessagingAlerts.apps.MessagingalertsConfig',
     'Country.apps.CountryConfig',
     'yfinance',
-    'django.contrib.humanize',
     'widget_tweaks',
     'Endorsements.apps.EndorsementsConfig',
     'Projects.apps.ProjectsConfig',
@@ -57,6 +56,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.google',
     "debug_toolbar",
     'django_filters',
+    'django.contrib.humanize.apps.HumanizeConfig',
 ]
 
 SITE_ID = 1

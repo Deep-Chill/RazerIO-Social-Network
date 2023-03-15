@@ -2,19 +2,25 @@ from django.db import models
 # Create your models here.
 from django.conf import settings
 
+
 class Company(models.Model):
     Name = models.CharField(max_length=256)
     About = models.TextField(max_length=10000, default='', blank=True, null=True)
-    Employees = models.ManyToManyField('Users.CustomUser')
+    Industry = models.CharField(max_length=100, blank=True, null=True)
     Shareprice = models.IntegerField(default=0, blank=True, null=True)
     StockTicker = models.CharField(max_length=10, null=True, blank=True)
+    Founded = models.DateField(blank=True, null=True)
+    Headquarters = models.CharField(max_length=100, blank=True, null=True)
     LastEditedBy = models.ForeignKey('Users.CustomUser', null=True, blank=True, on_delete=models.SET_NULL,
                                      related_name='edited_companies')
     Website = models.URLField(blank=True)
     Email_Domain = models.CharField(blank=True, max_length=50)
+    Logo = models.ImageField(upload_to='company_logos/', blank=True, null=True)
 
     def __str__(self):
         return self.Name
+
+
 
 Anonymous_YN = (('Yes', 'Yes'), ('No', 'No'))
 

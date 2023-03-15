@@ -4,7 +4,6 @@ from django.contrib.auth.models import AbstractUser
 from django.conf import settings
 from django.db.models import Q
 from Country.models import Country, Region
-from Projects.models import Project
 import uuid
 import os
 import email_validator
@@ -41,7 +40,6 @@ class User_Skill(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     skill = models.ForeignKey(Skill, on_delete=models.CASCADE)
     experience_years = models.IntegerField(default=0)
-    projects = models.ManyToManyField(Project)
 
 class CustomUser(AbstractUser):
     Bio = models.CharField(max_length=240, default='')

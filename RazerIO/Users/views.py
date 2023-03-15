@@ -8,14 +8,14 @@ from django.utils import timezone
 from django.views.generic.edit import CreateView
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Count
-
+from django.template.loader import render_to_string
 from .forms import CustomUserCreationForm, NewPost, CustomUserChangeForm
 from Company.models import Company
-from Feed.models import Post
+from Feed.models import Post, Comment, Upvote
 from Newspaper.models import Article, Newspaper as Nsp
 from Users.models import CustomUser, UserFollowing, Education
 from Endorsements.models import Endorsement
-from Projects.models import Project
+from Projects.models import Experience
 from allauth.account.models import EmailAddress
 from django.db.models import Q
 from django.utils import timezone
@@ -44,15 +44,17 @@ def profile(request, id):
     endorsements = Endorsement.objects.filter(receiver=id)
     is_following = False
     education = Education.objects.filter(user=user)
-    owned_project = Project.objects.filter(owner=user)
-    collaborated_project = Project.objects.filter(collaborators__in=[user])
-    projects = owned_project|collaborated_project
-    projects = projects.distinct().order_by('status')
+    owned_experience = Experience.objects.filter(owner=user)
+    collaborated_experience = Experience.objects.filter(collaborators__in=[user])
+    experiences = owned_experience|collaborated_experience
+    experiences = experiences.distinct().order_by('status')
+    mutual_follow = False
 
     if request.user.is_authenticated:
         following = UserFollowing.objects.filter(User=request.user, Following_User_ID=user).exists()
         if following:
             is_following = True
+        mutual_follow = UserFollowing.objects.filter(User=request.user, Following_User_ID=user).exists() and UserFollowing.objects.filter(User=user, Following_User_ID=request.user).exists()
 
     context = {
         "id": id,
@@ -63,24 +65,30 @@ def profile(request, id):
         "is_following": is_following,
         "endorsements":endorsements,
         "education":education,
-        "owned_project":owned_project,
-        "collaborated_project":collaborated_project,
-        "projects":projects
+        "owned_project":owned_experience,
+        "collaborated_project":collaborated_experience,
+        "experiences":experiences,
+        "mutual_follow":mutual_follow
     }
     return render(request, 'profile.html', context=context)
 
 
 
 def index(request):
+    context = {}
+    comments = Comment.objects.all()
+    upvotes = Upvote.objects.all()
     if request.user.is_authenticated:
         user = request.user
+        user_upvotes = Upvote.objects.filter(User=request.user)
 
         # Fetch all the necessary data with a few queries
         following_ids = UserFollowing.objects.filter(User=user).values_list('Following_User_ID', flat=True)
-        friends_posts = Post.objects.filter(Q(Author__in=following_ids) | Q(Author=user), Category='Friends').select_related('Author')
-        national_posts = Post.objects.filter(Category='National', Author__Country=user.Country).select_related('Author')
-        company_posts = Post.objects.filter(Category='Organization', Author__Company=user.Company).select_related('Author')
+        friends_posts = Post.objects.filter(Q(Author__in=following_ids) | Q(Author=user), Category='Friends').select_related('Author').only('Author', 'Text', 'Date_Created')
+        national_posts = Post.objects.filter(Category='National', Author__Country=user.Country).select_related('Author').only('Author', 'Text', 'Date_Created')
+        company_posts = Post.objects.filter(Category='Organization', Author__Company=user.Company).select_related('Author').only('Author', 'Text', 'Date_Created')
         articles = Article.objects.filter(Date_Published__gte=timezone.now() - timezone.timedelta(hours=48)).annotate(num_upvotes=Count('articleupvote'))
+
         # Handle the POST request separately to avoid unnecessary database queries
         if request.method == "POST":
             form = NewPost(request.POST)
@@ -100,15 +108,14 @@ def index(request):
             "FriendsPosts": friends_posts.order_by('-Date_Created'),
             "form": form,
             "Articles": articles.order_by('-num_upvotes', '-Date_Published'),
-            "NationalPosts": national_posts,
-            "CompanyPosts": company_posts,
+            "NationalPosts": national_posts.order_by('-Date_Created'),
+            "CompanyPosts": company_posts.order_by('-Date_Created'),
+            "comments":comments,
+            "upvotes":upvotes,
+            'user_upvotes': user_upvotes,
         }
-        return render(request, 'home.html', context=context)
-    else:
-        return render(request, 'home.html')
 
-
-
+    return render(request, 'home.html', context=context)
 
 def follow_user(request, id):
     user_to_follow = get_object_or_404(get_user_model(), id=int(id))
@@ -149,3 +156,41 @@ def edit_profile(request):
         form = CustomUserChangeForm(instance=request.user)
         add_email_form = AddEmailForm()
     return render(request, 'edit_profile.html', {'form':form, 'add_email_form': add_email_form})
+
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+
+@csrf_exempt
+def create_comment(request):
+    if request.method == 'POST':
+        post_id = request.POST.get('post_id')
+        comment_text = request.POST.get('comment_text')
+        print('create_comment called with post_id:', post_id, 'comment_text:', comment_text)
+        post = Post.objects.get(id=post_id)
+        comment = Comment(Author=request.user, Post=post, Text=comment_text)
+        comment.save()
+        rendered_comment = render_to_string('comment.html', {'comment': comment})
+        print(rendered_comment)
+        return JsonResponse({'html': rendered_comment})
+
+@csrf_exempt
+def upvote_post(request):
+    if request.method == 'POST':
+        post_id = request.POST.get('post_id')
+        print('upvote_post called with post_id:', post_id)
+        post = Post.objects.get(id=post_id)
+        upvote, created = Upvote.objects.get_or_create(User=request.user, Post=post)
+        if not created:
+            upvote.delete()
+        upvote_count = post.upvote_set.count()
+        return JsonResponse({'upvote_count': upvote_count})
+
+# urls.py
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    # ... existing paths ...
+    path('comment/', views.create_comment, name='create_comment'),
+    path('upvote/', views.upvote_post, name='upvote_post'),
+]
