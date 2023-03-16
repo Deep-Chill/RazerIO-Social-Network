@@ -77,6 +77,11 @@
           {% else %}
             <a class="dropdown-item" href="#">Newspaper</a>
           {% endif %}
+          {% if user.Company %}
+          <a class="dropdown-item" href="{% url 'company' user.Company.id %}">{{ user.Company.Name }}</a>
+          {% else %}
+          <a class="dropdown-item" href="#">Company</a>
+          {% endif %}
         </div>
 
       </li>

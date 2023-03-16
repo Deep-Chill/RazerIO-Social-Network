@@ -3,9 +3,39 @@
 {% block content %}
   <h1>Edit About Section for {{ company.Name }}</h1>
 
+  <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit" name="edit_company_submit">Save Company</button>
+  </form>
+
+  {% if not company.IsPublic|lower %}
+      <form method="post">
+          {% csrf_token %}
+          <h2>Notable Person</h2>
+          {{ notable_person_form.as_p }}
+          <button type="submit" name="notable_person_submit">Add Notable Person</button>
+      </form>
+
+      <form method="post">
+          {% csrf_token %}
+          <h2>Lead Investor</h2>
+          {{ lead_investor_form.as_p }}
+          <button type="submit" name="lead_investor_submit">Add Lead Investor</button>
+      </form>
+
+      <form method="post">
+          {% csrf_token %}
+          <h2>Valuation</h2>
+          {{ valuation_form.as_p }}
+          <button type="submit" name="valuation_submit">Add Valuation</button>
+      </form>
+  {% endif %}
+
   <form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <input type="submit" value="Save Changes">
+      {% csrf_token %}
+      <h2>Email Domain</h2>
+      {{ email_domain_form.as_p }}
+      <button type="submit" name="email_domain_submit">Add Email Domain</button>
   </form>
 {% endblock %}

@@ -14,6 +14,7 @@ Job_Categories = (('Programming', 'Programming'), ('Project and Product Manageme
 Job_Status_Choices = (('Open', 'Open'), ('Closed', 'Closed'), ('Filled', 'Filled'))
 Locations = (('Sacramento', 'Sacramento'), ('San Diego', 'San Diego'),
              ('Los Angeles', 'Los Angeles'), ('Remote', 'Remote'))
+
 EXPERIENCE_LEVEL_CHOICES = [
 ('Entry', 'Entry'),
 ('Junior', 'Junior'),

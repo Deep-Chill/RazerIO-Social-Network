@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+{% block head %}
+<style>
+    .messages {
+        margin-bottom: 20px;
+    }
+
+    .error {
+        background-color: #f8d7da;
+        border: 1px solid #f5c6cb;
+        border-radius: 4px;
+        color: #721c24;
+        padding: 12px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+{% if messages %}
+<div class="messages">
+    {% for message in messages %}
+    <div {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</div>
+    {% endfor %}
+</div>
+{% endif %}
+
+    <h1>{{ company.Name }} Reviews</h1>
+    <a href="{% url 'create_review' company_id=company.id %}">Write a Review</a>
+    <hr>
+    <form method="post" class="mt-3">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="{{ form.user_status.id_for_label }}">User Status:</label>
+            {{ form.user_status|add_class:'form-control' }}
+        </div>
+        <div class="form-group">
+            <label for="{{ form.overall_rating.id_for_label }}">Overall Rating:</label>
+            {{ form.overall_rating|add_class:'form-control' }}
+        </div>
+        <div class="form-group">
+            <label for="{{ form.culture_and_values_rating.id_for_label }}">Culture & Values Rating:</label>
+            {{ form.culture_and_values_rating|add_class:'form-control' }}
+        </div>
+        <div class="form-group">
+            <label for="{{ form.senior_leadership_rating.id_for_label }}">Senior Leadership Rating:</label>
+            {{ form.senior_leadership_rating|add_class:'form-control' }}
+        </div>
+        <div class="form-group">
+            <label for="{{ form.compensation_and_benefits_rating.id_for_label }}">Compensation & Benefits Rating:</label>
+            {{ form.compensation_and_benefits_rating|add_class:'form-control' }}
+        </div>
+        <div class="form-group">
+            <label for="{{ form.career_opportunities_rating.id_for_label }}">Career Opportunities Rating:</label>
+            {{ form.career_opportunities_rating|add_class:'form-control' }}
+        </div>
+        <div class="form-group">
+            <label for="{{ form.future_outlook.id_for_label }}">Future Outlook:</label>
+            {{ form.future_outlook|add_class:'form-control' }}
+        </div>
+        <div class="form-group">
+            <label for="{{ form.work_life_balance_rating.id_for_label }}">Work Life Balance Rating:</label>
+            {{ form.work_life_balance_rating|add_class:'form-control' }}
+        </div>
+        <div class="form-group">
+            <label for="{{ form.review_text.id_for_label }}">Review:</label>
+            {{ form.review_text|add_class:'form-control' }}
+        </div>
+        <button type="submit" class="btn btn-primary">Submit Review</button>
+        <a href="{% url 'company_reviews' company_id=company.id %}" class="btn btn-secondary">Go Back to Reviews</a>
+    </form>
+{% endblock %}

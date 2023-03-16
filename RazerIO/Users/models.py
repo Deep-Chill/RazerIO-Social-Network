@@ -17,6 +17,14 @@ from django.dispatch import receiver
 
 User = settings.AUTH_USER_MODEL
 
+EXPERIENCE_LEVEL_CHOICES = [
+('Entry', 'Entry'),
+('Junior', 'Junior'),
+('Mid-level', 'Mid-level'),
+('Senior', 'Senior'),
+('Principal', 'Principal'),
+]
+
 def upload_to(instance, filename):
     # Generate a unique identifier
     unique_id = uuid.uuid4().hex
@@ -52,6 +60,7 @@ class CustomUser(AbstractUser):
     Skill = models.ManyToManyField(Skill, through="User_Skill")
     Company_Verified_Email = models.BooleanField(default=False)
     badges = models.JSONField(default=dict)
+    experience_level = models.CharField(choices=EXPERIENCE_LEVEL_CHOICES, max_length=50, default='Principal')
 
     def earn_badge(self, badge_name):
         self.badges[badge_name] = True

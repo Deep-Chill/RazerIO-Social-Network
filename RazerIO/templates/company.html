@@ -1,87 +1,244 @@
 {% extends "base.html" %}
 {% block title %}Company Page{% endblock %}
+{% block head %}
+{% endblock %}
 
 {% block content %}
 {% load humanize %}
 
-<div class="container-fluid">
-  <div class="row">
-    <div class="col-sm-4">
-      <div class="card">
-        <div class="card-header">Institutional Holders</div>
-        <div class="card-body p-0">
-          <table class="table table-striped mb-0">
+<div class="container">
+    <div class="row">
+        <div class="col-sm-12">
+            <h1 class="d-inline">{{ Company.Name }}</h1>
+            <div class="float-right">
+                {% if user.is_authenticated and user.Company == Company %}
+                    <a href="{% url 'edit_company' Company.id %}" class="btn btn-sm btn-primary mb-3">Edit Page</a>
+                    <a href="{% url 'edit_history' Company.id %}" class="btn btn-sm btn-secondary mb-3">Recent Changes</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card mb-3">
+                <div class="card-body">
+                    {% if Company.IsPublic %}
+                        <p>Publicly Traded Company</p>
+                        <p>Stock Price: ${{ StockPrice|floatformat:2 }}</p>
+                    {% else %}
+                        <p>Private Company</p>
+                    {% endif %}
+                    <p>Industry: {{ Company.get_Industry_display }}</p>
+                    <p>Founded: {{ Company.Founded.year }}</p>
+                    <p>Headquarters: {{ Company.Headquarters }}</p>
+                    <p>Website: <a href="{{ Company.Website }}" target="_blank">{{ Company.Website }}</a></p>
+                    <p>About: {{ Company.About }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-12">
+            <ul class="nav nav-pills mb-3" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link active" data-toggle="pill" href="#info" role="tab">Info & Statistics</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-toggle="pill" href="#ownership" role="tab">Ownership & Notable People</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-toggle="pill" href="#jobs" role="tab">Jobs</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-toggle="pill" href="#perks" role="tab">Perks</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-toggle="pill" href="#health" role="tab">Company Health</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-toggle="pill" href="#reviews" role="tab">Reviews</a>
+                </li>
+            </ul>
+
+      <div class="tab-content">
+    <div class="tab-pane active" id="info" role="tabpanel">
+        {% if Company.IsPublic %}
+          <p>Market Cap: ${{ MarketCap|intword }}</p>
+          <p>Employee Count: {{ EmployeeCount|intcomma }}</p>
+          <p>Industry: {{ Company.get_Industry_display  }}</p>
+          <p>Annual Revenue: {{ AnnualRevenue|intword }}</p>
+          <p>Annual Profit: {{ AnnualProfit|intword }}</p>
+        {% else %}
+          <!-- Display manually entered data for non-public companies -->
+          <p>Employee Count: {{ Company.EmployeeCount|intcomma }}</p>
+          <p>Industry: {{ Company.get_Industry_display  }}</p>
+          {% if CompanyValuation %}
+            <p>Latest Valuation: ${{ CompanyValuation.last.value|intword }}</p>
+          {% endif %}
+        {% if CompanyValuation %}
+          <div class="card">
+            <div class="card-header">
+              Previous Valuations
+            </div>
+            <div class="card-body">
+              {% for valuation in CompanyValuation %}
+                <p>{{ valuation.date|date:"F j, Y" }}: ${{ valuation.value|intword }}</p>
+              {% endfor %}
+            </div>
+          </div>
+        {% endif %}
+        {% endif %}
+    </div>
+    <div class="tab-pane" id="ownership" role="tabpanel">
+        {% if not Company.IsPublic %}
+    <h4>Notable People</h4>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Title</th>
+          <th>Bio</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for person in NotablePeople %}
+          <tr>
+            <td>{{ person.name }}</td>
+            <td>{{ person.title }}</td>
+            <td>{{ person.bio }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <h4>Lead Investors</h4>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Notes</th>
+            <th>Amount invested</th>
+            <th>Date of investment</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for investor in LeadInvestors %}
+          <tr>
+            <td>{{ investor.name }}</td>
+            <td>{{ investor.bio }}</td>
+            <td>{{ investor.amount_invested|intword }}</td>
+            <td>{{ investor.investment_date }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+        <h4>Top 5 Owners</h4>
+        <table class="table">
             <thead>
-              <tr>
-                <th>Name</th>
-                <th>Shares (millions)</th>
-                <th>Value ($M)</th>
-              </tr>
+                <tr>
+                    <th>Organization</th>
+                    <th>Value of stock owned</th>
+                </tr>
             </thead>
             <tbody>
-              {% for _, row in Institutional.iterrows %}
+                {% for owner in Top3Owners %}
                 <tr>
-                  <td>{{ row.Holder }}</td>
-                  <td>{{ row.Shares_M|floatformat:2|intcomma }}</td>
-                  <td>{{ row.Value_M|floatformat:2|intcomma }}</td>
+                    <td>{{ owner.organization }}</td>
+                    <td>${{ owner.value|intword }}</td>
                 </tr>
-              {% endfor %}
+                {% endfor %}
             </tbody>
-          </table>
+        </table>
+            <h4>Notable People</h4>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Age</th>
+                        <th>Title</th>
+                        <th>Salary</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for officer in CompanyOfficers %}
+                    <tr>
+                <td>{{ officer.name }}</td>
+                <td>{{ officer.age|floatformat:"0" }}</td>
+                <td>{{ officer.title }}</td>
+                <td>${{ officer.totalPay|intword }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+          {% endif %}
+</div>
+
+        <div class="tab-pane" id="jobs" role="tabpanel">
+          <!-- Add company jobs content here -->
         </div>
-      </div>
-
-      <div class="card mt-3">
-        <div class="card-header">Mutual Fund Holders</div>
-        <div class="card-body p-0">
-          <table class="table table-striped mb-0">
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Shares (millions)</th>
-                <th>Value ($M)</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for _, row in MutualFunds.iterrows %}
-                <tr>
-                  <td>{{ row.Holder }}</td>
-                  <td>{{ row.Shares_M|floatformat:2|intcomma }}</td>
-                  <td>{{ row.Value_M|floatformat:2|intcomma }}</td>
-                </tr>
-              {% endfor %}
-            </tbody>
-          </table>
+        <div class="tab-pane" id="perks" role="tabpanel">
+          <!-- Add company perks content here -->
         </div>
-      </div>
-    </div>
+        <div class="tab-pane" id="health" role="tabpanel">
+          <!-- Add company health content here -->
+        </div>
+            <div class="tab-pane" id="reviews" role="tabpanel">
+                <h2>Average Ratings</h2>
+                <table class="table table-bordered">
+                    <tr>
+                        <td>Overall Rating</td>
+                        <td>{{ avg_ratings.avg_overall_rating|floatformat:1 }}</td>
+</tr>
+<tr>
+<td>Culture and Values Rating</td>
+<td>{{ avg_ratings.avg_culture_and_values_rating|floatformat:1 }}</td>
+</tr>
+<tr>
+<td>Senior Leadership Rating</td>
+<td>{{ avg_ratings.avg_senior_leadership_rating|floatformat:1 }}</td>
+</tr>
+<tr>
+<td>Compensation and Benefits Rating</td>
+<td>{{ avg_ratings.avg_compensation_and_benefits_rating|floatformat:1 }}</td>
+</tr>
+<tr>
+<td>Career Opportunities Rating</td>
+<td>{{ avg_ratings.avg_career_opportunities_rating|floatformat:1 }}</td>
+</tr>
+<tr>
+<td>Work-Life Balance Rating</td>
+<td>{{ avg_ratings.avg_work_life_balance_rating|floatformat:1 }}</td>
+</tr>
+<tr>
+<td>Future Outlook</td>
+<td>{{ avg_ratings.avg_future_outlook|floatformat:1 }}</td>
+</tr>
+</table>
+            <h2>Recent Reviews</h2>
+            {% for review in recent_reviews %}
+                <div class="card mb-3">
+                    <div class="card-header">
+                        {{ review.user_status }} Employee - Overall Rating: {{ review.overall_rating }}
+                    </div>
+                    <div class="card-body">
+                        <p>{{ review.review_text|truncatechars:100 }}</p>
+                        <a href="{% url 'review_detail' review_id=review.id %}">Read Full Review</a>
+                    </div>
+                </div>
+            {% endfor %}
 
-    <div class="col-sm-4">
-      <h1>{{ Company.Name }}</h1>
-      {% if StockPrice %}
-        <h3>Market cap($M): {{ MarketCap|floatformat:2|intcomma }}</h3>
-      {% endif %}
-      <hr>
-      <p>Number of employees: 79,000</p>
-      <p>Number of verified employees: {{ Employees }}</p>
-      <p>Stock Price: ${{ StockPrice|floatformat:2 }}</p>
-      <p>About: {{ Company.About }}</p>
-
-      {% if user.is_authenticated and user.Company == Company %}
-        <a href="{% url 'edit_company' Company.id %}" class="btn btn-primary">Edit Page</a>
-      {% endif %}
+            <a href="{% url 'create_review' company_id=Company.id %}" class="btn btn-primary">Write a Review</a>
+            <a href="{% url 'company_reviews' company_id=Company.id %}" class="btn btn-secondary">See All Reviews</a>
+        </div>
     </div>
-  </div>
-
-  <div class="row mt-3">
-    <div class="col-sm-4">
-      {% if user.is_authenticated %}
-      {% else %}
-        <p>You are not logged in</p>
-        <a href="{% url 'login' %}">Log In</a> |
-        <a href="{% url 'signup' %}">Sign Up</a>
-      {% endif %}
-    </div>
-  </div>
+</div>
+</div>
 </div>
 {% endblock %}
+
+
+
+
+

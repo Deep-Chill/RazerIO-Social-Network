@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="container">
+        <h1>{{ company.Name }} Reviews</h1>
+        <a href="{% url 'create_review' company_id=company.id %}" class="btn btn-primary mb-3">Write a Review</a>
+        <hr>
+        {% for review in reviews %}
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h3 class="card-title">{{ review.user_status }} Employee</h3>
+                    <p>Overall Rating: {{ review.overall_rating }}</p>
+                    <p>Culture & Values Rating: {{ review.culture_and_values_rating }}</p>
+                    <p>Senior Leadership Rating: {{ review.senior_leadership_rating }}</p>
+                    <p>Compensation & Benefits Rating: {{ review.compensation_and_benefits_rating }}</p>
+                    <p>Career Opportunities Rating: {{ review.career_opportunities_rating }}</p>
+                    <p>Work Life Balance Rating: {{ review.work_life_balance_rating }}</p>
+                    <p>Review: {{ review.review_text }}</p>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}
