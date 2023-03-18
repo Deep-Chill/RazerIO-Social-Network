@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Company, University, EmailDomain, CompanyReview, NotablePerson, LeadInvestor, Valuation, CompanyEditHistory
+from .models import Company, University, EmailDomain, CompanyReview, NotablePerson, LeadInvestor, Valuation, CompanyEditHistory, NonEmployeeReview
 # Register your models here.
 admin.site.register(Company)
 admin.site.register(University)
@@ -9,3 +9,4 @@ admin.site.register(NotablePerson)
 admin.site.register(LeadInvestor)
 admin.site.register(Valuation)
 admin.site.register(CompanyEditHistory)
+admin.site.register(NonEmployeeReview)

@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 {% load humanize %}
+{% load widget_tweaks %}
 {% block head %}
 
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
@@ -31,6 +32,12 @@
     margin-right: 5px;
   }
 
+.select2-container--bootstrap4 .select2-results__option--highlighted[aria-selected]:hover {
+  background-color: #007bff;
+  color: #fff;
+}
+
+
 </style>
 
 {% endblock %}
@@ -51,16 +58,16 @@
           <h6 class="text-center mt-3">{{ request.user.username }}</h6>
           <hr>
         </div>
-        <a class="nav-link active" id="v-pills-home-tab" data-toggle="pill" href="#v-pills-home" role="tab" aria-controls="v-pills-home" aria-selected="true">Inbox</a>
-        <a class="nav-link" id="v-pills-profile-tab" data-toggle="pill" href="#v-pills-profile" role="tab" aria-controls="v-pills-profile" aria-selected="false">New Message</a>
+    <a class="nav-link {% if not open_new_message_tab %}active{% endif %}" id="v-pills-home-tab" data-toggle="pill" href="#v-pills-home" role="tab" aria-controls="v-pills-home" aria-selected="{% if not open_new_message_tab %}true{% else %}false{% endif %}">Inbox</a>
+        <a class="nav-link {% if open_new_message_tab %}active{% endif %}" id="v-pills-profile-tab" data-toggle="pill" href="#v-pills-profile" role="tab" aria-controls="v-pills-profile" aria-selected="{% if open_new_message_tab %}true{% else %}false{% endif %}">New Message</a>
         <a class="nav-link" id="v-pills-messages-tab" data-toggle="pill" href="#v-pills-messages" role="tab" aria-controls="v-pills-messages" aria-selected="false">Outbox</a>
-        <a class="nav-link" id="v-pills-settings-tab" data-toggle="pill" href="#v-pills-settings" role="tab" aria-controls="v-pills-settings" aria-selected="false">Alerts</a>
+        <a class="nav-link" id="v-pills-alerts-tab" data-toggle="pill" href="#v-pills-alerts" role="tab" aria-controls="v-pills-alerts" aria-selected="false">Alerts</a>
       </div>
     </div>
 <div class="col-12 col-md-8 col-lg-9">
     <div class="tab-content custom2" id="v-pills-tabContent">
 <!-- Inbox tab content -->
-<div class="tab-pane fade show active" id="v-pills-home" role="tabpanel" aria-labelledby="v-pills-home-tab">
+<div class="tab-pane fade {% if not open_new_message_tab %}show active{% endif %}" id="v-pills-home" role="tabpanel" aria-labelledby="v-pills-home-tab">
     {% for conversation in conversations %}
         <div class="list-group-item list-group-item-action{% if conversation.is_read %} read{% endif %} position-relative">
             <div class="d-flex w-100 justify-content-between align-items-start">
@@ -84,7 +91,7 @@
                     <small>{{ conversation.created_at|date:"F j, Y" }}</small><br>
                 </div>
             </div>
-            <a href="#" class="btn btn-danger btn-sm position-absolute" style="right: 10px; top: 50%; transform: translateY(-50%);">Delete</a>
+            <a href="{% url 'delete_conversation' conversation_id=conversation.id %}" class="btn btn-danger btn-sm position-absolute" style="right: 10px; top: 50%; transform: translateY(-50%);">Delete</a>
         </div>
     {% empty %}
         <p>No messages yet.</p>
@@ -93,7 +100,7 @@
 
 
 <!-- New Message tab content -->
-<div class="tab-pane fade" id="v-pills-profile" role="tabpanel" aria-labelledby="v-pills-profile-tab">
+<div class="tab-pane fade {% if open_new_message_tab %}show active{% endif %}" id="v-pills-profile" role="tabpanel" aria-labelledby="v-pills-profile-tab">
   <div class="card">
     <div class="card-header">
       New Message
@@ -108,7 +115,7 @@
               <input type="text" value="{{ prepopulated_participant }}" disabled>
               <input type="hidden" name="participants" value="{{ prepopulated_participant }}">
             {% else %}
-              {{ form.participants }}
+              {{ form.participants|add_class:"form-control rounded select2" }}
             {% endif %}
           </div>
         </div>
@@ -152,23 +159,27 @@
           {% endfor %}
         </div>
               <!-- Alerts tab content -->
-<div class="tab-pane fade" id="v-pills-settings" role="tabpanel" aria-labelledby="v-pills-settings-tab">
-    {% for alert in alerts %}
-        <div class="list-group-item list-group-item-action{% if not alert.read %} font-weight-bold{% endif %} d-flex align-items-start">
-            <div class="d-flex justify-content-between w-100">
-                <div class="fw-bold">{{ alert.actor.username }} {{ alert.verb }}                          {% if alert.target %}
-                <div>{{ alert.target }}</div>
-            {% endif %}
-</div>
-                <small class="text-muted">{{ alert.timestamp|timesince }} ago</small>
+<div class="tab-pane fade" id="v-pills-alerts" role="tabpanel" aria-labelledby="v-pills-alerts-tab">
+    {% if alerts %}
+        {% for alert in alerts %}
+            <div class="list-group-item list-group-item-action{% if not alert.read %} font-weight-bold {{ alert.mark_as_read }} {% endif %} d-flex align-items-start">
+                <div class="d-flex justify-content-between w-100">
+                    <div class="fw-bold">{{ alert.actor.username }} {{ alert.verb }}{% if alert.target %}
+                    <div>{{ alert.target }}</div>
+                    {% endif %}
+                    </div>
+                    <div>
+                        <small class="text-muted">{{ alert.timestamp|timesince }} ago</small>
+                        <a href="{% url 'delete_alert' alert.id %}" class="btn btn-danger btn-sm ml-2">Delete</a>
+                    </div>
+                </div>
             </div>
-            <a href="#" class="btn btn-danger btn-sm ml-auto fixed-height-btn">Delete</a>
-        </div>
-    {% empty %}
+        {% endfor %}
+    {% else %}
         <p class="lead">No new alerts.</p>
-    {% endfor %}
+    {% endif %}
 </div>
-    </div>
+</div>
 </div>
 
   </div>
@@ -187,22 +198,55 @@ $(document).ready(function() {
 });
 
 </script>
+<script>
+  $(document).ready(function() {
+    $('.select2').select2({
+      theme: 'bootstrap4',
+      placeholder: 'Select recipients',
+      allowClear: true,
+    });
+  });
 
-  <script>
-    const messageField = document.getElementById('{{ form.message.id_for_label }}');
-    const remainingChars = document.getElementById('remaining-chars');
-    const maxChars = 10000;
+  $(document).on('select2:open', () => {
+    let allFound = document.querySelectorAll('.select2-container--open .select2-search__field');
+    allFound[allFound.length - 1].focus();
+  });
+</script>
 
-    messageField.addEventListener('input', updateRemainingChars);
+<script>
+const messageField = document.getElementById('{{ form.message.id_for_label }}');
+const remainingChars = document.getElementById('remaining-chars');
+const maxChars = 10000;
 
-    function updateRemainingChars() {
-      const currentLength = messageField.value.length;
-      const remaining = maxChars - currentLength;
-      remainingChars.textContent = remaining;
-    }
+messageField.addEventListener('input', updateRemainingChars);
 
-    updateRemainingChars();
-  </script>
+function updateRemainingChars() {
+  const currentLength = messageField.value.length;
+  const remaining = maxChars - currentLength;
+  remainingChars.textContent = remaining;
+}
+
+updateRemainingChars();
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        let hash = window.location.hash;
+        if (hash) {
+            // Deactivate the currently active tab
+            document.querySelector('.nav-link.active').classList.remove('active');
+            document.querySelector('.tab-pane.active').classList.remove('active', 'show');
+
+            // Activate the tab corresponding to the URL fragment
+            let targetNavLink = document.querySelector(`.nav-link[href="${hash}"]`);
+            let targetTabPane = document.querySelector(hash);
+            if (targetNavLink && targetTabPane) {
+                targetNavLink.classList.add('active');
+                targetTabPane.classList.add('active', 'show');
+            }
+        }
+    });
+</script>
 
 {% endblock %}
 

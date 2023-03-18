@@ -36,7 +36,7 @@
               <button type="submit" class="btn btn-outline-danger mb-2">Unfollow</button>
             </form>
             {% if mutual_follow %}
-              <a href="{% url 'new_conversation_id' user1.id %}" class="btn btn-outline-success">Send message</a>
+                <a href="{% url 'inbox_with_user_id' user_id=user1.id %}" class="btn btn-outline-success">Send message</a>
             {% endif %}
           {% else %}
             <form method="post" action="{% url 'follow_user' user1.id %}" class="mb-3">

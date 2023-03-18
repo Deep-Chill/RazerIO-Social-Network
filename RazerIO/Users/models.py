@@ -3,6 +3,8 @@ from django.db.models.signals import post_save
 from django.contrib.auth.models import AbstractUser
 from django.conf import settings
 from django.db.models import Q
+from django.core.files import File
+from PIL import Image
 from Country.models import Country, Region
 import uuid
 import os
@@ -61,6 +63,7 @@ class CustomUser(AbstractUser):
     Company_Verified_Email = models.BooleanField(default=False)
     badges = models.JSONField(default=dict)
     experience_level = models.CharField(choices=EXPERIENCE_LEVEL_CHOICES, max_length=50, default='Principal')
+    DateOfBirth = models.DateField(null=True, blank=True)
 
     def earn_badge(self, badge_name):
         self.badges[badge_name] = True
@@ -78,26 +81,6 @@ class CustomUser(AbstractUser):
 
     def __str__(self):
         return self.username
-
-
-# @receiver(email_confirmed)
-# @receiver(email_added)
-# @receiver(email_removed)
-# def updatecompanyverifiedstatus(sender, request, email_address, **kwargs):
-#     user = email_address.user
-#     domain = user.Company.Email_Domain
-#     users_emails = EmailAddress.objects.filter(user=user, verified=True, email__endswith='@'+domain)
-#     user.Company_Verified_Email = users_emails.exists()
-#     user.save()
-#
-# @receiver(email_changed)
-# def update_company_verified_email_on_change(sender, request, user, from_email_address, to_email_address, **kwargs):
-#     user = to_email_address.user
-#     domain = user.Company.Email_Domain
-#     users_emails = EmailAddress.objects.filter(user=user, verified=True, email__endswith='@'+domain)
-#     user.Company_Verified_Email = users_emails.exists()
-#     user.save()
-
 
 class UserFollowing(models.Model):
     User = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='following', on_delete=models.CASCADE)

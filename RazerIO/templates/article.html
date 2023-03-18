@@ -78,7 +78,13 @@
       </form>
     </div>
   </div>
+  {% if user == author %}
+  <div class="row">
+    <a href="#" type="button" class="btn btn-primary btn-block">Edit article</a>
+  </div>
+  {% endif %}
 </div>
+
 </div>
 
 {% endblock %}

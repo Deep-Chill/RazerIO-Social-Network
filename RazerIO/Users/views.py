@@ -85,8 +85,8 @@ def index(request):
         # Fetch all the necessary data with a few queries
         following_ids = UserFollowing.objects.filter(User=user).values_list('Following_User_ID', flat=True)
         friends_posts = Post.objects.filter(Q(Author__in=following_ids) | Q(Author=user), Category='Friends').select_related('Author').only('Author', 'Text', 'Date_Created')
-        national_posts = Post.objects.filter(Category='National', Author__Country=user.Country).select_related('Author').only('Author', 'Text', 'Date_Created')
-        company_posts = Post.objects.filter(Category='Organization', Author__Company=user.Company).select_related('Author').only('Author', 'Text', 'Date_Created')
+        national_posts = Post.objects.filter(Category='National', Country=user.Country).select_related('Author').only('Author', 'Text', 'Date_Created')
+        company_posts = Post.objects.filter(Category='Organization', Company=user.Company).select_related('Author').only('Author', 'Text', 'Date_Created')
         articles = Article.objects.filter(Date_Published__gte=timezone.now() - timezone.timedelta(hours=48)).annotate(num_upvotes=Count('articleupvote'))
 
         # Handle the POST request separately to avoid unnecessary database queries
@@ -96,6 +96,11 @@ def index(request):
                 new_post = form.save(commit=False)
                 new_post.Author = user
                 new_post.Text = form.cleaned_data['text']
+                if new_post.Category == 'Organization':
+                    new_post.Company = user.Company
+                if new_post.Category == 'National':
+                    new_post.Country = user.Country
+
                 new_post.save()
                 return JsonResponse({'status': 'ok', 'text': new_post.Text})
             else:

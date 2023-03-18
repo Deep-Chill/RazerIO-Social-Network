@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container my-5">
+    <h1 class="mb-4">Company Leaderboard</h1>
+    <table class="table table-hover">
+        <thead class="thead-light">
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">
+                    Company
+                </th>
+                <th scope="col" data-toggle="tooltip" data-placement="top" title="The IO Company score reflects a comprehensive
+                evaluation of the company's financials, stability, global reach, R&D, market share, product diversity,
+                public sentiment, employee satisfaction, ESG score, future outlook and more. Please note that the formula for
+                calculating the IO Company score is constantly being refined and updated to ensure accuracy and relevance.">
+                    IO Company Score
+                    <span class="badge badge-pill badge-secondary ml-2" data-toggle="tooltip" data-placement="top"
+                          title="You can improve a company's IO Company Score by leaving a review.">?</span>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for company in sorted_companies %}
+                <tr>
+                    <th scope="row">{{ forloop.counter }}</th>
+                    <td><a href="{% url 'company' company.company.id %}">{{ company.company.Name }}</a></td>
+                    <td>{{ company.score|floatformat:2 }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<script>
+$(document).ready(function(){
+    $('[data-toggle="tooltip"]').tooltip();
+});
+</script>
+
+{% endblock %}

@@ -42,7 +42,7 @@ urlpatterns = [
     path('signup/', SignupView.as_view(), name='account_signup'),
     path('__debug__/', include('debug_toolbar.urls')),
     path('news', articles_page, name='articles_page'),
-
+    path('', include('Feed.urls')),
 ]
 
 if settings.DEBUG:

@@ -52,7 +52,7 @@ textarea.form-control {
         <hr>
         <div class="d-grid gap-2 flex-column">
           <a href="{% url 'profile' user.id %}" class="btn btn-primary mb-2" style="width: 100%;"><i class="bi bi-person"></i> Profile</a>
-          <a href="{% url 'alerts' %}" class="btn btn-secondary mb-2" style="width: 100%;"><i class="bi bi-bell"></i> Alerts</a>
+          <a href="{% url 'inbox' %}#v-pills-alerts" class="btn btn-secondary mb-2" style="width: 100%;"><i class="bi bi-bell"></i> Alerts</a>
           <a href="{% url 'inbox' %}" class="btn btn-secondary mb-2" style="width: 100%;"><i class="bi bi-chat"></i> Messages</a>
         </div>
       </div>
@@ -104,7 +104,7 @@ textarea.form-control {
             <div id="post-list">
               <h2>Social Feed:</h2>
 {% for post in FriendsPosts %}
-  <div class="post" style="background-color: #f8f9fa; padding: 20px; border-radius: 5px; margin-bottom: 20px;">
+  <div class="post" id="post{{ post.id }}" style="background-color: #f8f9fa; padding: 20px; border-radius: 5px; margin-bottom: 20px;">
     <div>
       <a href="{% url 'profile' post.Author.id %}">{{ post.Author }}</a> wrote: {{ post.Text }}
       <small class="text-muted"> ({{ post.Date_Created|timesince }} ago)</small>
@@ -133,6 +133,9 @@ textarea.form-control {
         {% endfor %}
       </div>
     </div>
+        {% if request.user == post.Author %}
+        <button class="btn btn-danger delete-btn" data-post-id="{{ post.id }}" onclick="deletePost(event)">Delete</button>
+    {% endif %}
   </div>
 {% empty %}
   <div class="text-center text-muted">
@@ -344,6 +347,28 @@ textarea.form-control {
 
 });
 </script>
+
+<script>
+  function deletePost(event) {
+    event.preventDefault();
+    var postId = event.target.dataset.postId;
+    fetch(`/delete_post_ajax/${postId}/`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': '{{ csrf_token }}'
+      }
+    })
+    .then(response => response.json())
+    .then(data => {
+      $('#post' + data.post_id).remove();
+    })
+    .catch(error => {
+      console.error(error);
+    });
+  }
+</script>
+
 
 {% else %}
 

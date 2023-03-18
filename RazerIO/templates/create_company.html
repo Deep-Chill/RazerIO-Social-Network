@@ -1,52 +1,55 @@
 {% extends 'base.html' %}
-
+{% load crispy_forms_tags %}
 {% block content %}
+<script>
+    function showForm(isPublic) {
+        const publicForm = document.getElementById('public-form');
+        const privateForm = document.getElementById('private-form');
+
+        if (isPublic) {
+            publicForm.style.display = 'block';
+            privateForm.style.display = 'none';
+        } else {
+            publicForm.style.display = 'none';
+            privateForm.style.display = 'block';
+        }
+    }
+</script>
+
 <div class="container">
+    {% if messages %}
+<div class="alert alert-danger">
+  <ul>
+    {% for message in messages %}
+    {{ message }}
+    {% endfor %}
+  </ul>
+</div>
+{% endif %}
+
     <h2>Create a new company</h2>
-    <form method="post" enctype="multipart/form-data" class="mt-4">
+    <div class="form-check">
+        <input type="radio" class="form-check-input" id="public" name="company_type" value="public" onclick="showForm(true)">
+        <label class="form-check-label" for="public">Publicly Traded</label>
+    </div>
+    <div class="form-check">
+        <input type="radio" class="form-check-input" id="private" name="company_type" value="private" onclick="showForm(false)">
+        <label class="form-check-label" for="private">Private</label>
+    </div>
+
+    <form method="post" enctype="multipart/form-data" class="mt-4" id="public-form" style="display:none;">
         {% csrf_token %}
-        <div class="form-group">
-            <label for="{{ company_form.Name.id_for_label }}">Name:</label>
-            {{ company_form.Name }}
-            <small class="form-text text-muted">Enter the full name of the company.</small>
-        </div>
-        <div class="form-group">
-            <label for="{{ company_form.About.id_for_label }}">About:</label>
-            {{ company_form.About }}
-            <small class="form-text text-muted">Provide a brief description of the company. (Optional)</small>
-        </div>
-        <div class="form-group">
-            <label for="{{ company_form.Industry.id_for_label }}">Industry:</label>
-            {{ company_form.Industry }}
-            <small class="form-text text-muted">Industry the company operates in. (Optional)</small>
-        </div>
-        <div class="form-group">
-            <label for="{{ company_form.StockTicker.id_for_label }}">Stock Ticker:</label>
-            {{ company_form.StockTicker }}
-            <small class="form-text text-muted">The stock ticker symbol for the company. (e.g., KO for Coca Cola, TSLA for Tesla)(Optional)</small>
-        </div>
-        <div class="form-group">
-            <label for="{{ company_form.Founded.id_for_label }}">Founded:</label>
-            {{ company_form.Founded }}
-            <small class="form-text text-muted">The date the company was founded. (Optional)</small>
-        </div>
-        <div class="form-group">
-            <label for="{{ company_form.Headquarters.id_for_label }}">Headquarters:</label>
-            {{ company_form.Headquarters }}
-            <small class="form-text text-muted">The location of the company's headquarters. (Optional)</small>
-        </div>
-        <div class="form-group">
-            <label for="{{ company_form.Website.id_for_label }}">Website:</label>
-            {{ company_form.Website }}
-            <small class="form-text text-muted">The company's website URL. (Optional)</small>
-        </div>
-        <h3>Email Domain</h3>
-        <div class="form-group">
-            <label for="{{ email_domain_form.domain.id_for_label }}">Domain:</label>
-            {{ email_domain_form.domain }}
-<small class="form-text text-muted">Enter the domain for company email addresses (e.g., "coke.com" for "contact@coke.com").</small>
-        </div>
-        <button type="submit" class="btn btn-primary">Create Company</button>
+        {{ public_company_form|crispy }}
+        {{ email_domain_form_public|crispy }}
+        <button type="submit" class="btn btn-primary" name="public_form_submit">Create Public Company</button>
+    </form>
+
+
+    <form method="post" enctype="multipart/form-data" class="mt-4" id="private-form" style="display:none;">
+        {% csrf_token %}
+        {{ private_company_form|crispy }}
+        {{ email_domain_form_private|crispy }}
+        <button type="submit" class="btn btn-primary" name="private_form_submit">Create Private Company</button>
     </form>
 </div>
 {% endblock %}

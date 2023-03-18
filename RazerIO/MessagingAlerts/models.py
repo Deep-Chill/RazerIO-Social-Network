@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
 import uuid
+from django.urls import reverse
 
 User = settings.AUTH_USER_MODEL
 
@@ -18,6 +19,7 @@ class Message(models.Model):
     content = models.TextField(max_length=10000)
     timestamp = models.DateTimeField(auto_now_add=True)
     conversation = models.ForeignKey(Conversation, on_delete=models.CASCADE)
+    read_by = models.ManyToManyField(User, related_name='read_messages', blank=True)
 
     def __str__(self):
         return f'{self.sender} wrote in {self.conversation}'
@@ -45,3 +47,7 @@ class Alert(models.Model):
 
     def get_absolute_url(self):
         return reverse('notification_detail', args=[str(self.id)])
+
+    def mark_as_read(self):
+        self.read = True
+        self.save()

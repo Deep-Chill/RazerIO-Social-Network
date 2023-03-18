@@ -1,5 +1,21 @@
 {% extends 'base.html' %}
+{% block head %}
 
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/@ttskch/select2-bootstrap4-theme@1.5.2/dist/select2-bootstrap4.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+<style>
+.select2-container--bootstrap4 .select2-results__option--highlighted[aria-selected] {
+  background-color: #007bff;
+  color: #fff;
+}
+
+.select2-container {
+  width: 75% !important;
+}
+</style>
+{% endblock %}
 {% block content %}
 <div class="container my-5">
     <div class="row justify-content-center">
@@ -18,9 +34,14 @@
                             {{ form.Salary }}
                         </div>
                         <div class="form-group">
-                            <label for="{{ form.Company.id_for_label }}">Company</label>
+                            <label for="{{ form.Company.id_for_label }}" id="Company" class="company-label">Company</label>
                             {{ form.Company }}
                         </div>
+                        <div class="form-group">
+                            <label for="{{ form.ProfilePic.id_for_label }}">Profile Pic</label>
+                            {{ form.ProfilePic }}
+                        </div>
+
                         <button type="submit" class="btn btn-primary">Save changes</button>
                     </form>
                 </div>
@@ -28,4 +49,19 @@
         </div>
     </div>
 </div>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('#{{ form.Company.id_for_label }}').select2({
+            placeholder: "Search Company",
+            allowClear: true,
+            theme: "bootstrap4",
+            dropdownParent: $('body')
+        }).on('select2:opening', function() {
+            setTimeout(function() {
+                $('.select2-search__field').focus();
+            }, 100);
+        });
+    });
+</script>
 {% endblock %}

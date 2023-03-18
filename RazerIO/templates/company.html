@@ -1,21 +1,45 @@
 {% extends "base.html" %}
 {% block title %}Company Page{% endblock %}
+
 {% block head %}
+
+{% load humanize %}
+{% load static %}
+
+
+<style>
+.about-text {
+  display: block !important;
+}
+.show-more {
+  display: inline;
+}
+</style>
 {% endblock %}
 
 {% block content %}
-{% load humanize %}
-
 <div class="container">
     <div class="row">
         <div class="col-sm-12">
             <h1 class="d-inline">{{ Company.Name }}</h1>
+            <img src="{{ Company.get_logo_url }}" alt="{{ Company.Name }} logo">
+
             <div class="float-right">
                 {% if user.is_authenticated and user.Company == Company %}
                     <a href="{% url 'edit_company' Company.id %}" class="btn btn-sm btn-primary mb-3">Edit Page</a>
                     <a href="{% url 'edit_history' Company.id %}" class="btn btn-sm btn-secondary mb-3">Recent Changes</a>
                 {% endif %}
             </div>
+                        {% if Company.IsPublic %}
+                <div class="alert alert-primary" role="alert">
+                    Company Score: {{ CompanyScore|floatformat:5 }}
+<span class="badge badge-pill badge-secondary" data-toggle="tooltip" data-placement="top" title="The IO Company score is
+a comprehensive evaluation of the company's financials, stability, global reach, R&D, market share, product diversity,
+public sentiment, employee satisfaction, ESG score, future outlook and more. Help improve it by leaving a review on the
+company.">?</span>
+                </div>
+            {% endif %}
+
         </div>
     </div>
     <div class="row">
@@ -24,7 +48,7 @@
                 <div class="card-body">
                     {% if Company.IsPublic %}
                         <p>Publicly Traded Company</p>
-                        <p>Stock Price: ${{ StockPrice|floatformat:2 }}</p>
+                        <p>Market Cap: ${{ Company.MarketCap|intword }}</p>
                     {% else %}
                         <p>Private Company</p>
                     {% endif %}
@@ -32,7 +56,10 @@
                     <p>Founded: {{ Company.Founded.year }}</p>
                     <p>Headquarters: {{ Company.Headquarters }}</p>
                     <p>Website: <a href="{{ Company.Website }}" target="_blank">{{ Company.Website }}</a></p>
-                    <p>About: {{ Company.About }}</p>
+                    <div>
+                      <p>About: <span class="about-text">{{ Company.About|safe }}</span></p>
+                        <a href="#" class="btn btn-link show-more">Show more</a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -64,11 +91,16 @@
       <div class="tab-content">
     <div class="tab-pane active" id="info" role="tabpanel">
         {% if Company.IsPublic %}
-          <p>Market Cap: ${{ MarketCap|intword }}</p>
-          <p>Employee Count: {{ EmployeeCount|intcomma }}</p>
-          <p>Industry: {{ Company.get_Industry_display  }}</p>
-          <p>Annual Revenue: {{ AnnualRevenue|intword }}</p>
-          <p>Annual Profit: {{ AnnualProfit|intword }}</p>
+          <p>Stock Price: ${{ Company.StockPrice|floatformat:2 }}</p>
+          <p>Employee Count: {{ Company.EmployeeCount|intword|intcomma }}</p>
+          <p>Annual Revenue: ${{ Company.AnnualRevenue|intword }}</p>
+          <p>Annual Profit: ${{ Company.AnnualProfit|intword }}</p>
+        <p>Total Assets: ${{ Company.Assets|intword }}</p>
+        <p>Total Liabilities: ${{ Company.TotalLiabilities|intword }}</p>
+        <p>Net Assets: ${{ Company.NetAssets|intword }}</p>
+        <p>Total Debt: ${{ Company.TotalDebt|intword }}</p>
+        <p>Cash on Hand: ${{ Company.CashOnHand|intword }}</p>
+
         {% else %}
           <!-- Display manually entered data for non-public companies -->
           <p>Employee Count: {{ Company.EmployeeCount|intcomma }}</p>
@@ -91,50 +123,7 @@
         {% endif %}
     </div>
     <div class="tab-pane" id="ownership" role="tabpanel">
-        {% if not Company.IsPublic %}
-    <h4>Notable People</h4>
-    <table class="table">
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Title</th>
-          <th>Bio</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for person in NotablePeople %}
-          <tr>
-            <td>{{ person.name }}</td>
-            <td>{{ person.title }}</td>
-            <td>{{ person.bio }}</td>
-          </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-
-    <h4>Lead Investors</h4>
-    <table class="table">
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Notes</th>
-            <th>Amount invested</th>
-            <th>Date of investment</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for investor in LeadInvestors %}
-          <tr>
-            <td>{{ investor.name }}</td>
-            <td>{{ investor.bio }}</td>
-            <td>{{ investor.amount_invested|intword }}</td>
-            <td>{{ investor.investment_date }}</td>
-          </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  {% else %}
-        <h4>Top 5 Owners</h4>
+        <h4>Lead Investors</h4>
         <table class="table">
             <thead>
                 <tr>
@@ -143,10 +132,10 @@
                 </tr>
             </thead>
             <tbody>
-                {% for owner in Top3Owners %}
+                {% for owner in LeadInvestors %}
                 <tr>
-                    <td>{{ owner.organization }}</td>
-                    <td>${{ owner.value|intword }}</td>
+                    <td>{{ owner.name }}</td>
+                    <td>${{ owner.amount_invested|intword }}</td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -162,17 +151,16 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% for officer in CompanyOfficers %}
+                    {% for officer in NotablePeople %}
                     <tr>
                 <td>{{ officer.name }}</td>
                 <td>{{ officer.age|floatformat:"0" }}</td>
                 <td>{{ officer.title }}</td>
-                <td>${{ officer.totalPay|intword }}</td>
+                <td>${{ officer.salary|intword|intcomma }}</td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
-          {% endif %}
 </div>
 
         <div class="tab-pane" id="jobs" role="tabpanel">
@@ -182,7 +170,7 @@
           <!-- Add company perks content here -->
         </div>
         <div class="tab-pane" id="health" role="tabpanel">
-          <!-- Add company health content here -->
+
         </div>
             <div class="tab-pane" id="reviews" role="tabpanel">
                 <h2>Average Ratings</h2>
@@ -190,32 +178,32 @@
                     <tr>
                         <td>Overall Rating</td>
                         <td>{{ avg_ratings.avg_overall_rating|floatformat:1 }}</td>
-</tr>
-<tr>
-<td>Culture and Values Rating</td>
-<td>{{ avg_ratings.avg_culture_and_values_rating|floatformat:1 }}</td>
-</tr>
-<tr>
-<td>Senior Leadership Rating</td>
-<td>{{ avg_ratings.avg_senior_leadership_rating|floatformat:1 }}</td>
-</tr>
-<tr>
-<td>Compensation and Benefits Rating</td>
-<td>{{ avg_ratings.avg_compensation_and_benefits_rating|floatformat:1 }}</td>
-</tr>
-<tr>
-<td>Career Opportunities Rating</td>
-<td>{{ avg_ratings.avg_career_opportunities_rating|floatformat:1 }}</td>
-</tr>
-<tr>
-<td>Work-Life Balance Rating</td>
-<td>{{ avg_ratings.avg_work_life_balance_rating|floatformat:1 }}</td>
-</tr>
-<tr>
-<td>Future Outlook</td>
-<td>{{ avg_ratings.avg_future_outlook|floatformat:1 }}</td>
-</tr>
-</table>
+                        </tr>
+                        <tr>
+                        <td>Culture and Atmosphere Rating</td>
+                        <td>{{ avg_ratings.avg_culture_and_atmosphere_rating|floatformat:1 }}</td>
+                        </tr>
+                        <tr>
+                        <td>Senior Leadership Rating</td>
+                        <td>{{ avg_ratings.avg_senior_leadership_rating|floatformat:1 }}</td>
+                        </tr>
+                        <tr>
+                        <td>Compensation and Benefits Rating</td>
+                        <td>{{ avg_ratings.avg_compensation_and_benefits_rating|floatformat:1 }}</td>
+                        </tr>
+                        <tr>
+                        <td>Career Opportunities Rating</td>
+                        <td>{{ avg_ratings.avg_career_opportunities_rating|floatformat:1 }}</td>
+                        </tr>
+                        <tr>
+                        <td>Work-Life Balance Rating</td>
+                        <td>{{ avg_ratings.avg_work_life_balance_rating|floatformat:1 }}</td>
+                        </tr>
+                        <tr>
+                        <td>Future Outlook</td>
+                        <td>{{ avg_ratings.avg_future_outlook|floatformat:1 }}</td>
+                        </tr>
+                        </table>
             <h2>Recent Reviews</h2>
             {% for review in recent_reviews %}
                 <div class="card mb-3">
@@ -228,14 +216,59 @@
                     </div>
                 </div>
             {% endfor %}
-
-            <a href="{% url 'create_review' company_id=Company.id %}" class="btn btn-primary">Write a Review</a>
+            <div class="dropdown">
+                <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Write a Review</button>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                <a href="{% url 'create_employee_review' company_id=Company.id %}" class="btn btn-primary">As an employee</a>
+                <a href="{% url 'create_non_employee_review' company_id=Company.id %}" class="btn btn-primary">As a non-employee</a>
+            </div>
+            </div>
             <a href="{% url 'company_reviews' company_id=Company.id %}" class="btn btn-secondary">See All Reviews</a>
         </div>
     </div>
 </div>
 </div>
 </div>
+
+<script>
+// Get the elements
+const aboutText = document.querySelector('.about-text');
+const showMoreButton = document.querySelector('.show-more');
+
+// Store the original text and truncated text
+const originalText = aboutText.textContent;
+const truncatedText = originalText.slice(0, 150);
+
+// Set the initial truncated text
+aboutText.textContent = truncatedText;
+
+// Set up event listener for button click
+showMoreButton.addEventListener('click', function(event) {
+  event.preventDefault();
+  if (aboutText.textContent === originalText) {
+    aboutText.textContent = truncatedText;
+    showMoreButton.textContent = 'Show more';
+  } else {
+    aboutText.textContent = originalText;
+    showMoreButton.textContent = 'Show less';
+  }
+});
+
+// Show button if text is longer than 150 characters
+if (originalText.length > 150) {
+  showMoreButton.style.display = 'inline';
+} else {
+  showMoreButton.style.display = 'none';
+}
+</script>
+
+<script>
+$(document).ready(function(){
+    $('[data-toggle="tooltip"]').tooltip();
+});
+</script>
+
+
 {% endblock %}
 
 

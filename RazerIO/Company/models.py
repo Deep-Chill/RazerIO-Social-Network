@@ -1,11 +1,16 @@
 from django.db import models
 # Create your models here.
 from django.conf import settings
+import requests
+from django.core.cache import cache
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from allauth.account.models import EmailAddress
 import hashlib
+from django.db.models import JSONField
 from django.core.exceptions import ValidationError
+
+from django.utils import timezone
 
 INDUSTRY_CHOICES = (
     ('SOFTWARE', 'Software'),
@@ -25,8 +30,8 @@ INDUSTRY_CHOICES = (
     ('IOT', 'Internet of Things'),
     ('AR_VR', 'Augmented & Virtual Reality'),
     ('SOCIAL_MEDIA', 'Social Media'),
+    ('Other', 'Other')
 )
-
 
 class EmailDomain(models.Model):
     domain = models.CharField(max_length=50)
@@ -47,6 +52,24 @@ class Company(models.Model):
     Logo = models.ImageField(upload_to='company_logos/', blank=True, null=True)
     IsPublic = models.BooleanField(default=False)
 
+    StockPrice = models.DecimalField(max_digits=50, decimal_places=15, null=True, blank=True)
+    MarketCap = models.DecimalField(max_digits=50, decimal_places=15, null=True, blank=True)
+
+    last_updated_stockdata = models.DateTimeField(default=timezone.now)
+    last_updated_other_fields = models.DateTimeField(default=timezone.now)
+
+    EmployeeCount = models.PositiveIntegerField(null=True, blank=True)
+    LongBusinessSummary = models.TextField(max_length=10000, default='', blank=True, null=True)
+    AnnualRevenue = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
+    AnnualProfit = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
+    Headquarters: models.CharField(max_length=100, null=True, blank=True)
+    Country = models.CharField(max_length=100, null=True, blank=True)
+    TotalLiabilities = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
+    TotalDebt = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
+    CashOnHand = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
+    Assets = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
+    NetAssets = models.DecimalField(max_digits=15, decimal_places=0, null=True, blank=True)
+
     def clean(self):
         if not self.IsPublic and self.StockTicker:
             raise ValidationError("A company cannot have a StockTicker if it is not public.")
@@ -59,12 +82,48 @@ class Company(models.Model):
     def __str__(self):
         return self.Name
 
+    def get_logo_url(self):
+        if self.Logo:
+            return self.Logo.url
+        else:
+            return self.clearbit_logo_url()
+
+    def get_clearbit_logo_url(self):
+        cache_key = f'clearbit_logo_url_{self.pk}'
+        logo_url = cache.get(cache_key)
+        if not logo_url:
+            logo_url = self.clearbit_logo_url()
+            cache.set(cache_key, logo_url, 3600)  # Cache the logo URL for 1 hour
+        return logo_url
+
+    def clearbit_logo_url(self, size=128, format='png', greyscale=False):
+        greyscale_param = 'true' if greyscale else 'false'
+        return f"https://logo.clearbit.com/{self.Website}"
+
+    def update_company_data(self, company_data):
+        self.Founded = company_data.get('Founded', None)
+        self.StockPrice = company_data.get('StockPrice', None)
+        self.MarketCap = company_data.get('MarketCap', None)
+        self.EmployeeCount = company_data.get('EmployeeCount', None)
+        self.LongBusinessSummary = company_data.get('LongBusinessSummary', None)
+        self.Website = company_data.get('Website', None)
+        self.Headquarters = company_data.get('Headquarters', None)
+        self.Country = company_data.get('Country', None)
+        self.TotalLiabilities = company_data.get('TotalLiabilities', None)
+        self.TotalDebt = company_data.get('TotalDebt', None)
+        self.CashOnHand = company_data.get('CashOnHand', None)
+        self.Assets = company_data.get('Assets', None)
+        self.NetAssets = company_data.get('NetAssets', None)
+        self.save()
+
+
 class NotablePerson(models.Model):
     name = models.CharField(max_length=256, blank=True, null=True)
-    title = models.CharField(max_length=256)
+    title = models.CharField(max_length=256, blank=True, null=True)
     achievements = models.TextField(blank=True, null=True)
     company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name='notable_people')
-
+    age = models.IntegerField(null=True, blank=True)
+    salary = models.IntegerField(null=True, blank=True)
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE, null=True, blank=True)
     object_id = models.PositiveIntegerField(null=True, blank=True)
     content_object = GenericForeignKey('content_type', 'object_id')
@@ -131,7 +190,7 @@ class CompanyReview(models.Model):
     user_email_domain = models.CharField(max_length=100, blank=True, null=True)
     user_status = models.CharField(max_length=20, choices=[('Current', 'Current'), ('Former', 'Former')])
     overall_rating = models.PositiveSmallIntegerField(choices=RATING_CHOICES)
-    culture_and_values_rating = models.PositiveSmallIntegerField(choices=RATING_CHOICES)
+    culture_and_atmosphere_rating = models.PositiveSmallIntegerField(choices=RATING_CHOICES)
     senior_leadership_rating = models.PositiveSmallIntegerField(choices=RATING_CHOICES)
     compensation_and_benefits_rating = models.PositiveSmallIntegerField(choices=RATING_CHOICES)
     career_opportunities_rating = models.PositiveSmallIntegerField(choices=RATING_CHOICES)
@@ -140,6 +199,7 @@ class CompanyReview(models.Model):
     review_text = models.TextField(max_length=1000, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     user_hash = models.CharField(max_length=64, unique=True, blank=True, null=True)
+
     def generate_hash(self, email):
         hash_object = hashlib.sha256((email + SECRET_KEY).encode())
         return hash_object.hexdigest()
@@ -177,3 +237,26 @@ class CompanyEditHistory(models.Model):
     user = models.ForeignKey('Users.CustomUser', on_delete=models.CASCADE)
     timestamp = models.DateTimeField(auto_now_add=True)
     changes = models.TextField()
+
+RELATIONSHIP_CHOICES = (
+    ('customer', 'Customer'),
+    ('supplier', 'Supplier'),
+    ('partner', 'Partner'),
+    ('investor', 'Investor'),
+    ('other', 'Other'),
+)
+
+class NonEmployeeReview(models.Model):
+    company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name='non_employee_reviews')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)
+    relationship = models.CharField(max_length=100, choices=RELATIONSHIP_CHOICES)
+    overall_experience = models.PositiveSmallIntegerField(choices=RATING_CHOICES)
+    customer_service_rating = models.PositiveSmallIntegerField(choices=RATING_CHOICES, blank=True, null=True)
+    product_quality_rating = models.PositiveSmallIntegerField(choices=RATING_CHOICES, blank=True, null=True)
+    review_title = models.CharField(max_length=200, blank=True, null=True)
+    review_text = models.TextField(max_length=5000)
+    advice_to_management = models.TextField(max_length=2000, blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Non-Employee Review for {self.company.Name} by {self.user.username}"

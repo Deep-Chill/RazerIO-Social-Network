@@ -2,40 +2,81 @@
 
 {% block content %}
   <h1>Edit About Section for {{ company.Name }}</h1>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-6 col-lg-4">
+        <div class="card">
+          <div class="card-header">
+            <h2>Company Info</h2>
+          </div>
+          <div class="card-body">
+            <form method="post" enctype="multipart/form-data">
+              {% csrf_token %}
+              {{ form }}
+              <button type="submit" class="btn btn-primary mt-3" name="edit_company_submit">Save Company</button>
+            </form>
+          </div>
+        </div>
+      </div>
+        <div class="col-md-6 col-lg-4">
+          <div class="card">
+            <div class="card-header">
+              <h2>Notable Person</h2>
+            </div>
+            <div class="card-body">
+              <form method="post">
+                {% csrf_token %}
+                {{ notable_person_form.as_p }}
+                <button type="submit" class="btn btn-primary mt-3" name="notable_person_submit">Add Notable Person</button>
+              </form>
+            </div>
+          </div>
+        </div>
 
-  <form method="post" enctype="multipart/form-data">
-      {% csrf_token %}
-      {{ form.as_p }}
-      <button type="submit" name="edit_company_submit">Save Company</button>
-  </form>
+        <div class="col-md-6 col-lg-4">
+          <div class="card">
+            <div class="card-header">
+              <h2>Lead Investor</h2>
+            </div>
+            <div class="card-body">
+              <form method="post">
+                {% csrf_token %}
+                {{ lead_investor_form.as_p }}
+                <button type="submit" class="btn btn-primary mt-3" name="lead_investor_submit">Add Lead Investor</button>
+              </form>
+            </div>
+          </div>
+        </div>
 
-  {% if not company.IsPublic|lower %}
-      <form method="post">
-          {% csrf_token %}
-          <h2>Notable Person</h2>
-          {{ notable_person_form.as_p }}
-          <button type="submit" name="notable_person_submit">Add Notable Person</button>
-      </form>
+        <div class="col-md-6 col-lg-4">
+          <div class="card">
+            <div class="card-header">
+              <h2>Valuation</h2>
+            </div>
+            <div class="card-body">
+              <form method="post">
+                {% csrf_token %}
+                {{ valuation_form.as_p }}
+                <button type="submit" class="btn btn-primary mt-3" name="valuation_submit">Add Valuation</button>
+              </form>
+            </div>
+          </div>
+        </div>
 
-      <form method="post">
-          {% csrf_token %}
-          <h2>Lead Investor</h2>
-          {{ lead_investor_form.as_p }}
-          <button type="submit" name="lead_investor_submit">Add Lead Investor</button>
-      </form>
-
-      <form method="post">
-          {% csrf_token %}
-          <h2>Valuation</h2>
-          {{ valuation_form.as_p }}
-          <button type="submit" name="valuation_submit">Add Valuation</button>
-      </form>
-  {% endif %}
-
-  <form method="post">
-      {% csrf_token %}
-      <h2>Email Domain</h2>
-      {{ email_domain_form.as_p }}
-      <button type="submit" name="email_domain_submit">Add Email Domain</button>
-  </form>
+      <div class="col-md-6 col-lg-4">
+        <div class="card">
+          <div class="card-header">
+            <h2>Email Domain</h2>
+          </div>
+          <div class="card-body">
+            <form method="post">
+              {% csrf_token %}
+              {{ email_domain_form.as_p }}
+              <button type="submit" class="btn btn-primary mt-3" name="email_domain_submit">Add Email Domain</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 {% endblock %}

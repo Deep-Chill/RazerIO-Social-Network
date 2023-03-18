@@ -26,9 +26,10 @@ SECRET_KEY = 'django-insecure-)+kdny32s0xt#*#=a6*&7!pp&c22jy(_+_0_8xhl(8hj820m&=
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
+FILTERS_EMPTY_CHOICE_LABEL = ''
 
 # Application definition
+
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -57,6 +58,7 @@ INSTALLED_APPS = [
     "debug_toolbar",
     'django_filters',
     'django.contrib.humanize.apps.HumanizeConfig',
+    'allauth.socialaccount.providers.github'
 ]
 
 SITE_ID = 1
@@ -75,8 +77,20 @@ SOCIALACCOUNT_PROVIDERS = {
             'profile',
             'email',
         ],
+    },
+    'github': {
+        'SCOPE': ['user:email'],
+        'VERIFIED_EMAIL': False,
+        'AUTH_PARAMS': {'access_type': 'offline'},
+        'APP': {
+            'client_id': '7bada06c59f2310dc3dc',
+            'secret': '02f78e3931cfba3852acf3d2300221261e914c18',
+            'key': ''
+        }
     }
 }
+
+
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
