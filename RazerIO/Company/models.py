@@ -51,6 +51,7 @@ class Company(models.Model):
     Email_Domain = models.ManyToManyField(EmailDomain, blank=True)
     Logo = models.ImageField(upload_to='company_logos/', blank=True, null=True)
     IsPublic = models.BooleanField(default=False)
+    company_score = models.FloatField(null=True, blank=True)
 
     StockPrice = models.DecimalField(max_digits=50, decimal_places=15, null=True, blank=True)
     MarketCap = models.DecimalField(max_digits=50, decimal_places=15, null=True, blank=True)
@@ -62,7 +63,7 @@ class Company(models.Model):
     LongBusinessSummary = models.TextField(max_length=10000, default='', blank=True, null=True)
     AnnualRevenue = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
     AnnualProfit = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
-    Headquarters: models.CharField(max_length=100, null=True, blank=True)
+    # Headquarters: models.CharField(max_length=100, null=True, blank=True)
     Country = models.CharField(max_length=100, null=True, blank=True)
     TotalLiabilities = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
     TotalDebt = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)

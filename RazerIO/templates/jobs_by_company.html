@@ -1,0 +1,324 @@
+{% extends "base.html" %}
+
+{% block title %}
+Jobs by
+{% endblock %}
+
+{% load humanize %}
+{% load widget_tweaks %}
+{% block head %}
+
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/@ttskch/select2-bootstrap4-theme@1.5.2/dist/select2-bootstrap4.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+
+
+
+<style>
+.search-bar {
+    max-width: 100%;
+    margin-top: -45px;
+}
+.table-container {
+    max-width: 100%;
+    overflow-x: auto;
+}
+.filter-sidebar {
+    background-color: #f8f9fa;
+    border-right: 1px solid #dee2e6;
+    padding: 15px;
+    padding-left: 30px;
+}
+.main-content {
+    padding: 0 30px;
+}
+    .responsive-table {
+}
+.ui-slider {
+position: relative;
+text-align: left;
+background: #e9ecef;
+border-radius: 4px;
+height: 4px;
+}
+
+.ui-slider .ui-slider-handle {
+position: absolute;
+z-index: 2;
+width: 20px;
+height: 20px;
+background: #007bff;
+border: none;
+border-radius: 50%;
+cursor: pointer;
+top: -8px;
+outline: none;
+}
+
+.ui-slider .ui-slider-range {
+position: absolute;
+z-index: 1;
+font-size: .7em;
+display: block;
+border: 0;
+background-position: 0 0;
+background-color: #007bff;
+}
+</style>
+{% endblock %}
+{% block content %}
+
+<div class="container mt-auto">
+<div class="d-flex justify-content-between">
+<a href="{% url 'job_applications' %}" class="btn btn-outline-primary">My Job Applications</a>
+  <a href="{% url 'createjoblisting' %}" class="btn btn-outline-primary">Post a Job</a>
+  {% if job_posts_by_me %}
+<a href="{% url 'myjobposts' %}" class="btn btn-outline-primary">My Job Posts</a>
+{% endif %}
+</div>
+
+<h1 class="mt-4 mb-5 text-center">Jobs by {{ company }}</h1>
+</div>
+
+<div class="container-fluid mt-5">
+  <div class="row">
+    <div class="col-md-3 col-lg-2 filter-sidebar">
+      <h5>Customize your job search</h5>
+      <hr>
+      <form method="get" id="job-filter-form">
+        <div class="form-group">
+            <input type="hidden" name="salary_min" id="salary-min" value="{{ request.GET.salary_min }}">
+          <label for="{{ job_filter.form.Category.id_for_label }}" class="font-weight-bold mb-2">Category</label>
+          {{ job_filter.form.Category|add_class:"form-control rounded mb-3" }}
+        </div>
+        <div class="form-group">
+            <input type="hidden" name="salary_max" id="salary-max" value="{{ request.GET.salary_max }}">
+          <label for="{{ job_filter.form.Experience_Level.id_for_label }}" class="font-weight-bold mb-2">Experience Level</label>
+          {{ job_filter.form.Experience_Level|add_class:"form-control rounded mb-3" }}
+        </div>
+        <div class="form-group">
+            <label class="font-weight-bold mb-2">Salary Range</label>
+            <div id="salary-min-slider"></div>
+            <p class="text-center mt-2">
+                Min: <span id="salary-min-display">$20,000</span>
+            </p>
+        </div>
+        <div class="form-group">
+            <label class="font-weight-bold mb-2">Maximum Salary</label>
+            <div id="salary-max-slider"></div>
+            <p class="text-center mt-2">
+                Max: <span id="salary-max-display">$20,000</span>
+            </p>
+        </div>
+<div class="form-group">
+    <label class="font-weight-bold mb-2">Date Posted</label>
+    <div class="btn-group btn-group-toggle d-flex justify-content-center" data-toggle="buttons">
+        <label class="btn btn-outline-primary">
+            <input type="radio" name="date_posted" value="1"> Last Day
+        </label>
+        <label class="btn btn-outline-primary">
+            <input type="radio" name="date_posted" value="7"> Last Week
+        </label>
+        <label class="btn btn-outline-primary">
+            <input type="radio" name="date_posted" value="30"> Last Month
+        </label>
+    </div>
+</div>
+        <div class="form-group">
+          <button type="submit" class="btn btn-primary btn-block rounded">Search</button>
+          <a href="{% url 'job_posting_by_company' id=id %}" class="btn btn-outline-secondary btn-block rounded">Reset Filters</a>
+        </div>
+            </form>
+        </div>
+        <div class="col-md-9 col-lg-10 main-content" style="margin-left: 0; padding-left: 15px;">
+            <div class="d-flex justify-content-center mb-3">
+                <input type="text" id="myInput" class="form-control search-bar" placeholder="Search Jobs">
+            </div>
+            <div class="table-container">
+                <div class="table-responsive">
+                    <table class="table table-striped" id="myTable">
+            <thead>
+                <tr>
+                    <th>Company</th>
+                    <th>Title</th>
+                    <th>Level</th>
+                    <th>Salary</th>
+                    <th>Type</th>
+                    <th>Location</th>
+                    <th>Posted/Updated</th>
+                    <th>Openings</th>
+                    <th>Applicants</th>
+                    <th>URL</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for job in job %}
+                    <tr>
+                        <td>
+                            {% if job.Company %}
+                                <a href="{% url 'company' id=job.Company.id %}" class="text-primary">{{ job.Company }}</a>
+                            {% else %}
+                                This job does not have a Company!
+                            {% endif %}
+                        </td>
+                        <td>{{ job.Job_Title }}</td>
+                        <td>{{ job.Experience_Level }}</td>
+                        <td>${{ job.salary_min|floatformat:0|intcomma }} - ${{ job.salary_max|floatformat:0|intcomma }}/year</td>
+                        <td>{{ job.Category }}</td>
+                        <td>{{ job.Location }}</td>
+                        <td>{{ job.Date_Posted|date:"F j, Y"|default:"Unknown" }}</td>
+                        {% if job.NumberRecruiting %}
+                        <td>{{ job.NumberRecruiting }}</td>
+                        {% else %}
+                        <td>Unknown</td>
+                        {% endif %}
+                        <td>{{ job.total_applicants }}</td>
+                        <td>
+                            <a href="{{ job.ApplicationURL }}" class="btn btn-outline-primary">Apply</a>
+                        </td>
+                        {% if job.id in job_applications_by_me %}
+                            <td>
+                                <form method="POST" action="{% url 'job_applications' %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-success">Applied</button>
+                                </form>
+                            </td>
+                        {% else %}
+                            <td>
+                                <form method="POST" action="{% url 'apply_to_job' id=job.id %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-outline-primary">Mark as Applied</button>
+                                </form>
+                            </td>
+                        {% endif %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <!-- Pagination links -->
+    <nav aria-label="Job listings pagination">
+        <ul class="pagination justify-content-center mt-5">
+            {% if filtered_jobs.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ filtered_jobs.previous_page_number }}">Previous</a>
+                </li>
+            {% endif %}
+
+            {% for num in filtered_jobs.paginator.page_range %}
+                {% if filtered_jobs.number == num %}
+                    <li class="page-item active">
+                        <a class="page-link" href="#">{{ num }}</a>
+                    </li>
+
+    {% endif %}
+  {% endfor %}
+{% if filtered_jobs.has_next %}
+<li class="page-item">
+<a class="page-link" href="?page={{ filtered_jobs.next_page_number }}">Next</a>
+</li>
+{% endif %}
+
+</ul>
+  </nav>
+
+<script>
+const sliderValues = [
+        20000, 25000, 30000, 35000, 40000, 45000, 50000, 55000, 60000, 65000, 70000, 75000, 80000, 85000, 90000, 95000, 100000,
+        110000, 120000, 130000, 140000, 150000, 160000, 170000, 180000, 190000, 200000, 210000, 220000, 230000, 240000, 250000,
+        275000, 300000, 325000, 350000, 375000, 400000, 425000, 450000, 475000, 500000, 525000, 550000, 575000, 600000, 625000,
+        650000, 675000, 700000, 725000, 750000, 775000, 800000, 825000, 850000, 875000, 900000, 925000, 950000, 975000, 1000000
+    ];
+
+function formatSalary(value) {
+    return '$' + sliderValues[value].toLocaleString();
+}
+
+function getParameterByName(name, url) {
+    if (!url) url = window.location.href;
+    name = name.replace(/[\[\]]/g, '\\$&');
+    var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+        results = regex.exec(url);
+    if (!results) return null;
+    if (!results[2]) return '';
+    return decodeURIComponent(results[2].replace(/\+/g, ' '));
+}
+
+$(document).ready(function(){
+
+
+  $("#myInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#myTable tr").filter(function() {
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+    });
+  });
+
+
+  // Initialize sliders
+  $("#salary-min-slider").slider({
+    min: 0,
+    max: sliderValues.length - 1,
+    value: 0,
+    slide: function(event, ui) {
+        $("#salary-min-display").text(formatSalary(ui.value));
+        $("#{{ job_filter.form.salary_min.auto_id }}").val(sliderValues[ui.value]);
+    }
+  });
+
+  $("#salary-max-slider").slider({
+    min: 0,
+    max: sliderValues.length - 1,
+    value: 0,
+    slide: function(event, ui) {
+        $("#salary-max-display").text(formatSalary(ui.value));
+        $("#{{ job_filter.form.salary_max.auto_id }}").val(sliderValues[ui.value]);
+    }
+  });
+
+  const salaryMinInput = $('#salary-min');
+  const salaryMaxInput = $('#salary-max');
+  const salaryMinSlider = $('#salary-min-slider');
+  const salaryMaxSlider = $('#salary-max-slider');
+
+  const salaryMinValueFromUrl = parseInt(getParameterByName('salary_min')) || 0;
+  const salaryMaxValueFromUrl = parseInt(getParameterByName('salary_max')) || sliderValues[salaryMaxSlider.slider('option', 'max')];
+
+  // Find slider positions
+  const salaryMinPosition = sliderValues.indexOf(salaryMinValueFromUrl);
+  const salaryMaxPosition = sliderValues.indexOf(salaryMaxValueFromUrl);
+
+  // Set slider values
+  salaryMinSlider.slider('value', salaryMinPosition !== -1 ? salaryMinPosition : 0);
+  salaryMaxSlider.slider('value', salaryMaxPosition !== -1 ? salaryMaxPosition : salaryMaxSlider.slider('option', 'max'));
+
+  // Update the input elements when the sliders change
+  salaryMinSlider.on('slidechange', function(event, ui) {
+    console.log('Min slider changed:', ui.value);  // Debugging statement
+    salaryMinInput.val(sliderValues[ui.value]);
+  });
+
+  salaryMaxSlider.on('slidechange', function(event, ui) {
+    console.log('Max slider changed:', ui.value); // Debugging statement
+    salaryMaxInput.val(sliderValues[ui.value]);
+  });
+
+  // Add this at the end of your $(document).ready() function
+  $("#salary-min-display").text(formatSalary(salaryMinSlider.slider('value')));
+  $("#salary-max-display").text(formatSalary(salaryMaxSlider.slider('value')));
+});
+
+</script>
+
+
+
+
+
+{% endblock %}

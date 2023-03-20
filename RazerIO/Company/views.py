@@ -16,7 +16,7 @@ import json
 import math
 from yahooquery import Ticker
 from django.core.exceptions import ValidationError
-from datetime import date
+from datetime import date, timezone
 
 current_year = date.today().year
 
@@ -77,19 +77,42 @@ def get_company_score(company):
         weights['company_founded'] * company_founded_score +
         weights['reviews_on_our_website'] * reviews_on_our_website_score
     )
-    cache_key = f'company_score_{company.id}'
-    cache.set(cache_key, company_score, timeout=24 * 60 * 60)
+    # cache_key = f'company_score_{company.id}'
+    # cache.set(cache_key, company_score, timeout=24 * 60 * 60)
 
     return company_score
+
+
+def update_and_cache_company_score(company):
+    company_score = get_company_score(company)
+    company.company_score = company_score
+    company.save(update_fields=['company_score'])
+
+    cache_key = f'company_score_{company.id}'
+    cache.set(cache_key, company_score, timeout=24 * 60 * 60)
 
 
 def cache_company_score(company):
     cache_key = f'company_score_{company.id}'
     score = cache.get(cache_key)
-    if score is not None:
-        return score
-    else:
-        return get_company_score(company)
+    if score is None:
+        if company.company_score is not None:
+            score = company.company_score
+        else:
+            score = get_company_score(company)
+            company.company_score = score
+            company.save(update_fields=['company_score'])
+
+        cache.set(cache_key, score, timeout=24 * 60 * 60)
+
+    return score
+
+
+def update_company_score(company):
+    company_score = get_company_score(company)
+    company.company_score = company_score
+    company.save(update_fields=['company_score'])
+
 
 @cache_page(1*60*60)
 def company_leaderboard(request):
@@ -148,6 +171,11 @@ def CompanyPage(request, id):
     }
 
     if company_data:
+        company.last_updated_other_fields = timezone.now()
+        company.save(update_fields=['last_updated_other_fields'])
+
+        update_and_cache_company_score(company)  # Update company score and cache
+
         context.update(company_data)
 
     return render(request, 'company.html', context=context)
