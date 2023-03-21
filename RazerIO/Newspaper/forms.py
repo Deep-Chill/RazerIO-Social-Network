@@ -24,3 +24,9 @@ class ArticleCommentForm(forms.ModelForm):
             'Is_Anonymous': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
             'Show_Company': forms.CheckboxInput(attrs={'class': 'form-check-input'})
         }
+
+class EditArticleForm(forms.ModelForm):
+    Text = forms.CharField(widget=CKEditorWidget())
+    class Meta:
+        model = Article
+        fields = ['Text']

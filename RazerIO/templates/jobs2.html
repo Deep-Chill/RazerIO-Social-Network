@@ -12,10 +12,13 @@ Jobs by
 <link href="https://cdn.jsdelivr.net/npm/@ttskch/select2-bootstrap4-theme@1.5.2/dist/select2-bootstrap4.min.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
-
-
-
 <style>
+
+.select2-container--bootstrap4 .select2-results__option--highlighted[aria-selected]:hover {
+  background-color: #007bff;
+  color: #fff;
+}
+
 .search-bar {
     max-width: 100%;
     margin-top: -45px;
@@ -65,10 +68,30 @@ border: 0;
 background-position: 0 0;
 background-color: #007bff;
 }
+  .multiselect-dropdown {
+    display: inline-block;
+  }
+
+  .multiselect-dropdown .dropdown-menu {
+    position: absolute;
+    left: 0;
+    right: 0;
+    width: 100%;
+    overflow: auto;
+    max-height: 200px;
+  }
+    .form-row > .form-group {
+    width: 100%;
+  }
+
+  .form-row > .form-group:not(:last-child) {
+    margin-bottom: 15px;
+  }
+
 </style>
 {% endblock %}
-{% block content %}
 
+{% block content %}
 <div class="container mt-auto">
 <div class="d-flex justify-content-between">
 <a href="{% url 'job_applications' %}" class="btn btn-outline-primary">My Job Applications</a>
@@ -83,65 +106,96 @@ background-color: #007bff;
 
 <div class="container-fluid mt-5">
   <div class="row">
-<div class="col-md-3 col-lg-2 filter-sidebar">
+<div class="col-sm-2 col-md-2 col-lg-3 filter-sidebar">
     <h5>Customize your job search</h5>
     <hr>
     <form method="get" id="job-filter-form">
-        <div class="form-group">
+        <div class="form-group form-row">
           <label for="{{ job_filter.form.Company.id_for_label }}" class="font-weight-bold mb-2">Company</label>
-          {{ job_filter.form.Company|add_class:"form-control rounded mb-3" }}
+          {{ job_filter.form.Company|add_class:"form-control select2 mb-3" }}
         </div>
-        <div class="form-group">
+        <div class="form-group form-row">
           <label for="{{ job_filter.form.Category.id_for_label }}" class="font-weight-bold mb-2">Category</label>
-          {{ job_filter.form.Category|add_class:"form-control rounded mb-3" }}
+          <div class="multiselect-dropdown">
+            <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="categoryDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Select Categories
+            </button>
+            <div class="dropdown-menu" aria-labelledby="categoryDropdown">
+              {% for category in job_filter.form.Category.field.choices %}
+                <div class="custom-control custom-checkbox">
+                  <input type="checkbox" name="Category" value="{{ category.0 }}" class="custom-control-input" id="category-{{ forloop.counter }}">
+                  <label class="custom-control-label" for="category-{{ forloop.counter }}">{{ category.1 }}</label>
+                </div>
+              {% endfor %}
+            </div>
+          </div>
         </div>
-        <div class="form-group">
-          <label for="{{ job_filter.form.Experience_Level.id_for_label }}" class="font-weight-bold mb-2">Experience Level</label>
-          {{ job_filter.form.Experience_Level|add_class:"form-control rounded mb-3" }}
+        <!-- Repeat the same structure for Experience_Level and OtherInfo -->
+        <div class="form-group form-row">
+          <label for="{{ job_filter.form.Experience_Level.id_for_label }}" class="font-weight-bold mb-2">Experience_Level</label>
+          <div class="multiselect-dropdown">
+            <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="experienceDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Select Experience Levels
+            </button>
+            <div class="dropdown-menu" aria-labelledby="experienceDropdown">
+              {% for xl in job_filter.form.Experience_Level.field.choices %}
+                <div class="custom-control custom-checkbox">
+                  <input type="checkbox" name="Category" value="{{ xl.0 }}" class="custom-control-input" id="xl-{{ forloop.counter }}">
+                  <label class="custom-control-label" for="xl-{{ forloop.counter }}">{{ xl.1 }}</label>
+                </div>
+              {% endfor %}
+            </div>
+          </div>
         </div>
-        <div class="form-group">
+        <div class="form-group form-row">
           <label for="{{ job_filter.form.Location.id_for_label }}" class="font-weight-bold mb-2">Location</label>
-          {{ job_filter.form.Location|add_class:"form-control rounded mb-3" }}
+          {{ job_filter.form.Location|add_class:"form-control select2 mb-3" }}
         </div>
-<!--        <div class="form-group">-->
-<!--          <label class="font-weight-bold mb-2">Salary Range</label>-->
-<!--          <input type="hidden" name="salary_min" id="salary-min" value="{{ request.GET.salary_min }}">-->
-<!--          <input type="hidden" name="salary_max" id="salary-max" value="{{ request.GET.salary_max }}">-->
-<!--          <div id="salary-min-slider"></div>-->
-<!--          <p class="text-center mt-2">-->
-<!--              Min: <span id="salary-min-display">$20,000</span>-->
-<!--          </p>-->
-<!--          <div id="salary-max-slider"></div>-->
-<!--          <p class="text-center mt-2">-->
-<!--              Max: <span id="salary-max-display">$20,000</span>-->
-<!--          </p>-->
-<!--        </div>-->
-        <div class="form-group">
+        <div class="form-group form-row">
+                  <label for="{{ job_filter.form.OtherInfo.id_for_label }}" class="font-weight-bold mb-2">Other Info</label>
+                  <div class="multiselect-dropdown">
+                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="otherinfoDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      Select Other Info
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="otherinfoDropdown">
+                      {% for info in job_filter.form.OtherInfo.field.choices %}
+                        <div class="custom-control custom-checkbox">
+                          <input type="checkbox" name="OtherInfo" value="{{ info.0 }}" class="custom-control-input" id="info-{{ forloop.counter }}">
+                          <label class="custom-control-label" for="info-{{ forloop.counter }}">{{ info.1 }}</label>
+                        </div>
+                      {% endfor %}
+                    </div>
+                  </div>
+                </div>
+        <div class="form-group form-row">
           <label class="font-weight-bold mb-2">Date Posted</label>
-          {{ job_filter.form.Date_Posted|add_class:"form-control rounded mb-3" }}
+          <div class="btn-group">
+            <button type="button" class="btn btn-outline-primary date-filter" data-days="7">7 days</button>
+            <button type="button" class="btn btn-outline-primary date-filter" data-days="14">14 days</button>
+            <button type="button" class="btn btn-outline-primary date-filter" data-days="30">1 month</button>
+          </div>
+          <input type="hidden" name="Date_Posted" id="date_filter_input">
         </div>
-        <div class="form-group">
+        <div class="form-group form-row">
           <button type="submit" class="btn btn-primary btn-block rounded">Search</button>
           <a href="{% url 'jobs' %}" class="btn btn-outline-secondary btn-block rounded">Reset Filters</a>
         </div>
     </form>
 </div>
 
-        <div class="col-md-9 col-lg-10 main-content" style="margin-left: 0; padding-left: 15px;">
-            <div class="d-flex justify-content-center mb-3">
-                <input type="text" id="myInput" class="form-control search-bar" placeholder="Search Jobs">
-            </div>
+        <div class="col-md-9 col-lg-9 main-content" style="margin-left: 0; padding-left: 15px;">
             <div class="table-container">
                 <div class="table-responsive">
                 <table class="table table-striped" id="myTable">
                     <thead>
                         <tr>
                             <th>Company</th>
-                            <th>Job Status</th>
+                            <th>Company Score</th>
                             <th>Location</th>
                             <th>Experience Level</th>
                             <th>Category</th>
                             <th>Posted</th>
+                            <th>Other</th>
                             <th>Application URL</th>
                             <th></th>
                         </tr>
@@ -152,7 +206,7 @@ background-color: #007bff;
                                 <td>
                                     <a href="{% url 'company' id=job.Company.id %}" class="text-primary">{{ job.Company }}</a>
                                 </td>
-                                <td>{{ job.Job_Status }}</td>
+                                <td>{{ job.Company.company_score|floatformat:3 }}</td>
                                 <td>
                                     {% for location in job.Location.all %}
                                         {{ location }}{% if not forloop.last %}, {% endif %}
@@ -169,6 +223,11 @@ background-color: #007bff;
                                     {% endfor %}
                                 </td>
                                 <td>{{ job.Date_Posted|date:"F j, Y"|default:"Unknown" }}</td>
+                                <td>
+                                    {% for info in job.OtherInfo.all %}
+                                        {{ info }}{% if not forloop.last %}, {% endif %}
+                                    {% endfor %}
+                                </td>
                                 <td>
                                     <a href="{{ job.ApplicationURL }}" class="btn btn-outline-primary">Apply</a>
                                 </td>
@@ -197,44 +256,7 @@ background-color: #007bff;
     </div>
 </div>
 
-    <!-- Pagination links -->
-    <nav aria-label="Job listings pagination">
-        <ul class="pagination justify-content-center mt-5">
-            {% if filtered_jobs.has_previous %}
-                <li class="page-item">
-                    <a class="page-link" href="?page={{ filtered_jobs.previous_page_number }}">Previous</a>
-                </li>
-            {% endif %}
-
-            {% for num in filtered_jobs.paginator.page_range %}
-                {% if filtered_jobs.number == num %}
-                    <li class="page-item active">
-                        <a class="page-link" href="#">{{ num }}</a>
-                    </li>
-
-    {% endif %}
-  {% endfor %}
-{% if filtered_jobs.has_next %}
-<li class="page-item">
-<a class="page-link" href="?page={{ filtered_jobs.next_page_number }}">Next</a>
-</li>
-{% endif %}
-
-</ul>
-  </nav>
-
 <script>
-<!--const sliderValues = [-->
-<!--        20000, 25000, 30000, 35000, 40000, 45000, 50000, 55000, 60000, 65000, 70000, 75000, 80000, 85000, 90000, 95000, 100000,-->
-<!--        110000, 120000, 130000, 140000, 150000, 160000, 170000, 180000, 190000, 200000, 210000, 220000, 230000, 240000, 250000,-->
-<!--        275000, 300000, 325000, 350000, 375000, 400000, 425000, 450000, 475000, 500000, 525000, 550000, 575000, 600000, 625000,-->
-<!--        650000, 675000, 700000, 725000, 750000, 775000, 800000, 825000, 850000, 875000, 900000, 925000, 950000, 975000, 1000000-->
-<!--    ];-->
-
-<!--function formatSalary(value) {-->
-<!--    return '$' + sliderValues[value].toLocaleString();-->
-<!--}-->
-
 function getParameterByName(name, url) {
     if (!url) url = window.location.href;
     name = name.replace(/[\[\]]/g, '\\$&');
@@ -252,65 +274,50 @@ $(document).ready(function(){
       $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
     });
   });
+</script>
+<script>
 
+$(document).ready(function() {
+  $('.select2').select2({
+    theme: 'bootstrap4',
+    multiple: true,
+    placeholder: 'Select',
+    allowclear: true,
+  });
 
-<!--  // Initialize sliders-->
-<!--  $("#salary-min-slider").slider({-->
-<!--    min: 0,-->
-<!--    max: sliderValues.length - 1,-->
-<!--    value: 0,-->
-<!--    slide: function(event, ui) {-->
-<!--        $("#salary-min-display").text(formatSalary(ui.value));-->
-<!--        $("#{{ job_filter.form.salary_min.auto_id }}").val(sliderValues[ui.value]);-->
-<!--    }-->
-<!--  });-->
+  $(".date-filter").on("click", function() {
+    var days = $(this).data("days");
+    var date = new Date();
+    date.setDate(date.getDate() - days);
+    $("#date_filter_input").val(date.toISOString().split("T")[0]);
+    $("#job-filter-form").submit();
+  });
 
-<!--  $("#salary-max-slider").slider({-->
-<!--    min: 0,-->
-<!--    max: sliderValues.length - 1,-->
-<!--    value: 0,-->
-<!--    slide: function(event, ui) {-->
-<!--        $("#salary-max-display").text(formatSalary(ui.value));-->
-<!--        $("#{{ job_filter.form.salary_max.auto_id }}").val(sliderValues[ui.value]);-->
-<!--    }-->
-<!--  });-->
+});
 
-<!--  const salaryMinInput = $('#salary-min');-->
-<!--  const salaryMaxInput = $('#salary-max');-->
-<!--  const salaryMinSlider = $('#salary-min-slider');-->
-<!--  const salaryMaxSlider = $('#salary-max-slider');-->
+$(document).ready(function() {
+  // Dropdown toggle
+  $(".multiselect-dropdown .dropdown-menu").on("click", function(e) {
+    e.stopPropagation();
+  });
 
-<!--  const salaryMinValueFromUrl = parseInt(getParameterByName('salary_min')) || 0;-->
-<!--  const salaryMaxValueFromUrl = parseInt(getParameterByName('salary_max')) || sliderValues[salaryMaxSlider.slider('option', 'max')];-->
+  // Apply button
+  $(".multiselect-dropdown input[type='checkbox']").on("change", function() {
+    var btnText = [];
+    $(this).closest(".dropdown-menu").find("input[type='checkbox']:checked").each(function() {
+      btnText.push($(this).siblings("label").text());
+    });
 
-<!--  // Find slider positions-->
-<!--  const salaryMinPosition = sliderValues.indexOf(salaryMinValueFromUrl);-->
-<!--  const salaryMaxPosition = sliderValues.indexOf(salaryMaxValueFromUrl);-->
+    if (btnText.length === 0) {
+      btnText = "Select";
+    } else {
+      btnText = btnText.join(", ");
+    }
 
-<!--  // Set slider values-->
-<!--  salaryMinSlider.slider('value', salaryMinPosition !== -1 ? salaryMinPosition : 0);-->
-<!--  salaryMaxSlider.slider('value', salaryMaxPosition !== -1 ? salaryMaxPosition : salaryMaxSlider.slider('option', 'max'));-->
-
-<!--  // Update the input elements when the sliders change-->
-<!--  salaryMinSlider.on('slidechange', function(event, ui) {-->
-<!--    console.log('Min slider changed:', ui.value);  // Debugging statement-->
-<!--    salaryMinInput.val(sliderValues[ui.value]);-->
-<!--  });-->
-
-<!--  salaryMaxSlider.on('slidechange', function(event, ui) {-->
-<!--    console.log('Max slider changed:', ui.value); // Debugging statement-->
-<!--    salaryMaxInput.val(sliderValues[ui.value]);-->
-<!--  });-->
-
-<!--  // Add this at the end of your $(document).ready() function-->
-<!--  $("#salary-min-display").text(formatSalary(salaryMinSlider.slider('value')));-->
-<!--  $("#salary-max-display").text(formatSalary(salaryMaxSlider.slider('value')));-->
-<!--});-->
+    $(this).closest(".multiselect-dropdown").find(".dropdown-toggle").text(btnText);
+  });
+});
 
 </script>
-
-
-
-
 
 {% endblock %}

@@ -33,6 +33,61 @@ class SignUpView(CreateView):
     template_name = "registration/signup.html"
 
 
+user_weights = {
+    'company_ratings': 0.20,
+    'university_ratings': 0.15,
+    'current_company_rating': 0.10,
+    'position_score': 0.10,
+    'certifications_score': 0.05,
+    'industry_participation_score': 0.05,
+    'awards_score': 0.05,
+    'reputation_score': 0.10,
+    'community_engagement_score': 0.05,
+    'technical_skills_score': 0.05,
+    'open_source_contributions_score': 0.03,
+    'patents_score': 0.03,
+    'publications_score': 0.02,
+    'industry_experience_score': 0.02,
+    'professional_network_strength_score': 0.02,
+}
+def get_user_score(user):
+    company_ratings_score = ...
+    university_ratings_score = ...
+    current_company_rating_score = ...
+    position_score = ...
+    certifications_score = ...
+    industry_participation_score = ...
+    awards_score = ...
+    reputation_score = ...
+    community_engagement_score = ...
+    technical_skills_score = ...
+    open_source_contributions_score = ...
+    patents_score = ...
+    publications_score = ...
+    industry_experience_score = ...
+    professional_network_strength_score = ...
+
+    user_score = (
+        user_weights['company_ratings'] * company_ratings_score +
+        user_weights['university_ratings'] * university_ratings_score +
+        user_weights['current_company_rating'] * current_company_rating_score +
+        user_weights['position_score'] * position_score +
+        user_weights['certifications_score'] * certifications_score +
+        user_weights['industry_participation_score'] * industry_participation_score +
+        user_weights['awards_score'] * awards_score +
+        user_weights['reputation_score'] * reputation_score +
+        user_weights['community_engagement_score'] * community_engagement_score +
+        user_weights['technical_skills_score'] * technical_skills_score +
+        user_weights['open_source_contributions_score'] * open_source_contributions_score +
+        user_weights['patents_score'] * patents_score +
+        user_weights['publications_score'] * publications_score +
+        user_weights['industry_experience_score'] * industry_experience_score +
+        user_weights['professional_network_strength_score'] * professional_network_strength_score
+    )
+
+    return user_score
+
+
 def profile(request, id):
     user = CustomUser.objects.get(id=id)
     try:

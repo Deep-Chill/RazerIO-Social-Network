@@ -80,7 +80,7 @@
   </div>
   {% if user == author %}
   <div class="row">
-    <a href="#" type="button" class="btn btn-primary btn-block">Edit article</a>
+    <a href="{% url 'edit_article' id=Article.id %}" type="button" class="btn btn-primary btn-block">Edit article</a>
   </div>
   {% endif %}
 </div>

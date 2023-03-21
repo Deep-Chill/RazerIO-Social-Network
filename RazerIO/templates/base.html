@@ -136,11 +136,37 @@
     <button type="button" class="btn btn-danger" onclick="location.href='{% url 'logout' %}'">Logout</button>
   </div>
 </nav>
+{% endif %}
 
-    {% endif %}
   <main>
+    <div class="container-fluid">
+      <div class="row">
+        {% if user.is_authenticated %}
+    <div class="col-sm-2 col-md-2 col-lg-2" style="margin-top: 100px;">
+      <div class="card p-3 mb-3">
+        <div class="text-center">
+          {% if user.ProfilePic %}
+          <img src="{{ user.ProfilePic.url }}" class="rounded-circle" width="80" height="80">
+            {% else %}
+          <img src="https://cdn1.iconfinder.com/data/icons/user-pictures/100/unknown-512.png" class="rounded-circle" width="80" height="80">
+          {% endif %}
+          <h5 class="mt-3 mb-0">{{ user.username }}</h5>
+        </div>
+        <hr>
+        <div class="d-grid gap-2 flex-column">
+          <a href="{% url 'profile' user.id %}" class="btn btn-primary mb-2" style="width: 100%;"><i class="bi bi-person"></i> Profile</a>
+          <a href="{% url 'inbox' %}#v-pills-alerts" class="btn btn-secondary mb-2" style="width: 100%;"><i class="bi bi-bell"></i> Alerts</a>
+          <a href="{% url 'inbox' %}" class="btn btn-secondary mb-2" style="width: 100%;"><i class="bi bi-chat"></i> Messages</a>
+        </div>
+      </div>
+    </div>
+        {% endif %}
+        <div class="{% if user.is_authenticated %}col-sm-10 col-md-10 col-lg-10{% else %}col-12{% endif %}">
     {% block content %}
     {% endblock %}
+          </div>
+    </div>
+    </div>
   </main>
   </body>
 </html>

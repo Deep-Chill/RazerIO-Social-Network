@@ -40,6 +40,11 @@ Job_Status_Choices = (('Open', 'Open'), ('Closed', 'Closed'), ('Filled', 'Filled
 # ('Principal', 'Principal'),
 # ]
 
+class Job_Info(models.Model):
+    name=models.CharField(max_length=100)
+    def __str__(self):
+        return self.name
+
 class Job_Categories(models.Model):
     name = models.CharField(max_length=100)
     def __str__(self):
@@ -59,6 +64,7 @@ class JobListing(models.Model):
     Experience_Level = models.ManyToManyField(Experience_Level_Choices)
     Category = models.ManyToManyField(Job_Categories)
     ApplicationURL = models.URLField(default='https://www.mycompany.com/applyhere')
+    OtherInfo = models.ManyToManyField(Job_Info)
 
     def __str__(self):
         return f'{self.Company}'

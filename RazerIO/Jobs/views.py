@@ -74,15 +74,13 @@ def jobs(request):
     job_list = JobListing.objects.all()
     job_filter = JobFilter(request.GET, queryset=job_list)
     filtered_jobs_queryset = job_filter.qs
-
-
     job_posts_by_me = JobListing.objects.filter(Poster=request.user).exists()
     job_applications_by_me = JobApplication.objects.filter(applicant=request.user).values_list('job_listing', flat=True)
 
     return render(request, 'jobs2.html', {
         'job_posts_by_me': job_posts_by_me,
         'job_applications_by_me': job_applications_by_me,
-         'jobs': job_list,
+         'jobs': filtered_jobs_queryset,
         'job_filter':job_filter,
         'filtered_jobs_queryset':filtered_jobs_queryset
     })

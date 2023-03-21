@@ -2,12 +2,13 @@ from django.shortcuts import render
 from .models import Newspaper as Nsp
 from .models import Article, Article_Comment
 from django.shortcuts import get_object_or_404, redirect, render
-from .forms import ArticleForm, ArticleCommentForm
+from .forms import ArticleForm, ArticleCommentForm, EditArticleForm
 from .models import Newspaper, Article, ArticleUpvote
 from django.contrib.auth.decorators import login_required
 from django.db.models import F, Count
 from django.views.decorators.http import require_POST
 from django.utils import timezone
+from django.http import HttpResponseForbidden
 # Create your views here.
 
 def newspaper_view(request, id):
@@ -150,3 +151,19 @@ def general_articles(request):
     articles = Article.objects.filter(Category='General', Date_Published__gte=timezone.now() - timezone.timedelta(hours=48)).annotate(num_upvotes=Count('articleupvote'))
     context = {'articles':articles}
     return render(request, 'general_articles.html', context=context)
+
+@login_required
+def edit_article(request, id):
+    article = get_object_or_404(Article, id=id)
+    if article.Newspaper.Owner != request.user:
+        return HttpResponseForbidden("You are not the author of this article.")
+    if request.method == "POST":
+        form = EditArticleForm(request.POST, instance=Article)
+        if form.is_valid():
+            form.save()
+            return redirect('article', id=id)
+    else:
+        form = EditArticleForm(instance=article)
+
+    context={'form':form}
+    return render(request, 'edit_article.html', context=context)

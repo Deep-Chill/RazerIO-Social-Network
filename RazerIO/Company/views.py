@@ -32,7 +32,7 @@ def get_company_score(company):
 
     # Weights for each factor
     weights = {
-        'market_cap': 0.25,
+        'market_cap': 0.35,
         'employee_count': 0.15,
         'annual_revenue': 0.15,
         'annual_profit': 0.02,
@@ -133,7 +133,7 @@ def company_leaderboard(request):
 
 
 # Create your views here.
-@cache_page(12*60*60)
+@cache_page(60)
 def CompanyPage(request, id):
     company = get_object_or_404(Company, id=id)
 

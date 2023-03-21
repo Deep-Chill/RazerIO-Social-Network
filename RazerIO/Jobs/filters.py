@@ -7,4 +7,4 @@ class JobFilter(django_filters.FilterSet):
 
     class Meta:
         model = JobListing
-        fields = ['Company', 'Category', 'Experience_Level', 'Location', 'Date_Posted']
+        fields = ['Company', 'Category', 'Experience_Level', 'OtherInfo', 'Location', 'Date_Posted']

@@ -38,33 +38,15 @@ textarea.form-control {
 </style>
 
 <div class="container-fluid">
-  <div class="row justify-content-between">
-    <div class="col-sm-2 col-md-2 col-lg-2">
-      <div class="card p-3 mb-3">
-        <div class="text-center">
-          {% if user.ProfilePic %}
-          <img src="{{ user.ProfilePic.url }}" class="rounded-circle" width="80" height="80">
-            {% else %}
-          <img src="https://cdn1.iconfinder.com/data/icons/user-pictures/100/unknown-512.png" class="rounded-circle" width="80" height="80">
-          {% endif %}
-          <h5 class="mt-3 mb-0">{{ user.username }}</h5>
-        </div>
-        <hr>
-        <div class="d-grid gap-2 flex-column">
-          <a href="{% url 'profile' user.id %}" class="btn btn-primary mb-2" style="width: 100%;"><i class="bi bi-person"></i> Profile</a>
-          <a href="{% url 'inbox' %}#v-pills-alerts" class="btn btn-secondary mb-2" style="width: 100%;"><i class="bi bi-bell"></i> Alerts</a>
-          <a href="{% url 'inbox' %}" class="btn btn-secondary mb-2" style="width: 100%;"><i class="bi bi-chat"></i> Messages</a>
-        </div>
-      </div>
-    </div>
-    <div class="col-sm-6 col-md-6 col-lg-6">
+  <div class="row">
+    <div class="col-sm-8 col-md-8 col-lg-8">
       <div class="card">
         <div class="card-body">
           <h3 class="card-title">Top Rated news in {{ user.Country }}</h3>
           {% for article in Articles %}
             <div class="d-flex align-items-center mb-2">
               <span class="badge badge-primary mr-3">{{ article.num_upvotes }}</span>
-              <a href="{% url 'article' article.id %}">{{ article.Title }} </a> by {{ article.Newspaper }}
+              <a href="{% url 'article' article.id %}">{{ article.Title }}</a>&nbsp;by {{ article.Newspaper }}
             </div>
           <a href="{% url 'articles_page' %}" class="btn btn-primary" style="width: 100%;">More News</a>
             {% empty %}
@@ -73,7 +55,7 @@ textarea.form-control {
         </div>
       </div>
     </div>
-    <div class="row justify-content-between col-sm-4 col-md-4 col-lg-4">
+    <div class="justify-content-between col-sm-4 col-md-4 col-lg-4">
   <div class="col-sm-12 col-md-12 col-lg-12">
     <form id="new-post-form" method="POST">
   {% csrf_token %}
