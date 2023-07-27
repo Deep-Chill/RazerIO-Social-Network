@@ -1,5 +1,5 @@
 # RazerIO-SocialNetwork
-A social network for professionals. Built with Django.
+A social network for professionals. Built with Django. I don't care about the design, I've only made the backend.
 
 <a href="https://imgbb.com/"><img src="https://i.ibb.co/zm0Vq7Y/Screenshot-15.png" alt="Screenshot-15" border="0"></a>
 <hr><br>
