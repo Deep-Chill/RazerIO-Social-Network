@@ -42,13 +42,13 @@ def inbox(request, user_id=None):
         }
     return render(request, 'inbox.html', context=context)
 
-@login_required
-def outbox(request):
-    user = request.user
-    messages = Message.objects.filter(sender=user).select_related('conversation')
-    conversations = Conversation.objects.filter(participants=user).select_related('participants')
-    context = {'messages':messages, 'conversations':conversations, }
-    return render(request, 'outbox.html', context=context)
+# @login_required
+# def outbox(request):
+#     user = request.user
+#     messages = Message.objects.filter(sender=user).select_related('conversation')
+#     conversations = Conversation.objects.filter(participants=user).select_related('participants')
+#     context = {'messages':messages, 'conversations':conversations, }
+#     return render(request, 'outbox.html', context=context)
 
 
 @login_required

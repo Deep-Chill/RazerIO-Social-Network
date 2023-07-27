@@ -58,7 +58,9 @@ INSTALLED_APPS = [
     "debug_toolbar",
     'django_filters',
     'django.contrib.humanize.apps.HumanizeConfig',
-    'allauth.socialaccount.providers.github'
+    'allauth.socialaccount.providers.github',
+    'bootstrap4',
+    'crispy_bootstrap4'
 ]
 
 SITE_ID = 1

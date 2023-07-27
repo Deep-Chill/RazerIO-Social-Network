@@ -8,7 +8,7 @@ from PIL import Image
 from Country.models import Country, Region
 import uuid
 import os
-import email_validator
+# import email_validator
 # from allauth.account.models import EmailAddress
 from django.forms import ValidationError
 from django.dispatch import receiver
