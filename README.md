@@ -2,7 +2,7 @@
 
 :star: Star it on GitHub!
 
-RazerIO is a social network for professionals built with Django. I don't care about the design, I've only made the backend.
+RazerIO is a social network for professionals built with Django. Think LinkedIn but for computer scientists and programmers. I don't care about the design, I've only made the backend.
 
 <a href="https://ibb.co/HDSsQfr"><img src="https://i.ibb.co/5W0yVg5/Screenshot-7.png" alt="Screenshot-7" border="0"></a>
 
@@ -20,15 +20,13 @@ RazerIO is a social network for professionals built with Django. I don't care ab
     - [Leaderboards](#leaderboards)
     - [Projects](#projects)
     - [Newspaper](#newspaper)
-- [Incomplete tasks](#page-setup)
-    - [Download the Aimeos Page Tree t3d file](#download-the-aimeos-page-tree-t3d-file)
-    - [Go to the Import View](#go-to-the-import-view)
-    - [Upload the page tree file](#upload-the-page-tree-file)
-    - [Go to the import view](#go-to-the-import-view)
-    - [Import the page tree](#import-the-page-tree)
-    - [SEO-friendly URLs](#seo-friendly-urls)
+- [Incomplete tasks](#incomplete-tasks)
+    - [Startup](#startup)
+    - [Company Wiki pages](#companywiki)
+    - [Competitive programming](#competitive-programming)
+    - [Statistics](#statistics)
 - [License](#license)
-- [Links](#links)
+- [Contribute](#contribute)
 
 ## Installation
 
@@ -51,7 +49,7 @@ then use credentials created there to login. You can then logout and create new 
 ## Features
 
 ## Account
-Sign up using Google or Github. Follow/Unfollow users. Profile page with personal information, company information, employment history, endorsements from colleagues, and more. Tweak your profile by changing settings, update your email/passwords, remove connected social media accounts or change your bio/picture. Get profile tags such as a verified company tag if you're a verified employee.
+Sign up using Google or Github. Follow/Unfollow users. Profile page with personal information, company information, employment history, endorsements from colleagues, and more. Tweak your profile by changing settings, update your email/passwords, remove connected social media accounts or change your bio/picture. Get profile tags such as a verified company tag if you're a verified employee. Search for users, articles, and companies in the search bar.
 
 <a href="https://imgbb.com/"><img src="https://i.ibb.co/zm0Vq7Y/Screenshot-15.png" alt="Screenshot-15" border="0"></a>
 <hr><br>
@@ -72,7 +70,7 @@ Create group threads with up to 50 members. Send and receive messages from peopl
 ## Company Page
 Find your company in a list of provided companies. Can't find it? Create your own! If the company is public, provide the stock ticker and the website will automatically fill in the rest. If it's private, provide information you want to go on there. Get a verified employee tag so you can create job listings for the company and post in the company's social feeds. 
 
-The company page includes financial information about the company, ownership(and if those owners are in RazerIO it directly links to their profiles,) available job openings, and more information sourced by verified employees on the platform.
+The company page includes financial information about the company, ownership(and if those owners are in RazerIO it directly links to their profiles,) available job openings, and more information sourced by verified employees on the platform. Leave reviews anonymously if you're a verified employee.
 
 <a href="https://ibb.co/pn72rJG"><img src="https://i.ibb.co/BwpLKqd/Screenshot-14.png" alt="Screenshot-14" border="0"></a>
 
@@ -108,3 +106,74 @@ Create a newspaper, write articles that show up on the homepage feed for everyon
 <br>
 <a href="https://ibb.co/5hJgrWx"><img src="https://i.ibb.co/9Hdkb93/Screenshot-7.png" alt="Screenshot-7" border="0"></a>
 <hr><br>
+
+### Planned features
+
+## New Modules
+
+While most of the fundamental features are complete, there's a lot yet to be done.
+
+1. **Competitive Programming Competitions:** A platform for users to engage in competitive programming events.
+2. **Company-Hosted Programming Competitions:** A feature for companies to host their own programming competitions.
+3. **Startups:** A dedicated module offering a suite of features catered towards startups.
+4. **Contracts and Internships:** A better system to manage contract work and internships.
+6. **Elo Rating/Score on Profiles:** Integration of something akin to an Elo rating system to user profiles.
+7. **Wiki Pages for Organizations/Companies:** Detailed, user-editable wiki pages for companies and organizations.
+8. **Groups:** A module to handle group creation and management for team collaborations.
+
+## Module Improvements
+
+### Jobs, Social, Newspaper, Entrepreneurship, Competitive Programming, Testing, and Statistics
+
+- Enhanced features for startups, projects, and competitive programming.
+- New competitive programming and testing page.
+- Improved statistics with leaderboards for startups, users, and newspapers.
+
+## Security
+
+- Reporting functionality.
+- Automatic image resizing.
+- New user interface for non-signed in users and sidebar for logged-in users.
+
+## Non-Essential Features
+
+Additional features to improve existing modules like jobs, social, newspaper, and entrepreneurship. These include but are not limited to, discussion sections on job pages, company health indicators, a freelancing market, and more. Detailed specifications can be found in the project documentation.
+
+## Long-Term Features
+
+- Comprehensive job board.
+- Interface dark mode.
+- User-friendly navigation persistence.
+- Moderation system with scoring for user engagement.
+- Stock data visualization.
+- Comprehensive company rating system.
+- Centralized notification system.
+- Service marketplace (mentorship, coaching, code review, training, etc.).
+- Visualization of user connection webs.
+
+## Pre-production Tasks
+
+- Implementation of an auto-delete function for job listings after 14 days, using Celery. 
+
+# Security Measures
+
+- A server limit for file uploads set to 20 MB.
+- A distributed scheduling system for API calls to prevent overload.
+- Caching mechanisms to reduce API calls and improve response times.
+
+Please note that this is a high-level overview, and detailed specifications for each feature and module can be found by reaching out.
+
+
+## License
+
+RazerIO is licensed under the terms of the MIT License and is available for free.
+
+## Contributing
+
+If you're thinking about using or even contributing to razerIO, feel free to use this code in any way you see fit.
+
+If you spot any bugs, have an idea for an improvement, or even want to add a new feature, go ahead and do it. I'd appreciate if you could report any bugs or suggestions through the [Issue Tracker](https://github.com/razerIO/razerIO/issues).
+
+If you've written code that fixes a bug or adds a new feature, you can create a pull request. A brief description of what you've done and why would be helpful.
+
+Thanks for your interest in RazerIO and happy coding!
