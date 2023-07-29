@@ -59,7 +59,7 @@ Sign up using Google or Github. Follow/Unfollow users. Profile page with persona
 <hr><br>
 
 ## Social Feeds
-3 social feeds, one for your friends list, one for everyone in the same company as you, and one for everyone in the same country as you.
+3 social feeds, one for your friends list, one for everyone in the same company as you, and one for everyone in the same country as you.<br>
 <a href="https://ibb.co/HDSsQfr"><img src="https://i.ibb.co/5W0yVg5/Screenshot-7.png" alt="Screenshot-7" border="0"></a>
 <hr><br>
 
