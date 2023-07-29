@@ -15,6 +15,8 @@ RazerIO is a social network for professionals built with Django. I don't care ab
     - [Account](#account)
     - [Social Feeds](#social-feeds)
     - [Messaging](#messaging)
+    - [Company Page](#company)
+    - [Job board](#job-board)
     - [Company](#company)
 - [Incomplete tasks](#page-setup)
     - [Download the Aimeos Page Tree t3d file](#download-the-aimeos-page-tree-t3d-file)
@@ -47,7 +49,7 @@ then use credentials created there to login. You can then logout and create new 
 ## Features
 
 ## Account
-Sign up using Google or Github. Follow/Unfollow users. Profile page with personal information, company information, employment history, endorsements from colleagues, and more!
+Sign up using Google or Github. Follow/Unfollow users. Profile page with personal information, company information, employment history, endorsements from colleagues, and more. Tweak your profile by changing settings, update your email/passwords, remove connected social media accounts or change your bio/picture. Get profile tags such as a verified company tag if you're a verified employee.
 
 <a href="https://imgbb.com/"><img src="https://i.ibb.co/zm0Vq7Y/Screenshot-15.png" alt="Screenshot-15" border="0"></a>
 <hr><br>
@@ -64,13 +66,27 @@ Create group threads with up to 50 members. Send and receive messages from peopl
 
 <a href="https://ibb.co/WfYvcMR"><img src="https://i.ibb.co/SB9wKMZ/Screenshot-9.png" alt="Screenshot-9" border="0"></a>
 <hr><br>
+
+## Company Page
+Find your company in a list of provided companies. Can't find it? Create your own! If the company is public, provide the stock ticker and the website will automatically fill in the rest. If it's private, provide information you want to go on there. Get a verified employee tag so you can create job listings for the company and post in the company's social feeds. 
+
+The company page includes financial information about the company, ownership(and if those owners are in RazerIO it directly links to their profiles,) available job openings, and more information sourced by verified employees on the platform.
+
+<a href="https://ibb.co/pn72rJG"><img src="https://i.ibb.co/BwpLKqd/Screenshot-14.png" alt="Screenshot-14" border="0"></a>
+
+
+## Job board
+If you're looking for a job: Search and filter for jobs, apply for jobs, and keep track of your applications.
+
+If you're hiring: Create new job listings for your company, manage listings, and keep track of applicants.
+
 <a href="https://ibb.co/D8D7nHC"><img src="https://i.ibb.co/cCcNdSF/Screenshot-10.png" alt="Screenshot-10" border="0"></a>
 <hr><br>
+
 <a href="https://ibb.co/ZTnmcfw"><img src="https://i.ibb.co/7yw4rST/Screenshot-11.png" alt="Screenshot-11" border="0"></a>
 <hr><br>
 <a href="https://ibb.co/TkbKnwq"><img src="https://i.ibb.co/wRwJbdr/Screenshot-12.png" alt="Screenshot-12" border="0"></a>
 <hr><br>
 <a href="https://ibb.co/QjCkC66"><img src="https://i.ibb.co/84dbdjj/Screenshot-13.png" alt="Screenshot-13" border="0"></a>
 <hr><br>
-<a href="https://ibb.co/pn72rJG"><img src="https://i.ibb.co/BwpLKqd/Screenshot-14.png" alt="Screenshot-14" border="0"></a>
 <hr><br>
