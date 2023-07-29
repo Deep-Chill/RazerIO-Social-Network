@@ -20,11 +20,13 @@ RazerIO is a social network for professionals built with Django. Think LinkedIn 
     - [Leaderboards](#leaderboards)
     - [Projects](#projects)
     - [Newspaper](#newspaper)
-- [Incomplete tasks](#incomplete-tasks)
-    - [Startup](#startup)
-    - [Company Wiki pages](#companywiki)
-    - [Competitive programming](#competitive-programming)
-    - [Statistics](#statistics)
+- [Planned Features](#planned-features)
+    - [New Modules](#new-modules)
+    - [Module Improvements](#module-improvements)
+    - [Security](#security)
+    - [Non-Essential Features](#non-essential-features)
+    - [Long-Term Features](#long-term-features)
+    - 
 - [License](#license)
 - [Contribute](#contribute)
 
@@ -76,9 +78,9 @@ The company page includes financial information about the company, ownership(and
 
 
 ## Job board
-If you're looking for a job: Search and filter for jobs, apply for jobs, and keep track of your applications.
+If you're looking for a job: Search and filter for jobs, apply for jobs, and keep track of your applications. The job board is cached to make the search fast.
 
-If you're hiring: Create new job listings for your company, manage listings, and keep track of applicants.
+If you're hiring: Create new job listings for your company, manage listings, and keep track of applicants. 
 
 <a href="https://ibb.co/D8D7nHC"><img src="https://i.ibb.co/cCcNdSF/Screenshot-10.png" alt="Screenshot-10" border="0"></a>
 <hr><br>
@@ -134,6 +136,10 @@ While most of the fundamental features are complete, there's a lot yet to be don
 - Reporting functionality.
 - Automatic image resizing.
 - New user interface for non-signed in users and sidebar for logged-in users.
+- A server limit for file uploads set to 20 MB.
+- A distributed scheduling system for API calls to prevent overload.
+- Caching mechanisms to reduce API calls and improve response times.
+
 
 ## Non-Essential Features
 
@@ -141,12 +147,10 @@ Additional features to improve existing modules like jobs, social, newspaper, an
 
 ## Long-Term Features
 
-- Comprehensive job board.
 - Interface dark mode.
 - User-friendly navigation persistence.
 - Moderation system with scoring for user engagement.
 - Stock data visualization.
-- Comprehensive company rating system.
 - Centralized notification system.
 - Service marketplace (mentorship, coaching, code review, training, etc.).
 - Visualization of user connection webs.
@@ -154,12 +158,6 @@ Additional features to improve existing modules like jobs, social, newspaper, an
 ## Pre-production Tasks
 
 - Implementation of an auto-delete function for job listings after 14 days, using Celery. 
-
-# Security Measures
-
-- A server limit for file uploads set to 20 MB.
-- A distributed scheduling system for API calls to prevent overload.
-- Caching mechanisms to reduce API calls and improve response times.
 
 Please note that this is a high-level overview, and detailed specifications for each feature and module can be found by reaching out.
 
