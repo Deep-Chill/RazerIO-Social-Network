@@ -1,15 +1,10 @@
-# RazerIO-SocialNetwork
-A social network for professionals. Built with Django. I don't care about the design, I've only made the backend.
-
-<a href="https://ibb.co/HDSsQfr"><img src="https://i.ibb.co/5W0yVg5/Screenshot-7.png" alt="Screenshot-7" border="0"></a>
-
 # RazerIO
 
 :star: Star it on GitHub!
 
 RazerIO is a social network for professionals built with Django. I don't care about the design, I've only made the backend.
 
-![razerIO-homepage](https://i.ibb.co/5W0yVg5/Screenshot-7.png" alt="Screenshot-7)
+<a href="https://ibb.co/HDSsQfr"><img src="https://i.ibb.co/5W0yVg5/Screenshot-7.png" alt="Screenshot-7" border="0"></a>
 
 ## Table Of Content
 
