@@ -15,9 +15,11 @@ RazerIO is a social network for professionals built with Django. I don't care ab
     - [Account](#account)
     - [Social Feeds](#social-feeds)
     - [Messaging](#messaging)
-    - [Company Page](#company)
+    - [Company Page](#company-page)
     - [Job board](#job-board)
-    - [Company](#company)
+    - [Leaderboards](#leaderboards)
+    - [Projects](#projects)
+    - [Newspaper](#newspaper)
 - [Incomplete tasks](#page-setup)
     - [Download the Aimeos Page Tree t3d file](#download-the-aimeos-page-tree-t3d-file)
     - [Go to the Import View](#go-to-the-import-view)
@@ -83,10 +85,26 @@ If you're hiring: Create new job listings for your company, manage listings, and
 <a href="https://ibb.co/D8D7nHC"><img src="https://i.ibb.co/cCcNdSF/Screenshot-10.png" alt="Screenshot-10" border="0"></a>
 <hr><br>
 
+## Leaderboards
+Ranks companies based on a formula that assigns them a "IO score" which is a score based on valuations such as financials, reviews, and more!
+
+The IO Company score reflects a comprehensive evaluation of the company's financials, stability, global reach, R&D, market share, product diversity, public sentiment, employee satisfaction, ESG score, future outlook and more. Improve your company's IO score by leaving reviews.
+
 <a href="https://ibb.co/ZTnmcfw"><img src="https://i.ibb.co/7yw4rST/Screenshot-11.png" alt="Screenshot-11" border="0"></a>
 <hr><br>
+
+## Projects
+Showcase your projects or find people to work on them with you. Create new projects, manage existing projects, or apply for a project!
+
 <a href="https://ibb.co/TkbKnwq"><img src="https://i.ibb.co/wRwJbdr/Screenshot-12.png" alt="Screenshot-12" border="0"></a>
 <hr><br>
+
+## Newspaper
+Create a newspaper, write articles that show up on the homepage feed for everyone in your country. Leave comments on articles anonymously and only choose to show your verified company if you wish. 
+
 <a href="https://ibb.co/QjCkC66"><img src="https://i.ibb.co/84dbdjj/Screenshot-13.png" alt="Screenshot-13" border="0"></a>
-<hr><br>
+<br>
+<a href="https://ibb.co/PmQJ82s"><img src="https://i.ibb.co/5MFCVQX/Screenshot-6.png" alt="Screenshot-6" border="0"></a>
+<br>
+<a href="https://ibb.co/5hJgrWx"><img src="https://i.ibb.co/9Hdkb93/Screenshot-7.png" alt="Screenshot-7" border="0"></a>
 <hr><br>
