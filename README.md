@@ -26,7 +26,7 @@ RazerIO is a social network for professionals built with Django. Think LinkedIn 
     - [Security](#security)
     - [Non-Essential Features](#non-essential-features)
     - [Long-Term Features](#long-term-features)
-    - 
+    - [Pre-production Tasks](#pre-production-tasks)
 - [License](#license)
 - [Contribute](#contribute)
 
