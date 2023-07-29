@@ -72,7 +72,7 @@ Create group threads with up to 50 members. Send and receive messages from peopl
 ## Company Page
 Find your company in a list of provided companies. Can't find it? Create your own! If the company is public, provide the stock ticker and the website will automatically fill in the rest. If it's private, provide information you want to go on there. Get a verified employee tag so you can create job listings for the company and post in the company's social feeds. 
 
-The company page includes financial information about the company, ownership(and if those owners are in RazerIO it directly links to their profiles,) available job openings, and more information sourced by verified employees on the platform. Leave reviews anonymously if you're a verified employee.
+The company page includes financial information about the company, ownership(and if those owners are on RazerIO it directly links to their profiles,) available job openings, and more information sourced by verified employees on the platform. Leave reviews anonymously if you're a verified employee.
 
 <a href="https://ibb.co/pn72rJG"><img src="https://i.ibb.co/BwpLKqd/Screenshot-14.png" alt="Screenshot-14" border="0"></a>
 
