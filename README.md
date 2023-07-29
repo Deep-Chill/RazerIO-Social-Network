@@ -115,13 +115,11 @@ Create a newspaper, write articles that show up on the homepage feed for everyon
 
 While most of the fundamental features are complete, there's a lot yet to be done.
 
-1. **Competitive Programming Competitions:** A platform for users to engage in competitive programming events.
-2. **Company-Hosted Programming Competitions:** A feature for companies to host their own programming competitions.
-3. **Startups:** A dedicated module offering a suite of features catered towards startups.
-4. **Contracts and Internships:** A better system to manage contract work and internships.
-6. **Elo Rating/Score on Profiles:** Integration of something akin to an Elo rating system to user profiles.
-7. **Wiki Pages for Organizations/Companies:** Detailed, user-editable wiki pages for companies and organizations.
-8. **Groups:** A module to handle group creation and management for team collaborations.
+1. **Competitive Programming Competitions:** A platform for users to engage in competitive programming events with features for companies to host their own programming competitions.
+2. **Startups:** A dedicated module offering a suite of features catered towards startups.
+3. **Contracts and Internships:** A better system to manage contract work and internships.
+4. **Wiki Pages for Organizations/Companies:** Detailed, user-editable wiki pages for companies and organizations.
+5. **Groups:** A module to handle group creation and management for team collaborations.
 
 ## Module Improvements
 
@@ -130,6 +128,8 @@ While most of the fundamental features are complete, there's a lot yet to be don
 - Enhanced features for startups, projects, and competitive programming.
 - New competitive programming and testing page.
 - Improved statistics with leaderboards for startups, users, and newspapers.
+- Integration of something akin to an Elo rating system to user profiles that takes into account their work experience, projects, connections, papers published, and more.
+
 
 ## Security
 
@@ -143,7 +143,7 @@ While most of the fundamental features are complete, there's a lot yet to be don
 
 ## Non-Essential Features
 
-Additional features to improve existing modules like jobs, social, newspaper, and entrepreneurship. These include but are not limited to, discussion sections on job pages, company health indicators, a freelancing market, and more. Detailed specifications can be found in the project documentation.
+Additional features to improve existing modules like jobs, social, newspaper, and entrepreneurship. These include but are not limited to, discussion sections on job pages, company health indicators, a freelancing market, and more. Detailed specifications have not been provided.
 
 ## Long-Term Features
 
