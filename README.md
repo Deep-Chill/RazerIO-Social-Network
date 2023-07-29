@@ -38,15 +38,17 @@ python manage.py runserver
 ```
 
 ## Getting started
-After successfully installing and running the server, navigate to http://localhost:8000 on your browser to access the razerIO homepage. To start using razerIO, register for a new account by running the command 
+After successfully installing and running the server, navigate to http://localhost:8000 on your browser to access the razerIO homepage. To start using razerIO, register for a new admin account by running the command: 
 ```
 python manage.py createsuperuser
 ```
+then use credentials created there to login. You can then logout and create new user accounts with Google or Github.
 
 ## Features
 
 ## Account
 Sign up using Google or Github. Follow/Unfollow users. Profile page with personal information, company information, employment history, endorsements from colleagues, and more!
+
 <a href="https://imgbb.com/"><img src="https://i.ibb.co/zm0Vq7Y/Screenshot-15.png" alt="Screenshot-15" border="0"></a>
 <hr><br>
 <a href="https://ibb.co/n1zRTxx"><img src="https://i.ibb.co/hdDCk33/Screenshot-8.png" alt="Screenshot-8" border="0"></a>
