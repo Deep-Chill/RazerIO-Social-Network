@@ -51,7 +51,12 @@ then use credentials created there to login. You can then logout and create new 
 ## Features
 
 ## Account
-Sign up using Google or Github. Follow/Unfollow users. Profile page with personal information, company information, employment history, endorsements from colleagues, and more. Tweak your profile by changing settings, update your email/passwords, remove connected social media accounts or change your bio/picture. Get profile tags such as a verified company tag if you're a verified employee. Search for users, articles, and companies in the search bar.
+- Sign up using Google or Github.
+- Follow/Unfollow users.
+- Profile page with personal information, company information, employment history, endorsements from colleagues, and more.
+- Tweak your profile by changing settings, update your email/passwords, remove connected social media accounts or change your bio/picture.
+- Get profile tags such as a verified company tag if you're a verified employee.
+- Search for users, articles, and companies in the search bar.
 
 <a href="https://imgbb.com/"><img src="https://i.ibb.co/zm0Vq7Y/Screenshot-15.png" alt="Screenshot-15" border="0"></a>
 <hr><br>
@@ -59,18 +64,28 @@ Sign up using Google or Github. Follow/Unfollow users. Profile page with persona
 <hr><br>
 
 ## Social Feeds
-3 social feeds, one for your friends list, one for everyone in the same company as you, and one for everyone in the same country as you.<br>
+3 social feeds, 
+- one for your friends list,
+- one for everyone in the same company as you,
+- and one for everyone in the same country as you.
+  <br>
 <a href="https://ibb.co/HDSsQfr"><img src="https://i.ibb.co/5W0yVg5/Screenshot-7.png" alt="Screenshot-7" border="0"></a>
 <hr><br>
 
 ## Messaging
-Create group threads with up to 50 members. Send and receive messages from people in yours friends list. Receive alerts for events (new friend requests, comments on newspaper articles, and more!)
+- Create group threads with up to 50 members.
+- Send and receive messages from people in yours friends list.
+- Receive alerts for events (new friend requests, comments on newspaper articles, and more!)
 
 <a href="https://ibb.co/WfYvcMR"><img src="https://i.ibb.co/SB9wKMZ/Screenshot-9.png" alt="Screenshot-9" border="0"></a>
 <hr><br>
 
 ## Company Page
-Find your company in a list of provided companies. Can't find it? Create your own! If the company is public, provide the stock ticker and the website will automatically fill in the rest. If it's private, provide information you want to go on there. Get a verified employee tag so you can create job listings for the company and post in the company's social feeds. 
+- Find your company in a list of provided companies.
+- Can't find it? Create your own!
+- If the company is public, provide the stock ticker and the website will automatically fill in the rest.
+- If it's private, provide information you want to go on there.
+- Get a verified employee tag so you can create job listings for the company and post in the company's social feeds. 
 
 The company page includes financial information about the company, ownership(and if those owners are on RazerIO it directly links to their profiles,) available job openings, and more information sourced by verified employees on the platform. Leave reviews anonymously if you're a verified employee.
 
@@ -78,15 +93,15 @@ The company page includes financial information about the company, ownership(and
 
 
 ## Job board
-If you're looking for a job: Search and filter for jobs, apply for jobs, and keep track of your applications. The job board is cached to make the search fast.
+- If you're looking for a job: Search and filter for jobs, apply for jobs, and keep track of your applications. The job board is cached to make the search fast.
 
-If you're hiring: Create new job listings for your company, manage listings, and keep track of applicants. 
+- If you're hiring: Create new job listings for your company, manage listings, and keep track of applicants. 
 
 <a href="https://ibb.co/D8D7nHC"><img src="https://i.ibb.co/cCcNdSF/Screenshot-10.png" alt="Screenshot-10" border="0"></a>
 <hr><br>
 
 ## Leaderboards
-Ranks companies based on a formula that assigns them a "IO score" which is a score based on valuations such as financials, reviews, and more!
+- Ranks companies based on a formula that assigns them a "IO score" which is a score based on valuations such as financials, reviews, and more.
 
 The IO Company score reflects a comprehensive evaluation of the company's financials, stability, global reach, R&D, market share, product diversity, public sentiment, employee satisfaction, ESG score, future outlook and more. Improve your company's IO score by leaving reviews.
 
@@ -94,13 +109,15 @@ The IO Company score reflects a comprehensive evaluation of the company's financ
 <hr><br>
 
 ## Projects
-Showcase your projects or find people to work on them with you. Create new projects, manage existing projects, or apply for a project!
+- Showcase your projects or find people to work on them with you.
+- Create new projects, manage existing projects, or apply for a project.
 
 <a href="https://ibb.co/TkbKnwq"><img src="https://i.ibb.co/wRwJbdr/Screenshot-12.png" alt="Screenshot-12" border="0"></a>
 <hr><br>
 
 ## Newspaper
-Create a newspaper, write articles that show up on the homepage feed for everyone in your country. Leave comments on articles anonymously and only choose to show your verified company if you wish. 
+- Create a newspaper, write articles that show up on the homepage feed for everyone in your country.
+- Leave comments on articles anonymously and only choose to show your verified company if you wish. 
 
 <a href="https://ibb.co/QjCkC66"><img src="https://i.ibb.co/84dbdjj/Screenshot-13.png" alt="Screenshot-13" border="0"></a>
 <br>
