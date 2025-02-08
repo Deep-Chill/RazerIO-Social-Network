@@ -1,7 +1,5 @@
 # RazerIO
 
-:star: Star it on GitHub!
-
 RazerIO is a social network for professionals built with Django. I've only made the backend with a basic frontend. Everything is done in Django without using DRF or any other API.
 
 <a href="https://ibb.co/HDSsQfr"><img src="https://i.ibb.co/5W0yVg5/Screenshot-7.png" alt="Screenshot-7" border="0"></a>
